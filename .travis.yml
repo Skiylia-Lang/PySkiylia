@@ -9,6 +9,7 @@ python: 3.8
 # Install codecov pip dependency
 install:
   - pip install codecov
+  - pip install coverage
 
 # Run tests
 script:

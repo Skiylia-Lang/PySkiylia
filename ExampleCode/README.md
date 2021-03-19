@@ -1,4 +1,4 @@
-# PySkiylia
+# Skiylia - Example code
 Dynamically typed Object Oriented Program Language.
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
@@ -8,28 +8,14 @@ Dynamically typed Object Oriented Program Language.
 ![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/SK1Y101/PySkiylia)
 [![codecov](https://codecov.io/gh/SK1Y101/PySkiylia/branch/main/graph/badge.svg?token=DRJ67ZQA7M)](https://codecov.io/gh/SK1Y101/PySkiylia)
 [![time tracker](https://wakatime.com/badge/github/SK1Y101/PySkiylia.svg?style=flat-square)](https://wakatime.com/badge/github/SK1Y101/PySkiylia)
-![GitHub language count](https://img.shields.io/github/languages/count/SK1Y101/PySkiylia)
-![GitHub top language](https://img.shields.io/github/languages/top/SK1Y101/PySkiylia)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/SK1Y101/PySkiylia)
-![Lines of code](https://img.shields.io/tokei/lines/github.com/SK1Y101/PySkiylia)
+
+This repository folder contains examples of Skiylia-specific code, and (possibly) the equivalent in python.
 
 ## Releases
-
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/SK1Y101/PySkiylia?include_prereleases)
-![GitHub commits since latest release (by date including pre-releases)](https://img.shields.io/github/commits-since/SK1Y101/PySkiylia/latest?include_prereleases)
-![GitHub milestone](https://img.shields.io/github/milestones/progress/SK1Y101/PySkiylia/1)
-![GitHub milestones](https://img.shields.io/github/milestones/open/SK1Y101/PySkiylia)
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/SK1Y101/PySkiylia.svg)](http://isitmaintained.com/project/SK1Y101/PySkiylia "Percentage of issues still open")
-![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/SK1Y101/PySkiylia)
-![GitHub last commit](https://img.shields.io/github/last-commit/SK1Y101/PySkiylia)
 
 **PySkiylia: [Latest release]**
 
 Support here: [issues]
-
-## Sample code
-
-Within this [folder] is all the code examples that have been used to test the project. Feel free to play around and get a feel for the language!
 
 ## Contributors
 

@@ -3,23 +3,22 @@ pull_request_rules:
     conditions:
       - base=master
       - label!=work-in-progress
+      #- "#approved-reviews-by>=1"
     actions:
       merge:
         method: merge
-        strict: true
+
+  - name: delete head branch after merge
+    conditions:
+      - merged
+    actions:
+      delete_head_branch: {}
 
   - name: remove outdated reviews
     conditions:
       - base=master
     actions:
       dismiss_reviews: {}
-
-  - name: delete head branch after merge
-    conditions:
-      - base=master
-      - label!=work-in-progress
-    actions:
-      delete_head_branch: {}
 
   - name: automatic merge for Snyk pull requests
     conditions:

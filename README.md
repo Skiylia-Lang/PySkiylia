@@ -53,4 +53,4 @@ Contributions of any kind are welcome!
 
 [Latest release]: https://github.com/SK1Y101/PySkiylia/releases
 [issues]: https://github.com/SK1Y101/PySkiylia/issues
-[folder]: https://github.com/SK1Y101/PySkiylia/ExampleCode
+[folder]: https://github.com/SK1Y101/PySkiylia/tree/main/ExampleCode

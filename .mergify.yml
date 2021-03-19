@@ -1,7 +1,7 @@
 pull_request_rules:
   - name: merge on CI success
     conditions:
-      - base=master
+      - base=main
       - label!=work-in-progress
       #- "#approved-reviews-by>=1"
     actions:

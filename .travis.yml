@@ -1,0 +1,19 @@
+#sudo: false
+
+# Use Python
+language: python
+
+# Use python version I actually use
+python: 3.8
+
+# Install codecov pip dependency
+install:
+  - pip install codecov
+
+# Run tests
+script:
+  - coverage run test.py
+
+# Push to codecov
+after_success:
+  - codecov

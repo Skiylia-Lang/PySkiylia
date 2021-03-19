@@ -3,7 +3,7 @@ pull_request_rules:
     conditions:
       - base=master
       - label!=work-in-progress
-      - "#approved-reviews-by>=1"
+      #- "#approved-reviews-by>=1"
     actions:
       merge:
         method: merge

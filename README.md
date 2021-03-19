@@ -1,51 +1,31 @@
 # PySkiylia
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
-A Dynamically typed, Object Oriented Program Language, written in Python
+A Dynamically typed, Object Oriented Program Language.
 
-<p align="center">
-  <img alt="GitHub" src="https://img.shields.io/github/license/SK1Y101/PySkiylia">
+[![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
-  <img src="https://wakatime.com/badge/github/SK1Y101/PySkiylia.svg"/>
+![GitHub](https://img.shields.io/github/license/SK1Y101/PySkiylia)
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat)](#contributors-)
+![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/SK1Y101/PySkiylia)
+[![codecov](https://codecov.io/gh/SK1Y101/PySkiylia/branch/main/graph/badge.svg?token=DRJ67ZQA7M)](https://codecov.io/gh/SK1Y101/PySkiylia)
+[![time tracker](https://wakatime.com/badge/github/SK1Y101/PySkiylia.svg?style=flat-square)](https://wakatime.com/badge/github/SK1Y101/PySkiylia)
+![GitHub language count](https://img.shields.io/github/languages/count/SK1Y101/PySkiylia)
+![GitHub top language](https://img.shields.io/github/languages/top/SK1Y101/PySkiylia)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/SK1Y101/PySkiylia)
+![Lines of code](https://img.shields.io/tokei/lines/github.com/SK1Y101/PySkiylia)
 
-  <a href="https://codecov.io/gh/SK1Y101/PySkiylia">
-    <img src="https://codecov.io/gh/SK1Y101/PySkiylia/branch/main/graph/badge.svg?token=DRJ67ZQA7M&style=plastic"/>
-  </a>
+## Releases
 
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/SK1Y101/PySkiylia?include_prereleases)
+![GitHub commits since latest release (by date including pre-releases)](https://img.shields.io/github/commits-since/SK1Y101/PySkiylia/latest?include_prereleases)
+![GitHub milestone](https://img.shields.io/github/milestones/progress/SK1Y101/PySkiylia/1)
+![GitHub milestones](https://img.shields.io/github/milestones/open/SK1Y101/PySkiylia)
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/SK1Y101/PySkiylia.svg)](http://isitmaintained.com/project/SK1Y101/PySkiylia "Percentage of issues still open")
+![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/SK1Y101/PySkiylia)
+![GitHub last commit](https://img.shields.io/github/last-commit/SK1Y101/PySkiylia)
 
-  <a href="https://mergify.io">
-    <img src="https://img.shields.io/endpoint.svg?url=https://gh.mergify.io/badges/SK1Y101/PySkiylia" alt="Mergify">
-    </a>
+**PySkiylia: [Latest release]**
 
-  <img alt="Known Vulnerabilities" src="https://snyk.io/test/github/SK1Y101/PySkiylia/badge.svg">
-
-  <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/SK1Y101/PySkiylia">
-
-  <br>
-
-  <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/SK1Y101/PySkiylia">
-
-  <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/SK1Y101/PySkiylia">
-
-  <img alt="GitHub release (latest by date including pre-releases)" src="https://img.shields.io/github/v/release/SK1Y101/PySkiylia?include_prereleases">
-
-  <img alt="GitHub commits since latest release (by date including pre-releases)" src="https://img.shields.io/github/commits-since/SK1Y101/PySkiylia/latest?include_prereleases">
-
-  <img alt="GitHub milestone" src="https://img.shields.io/github/milestones/progress/SK1Y101/PySkiylia/1">
-
-  <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/SK1Y101/PySkiylia">
-
-  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/SK1Y101/PySkiylia">
-
-  <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/SK1Y101/PySkiylia">
-
-  <img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed-raw/SK1Y101/PySkiylia">
-
-  <img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr-raw/SK1Y101/PySkiylia">
-
-  <img alt="GitHub closed pull requests" src="https://img.shields.io/github/issues-pr-closed-raw/SK1Y101/PySkiylia">
-</p>
+Support here: [issues]
 
 ## Contributors
 
@@ -66,3 +46,6 @@ All the people who have contributed ([emoji key](https://allcontributors.org/doc
 
 This project follows the [all-contributors](https://allcontributors.org) specification.
 Contributions of any kind are welcome!
+
+[Latest release]: https://github.com/SK1Y101/PySkiylia/releases
+[issues]: https://github.com/SK1Y101/PySkiylia/issues

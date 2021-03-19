@@ -1,10 +1,8 @@
 pull_request_rules:
   - name: merge on CI success
     conditions:
-<<<<<<< HEAD
       - base=master
       - label!=work-in-progress
-=======
       - "#approved-reviews-by>=1"
     actions:
       merge:
@@ -14,7 +12,6 @@ pull_request_rules:
     conditions:
       - author~=^dependabot(|-preview)\[bot\]$
       - check-success=Travis CI - Pull Request
->>>>>>> 564cdf744b1a43c5857dd86884561358b825cf53
     actions:
       merge:
         method: merge

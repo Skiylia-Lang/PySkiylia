@@ -59,7 +59,7 @@ class Lexer:
             #as division and comments use the same character, check if the next is a comment
             if self.match("/"):
                 #keep advancing until we find a newline
-                while self.match("\n", peek=True):
+                while not self.match("\n", peek=True):
                     self.advance()
             else:
                 return self.addToken("Slash")
@@ -78,6 +78,9 @@ class Lexer:
         elif c == "\n":
             #increment the line counter when we reach a newline
             self.line += 1
+        elif c == " ":
+            #skip whitespace
+            pass
         elif c == '"':
             #if we have a string identifier
             return self.findString()

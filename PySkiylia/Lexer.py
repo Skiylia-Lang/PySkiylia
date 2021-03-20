@@ -94,6 +94,8 @@ class Lexer:
         elif c == "\n":
             #increment the line counter when we reach a newline
             self.line += 1
+            #return the End token (This will be useful for the parser, as it can identify if a line, and thus statement, has finished)
+            return self.addToken("End")
         elif c == " ":
             #skip whitespace
             pass

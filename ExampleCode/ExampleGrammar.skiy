@@ -1,0 +1,378 @@
+//This is a single line comment
+
+'''This is a
+    multi-line comment'''
+
+//linebreaks act the same as in python, semi-colons act like implicit line breaks
+'''ie:
+      a = 45; c = 74+a;
+
+      is equivalent to
+
+      a = 45
+      c = 74+a
+'''
+
+//Data types
+//Booleans
+True; False
+
+0, "", [], {}, False //all evaluate to false
+1, True               //all evaluate to true
+
+//Numbers (which are floats by default I guess?)
+123; 123.56;
+
+//Strings
+'Hello' //string
+"hi"    //also a string
+""      //empty string, evaluates to false as in python
+"1425"  //string of a number
+
+//Non-type
+null    //equivalent to None in Python
+
+
+//Expressions
+//Arithmetic
+1 + 2     //addition
+2 - 0.5   //subtraction
+4 * 12    //multiplication
+2a        //implicit multiplication (not sure if desired)
+7 / 2     //division (tries to convert output to integer if possible)
+1.8 ** 3  //exponentiation
+5 % 3     //modulo
+
+-a        //negation of the value of a
+++a       //increment a by 1 (might add post/prefix rules)
+--a       //decrement a by 1 (might add post/prefix rules)
+
+
+//Comparisons and equalities
+a < b   //less than
+a <= b  //less than or equal to
+a > b   //greater than
+a >= b  //greater than or equal to
+a == b  //equal to
+a != b  //not equal to
+a === b  //identically equal to
+a !== b  //not identically equal to
+
+123 == 123. //should evaluate to true, as the float can be converted to integer (or vice versa)
+123 === 123. //should evaluate to false, as they have different types
+123 == "123" //should not convert string to number implicitly
+
+//Logical operators
+//Unary
+!a      //not a
+not a   //not a
+-a      //negates the value of a and implicitly converts to number (6 beomes -6, "-6" becomes 6)
++a      //implicitly converts to a number ("-6" becomes -6)
+
+Binary
+a and b //a and b
+a && b  //a and b
+a or b  //a or b
+a || b  //a or b
+a xor b //a or b, but not both
+a ^^ b  //a or b, but not both
+a ?? b  //return b if a is null (ie: a = b??4 gives b if not null, or 4 if b is null)
+
+//Bitwise
+a & b   //bitwise and
+a | b   //bitwise or
+a ^ b   //bitwise xor
+~a      //bitwise not
+a << 3  //bitwise left shift of 3
+a >> 3  //bitwise right shift of 3
+
+//Ternary Technically these are control flow as well
+a ? b : c //if a is true, then b, else c    //ie: v = (a>5) ? "6" : "8" (if 'a' is greater than 5, then v='6', else v='8')
+a ?: c //if a is true, then a, else c (implicit version of a ? a : c) (technically a binary operator, but hey ho)
+//ie: v = (a>5)?:c (if 'a' is greater than 5, v='True', else v='c')
+
+//Variables and asignment
+var a = 1   //declares a as equal to 1
+global a = 1  //declares a as a global value equal to 1
+const a = 1   //declares a as a constant (cannot be changed at any point in the code, treated as global)
+a = 1       //implicitly declares a as equal to 1
+var a       //declares a as null
+global a, const a //same as above, but as global or constant
+a           //implicitly declares a as null
+a, b = 1, 3 //declare a as 1 and b as 3
+a = b = 2   //declare a and b as 2
+a, b = 2    //also declare a and b as 2
+
+'''var a
+    print(a)  //shows null
+    a=45
+    print(a)  //shows 45
+'''
+
+//basically, if it has a symbol, attatching = to the end will asign in place
+//only works if they have convertable types. ie: a=6; a+="hello" would fail, but a=6; a+=4.6 gives 10.6
+//however, a=5; a+=-"6" would give -1, as the -"6" converts the string to a number implicitly
+//operation   //long equivalent   //string assignments if available
+a+=6          //a = a + 6     ("ab"+="5e" becomes "ab5e")
+a-=6          //a = a - 6     ("ab5e"-="5e" becomes "ab")
+a*=6          //a = a * 6     ("ab"*=6 becomes "abababababab")
+a/=6          //a = a / 6
+a**=6         //a = a ** 6
+a%=6          //a = a % 6
+a&&=b         //a = a and b
+a||=b         //a = a || b
+a^^=b         //a = a ^^ b
+a??=b         //a = a ?? b (if a is null, set a to b)
+//the below are bitwise asignments
+a&=6          //a = a & 6
+a|=b          //a = a | b
+a^=b          //a = a ^ b
+a<<=b         //a = a << b
+a>>=b         //a = a >> b
+
+//these are less intuitive, but i like the idea of them
+a?=b:c        //a = a ? b : c
+'''
+  if (a>5):
+    a=b
+  else:
+    a=c
+  //or
+  a>5?=b:c
+'''
+a?:=c         //a = a ?: c  //a = a ? a : c   //?: was already a shortening (if a is true, keep as a, else set to c)
+'''
+  if (a < 7):
+    a = a
+  else:
+    a = c
+  //or
+  a<7?:=c
+'''
+//(they look for the first variable provided to set it's value)
+
+//control flow  --> strongly prefer whitespace indenting
+//if-else statement
+if a==5:
+  ++a
+  print(a)
+else:
+  --a
+  print(a)
+
+//but is also equivalently using braces if the programmer so desires
+if a==5 {
+  ++a; print(a)
+} else {
+  --a
+  print(a)
+}   //curly braces can be used in place of ':' if so desired (also making use of ';' for an explicit line break)
+
+//: or {} *can* be ommitted, but only for single lines. (better to use ':' explicitly)
+if a==5
+  print(a)
+else
+  print("nope")
+
+//ternary opperator can be used instead of the above, to give:
+a = a==5 ? 5 : "nope"
+print(a)    //-> this changes the value of a
+//or
+print(a==5 ? 5 : "nope")  //-> this does not change the value of a
+//or
+print(a==5 ?: "nope")  //-> this does not change the value of a
+//
+print(a==5?:="nope")  //-> this does change the value of a
+
+
+//If statements do not require elses
+if a==5:
+  print("a was 5")
+'''the rest of the code goes here'''
+
+//but they can also be chained together with elif (or else if)
+if a==5:
+  print(5)
+elif a==6
+  print(6)
+else
+  print(no)
+
+//this is equivalent code
+if a==5:
+  print(5)
+else if a==6
+  print(6)
+else
+  print(no)
+
+//FOR LOOPS
+//Break and continue also works the same as in python
+//much the same as in python, this implicitly increments x by 1 per each loop
+//also will declare the increment variable as either 0, or the first value of what was given to loop implicitly
+for x in "hello":
+  print(x)
+  //output: h, e, l, l, o
+
+//increment x up to 10
+for x when x<=10:
+  print(x)
+  //output: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+
+for x when x<=10 do x+=.5:
+  print(x)
+  //output: 0., 0.5, 1., 1.5, 2., 2.5, 3., 3.5, 4., 4.5, 5., 5.5, 6., 6.5, 7., 7.5, 8., 8.5, 9., 9.5, 10.
+
+//explicitly define the increment Variable
+x = 3
+for x when x<10:
+  print(x)
+  //output: 3, 4, 5, 6, 7, 8, 9
+
+//define in place
+for x=3 when x<10:
+  print(x)
+  //output: 3, 4, 5, 6, 7, 8, 9
+
+//can also use var
+for var x = 3 when x<30 do x*=2:
+  print(x)
+  //output: 3, 6, 12, 24
+
+//or parts can be skipped entirely:
+for x do x+=6:
+  print(x)
+  //0, 6, 12, 18, 24, 30, 36, 42, 48, ... (infinitely loops)
+
+//or a c style implicit for loop is possible
+for x; x<6:
+  print(x)
+  //0, 1, 2, 3, 4, 5
+
+for x=10; x; --x:
+  print(x)
+  //10, 9, 8, 7, 6, 5, 4, 3, 2, 1
+
+for x=10;; --x:
+  print(x)
+  //10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, ... (infinitely loops)
+
+//WHILE LOOPS
+while a<10:
+  print(a)
+  ++a
+  //will fail, as these do not implicitly define variables
+
+a=0
+while a<10:
+  print(a)
+  ++a
+  //0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+
+//DO-While Loops
+a = 0
+do while a<=5:
+  a+=2
+
+//or
+a=0
+do:
+  a+=2
+while a<=5:
+
+//or
+a=0
+do {
+  a+=2
+} while a<=5
+
+//does the loop once, then evaluates whether to keep looping
+ie:
+a=10; do {++a; print(a)} while a<=6;
+//outputs: 7
+
+//whereas
+a=10
+while a<=6:
+  ++a
+  print(a)
+//will never call the while loop
+
+
+//FUNCTIONS
+def hiThere(): //defining
+  print("hello")
+
+//or def hiThere() { print("hello") }
+
+hiThere() //calling the function
+
+def hello(a=2):   //arguments can be passed, as well as default arguments
+  return a+1
+//functions implicitly return null, if no return is given
+
+def function():
+  return "hi there"
+a = function
+print(a)  //doesn't show anything
+print(a())  //shows "hi there"
+
+//CLASSES
+class hiThere:
+  yes():
+    print("yes")
+  def no():
+    print("no")
+
+//class methods do not require 'def', but it can be used
+hiThere.test = "yesaf" //assign a variable to the class dynamically
+//init() will be called automatically
+
+//inheritance
+class example:
+  init():
+    print("haha")
+
+class trial(example):
+  init():
+    print("no you")
+
+//bracketed class inherits from above
+//the child will overwrite parent methods with the same name by default
+
+class trial(example):
+  init():
+    super.init()
+    print("no you")
+
+//the child will call a parent function, fail if the parent doesnt have one
+
+class trial(example):
+  init():
+    self.nope()
+    print("no you")
+
+//the child will call it's own function, fail if it doesn't have one
+
+class trial(example):
+  nope():
+    print("yeah")
+  init():
+    nope()
+    print("no you")
+
+//attempts to call a global function, call's it's own if that doesnt exist
+
+//Standard library
+print("a")    //prints "a"
+abs(-5)       //converts to absolute
+mod(5, 7)     //returns 5 % 7
+floor(5, 7)   //returns the floor of 5/7
+ceil(5, 7)    //returns the ceil of 5 / 7
+str() / string() //converts to string
+int() / integer() //converts to integer by flooring ( int("5.96") -> 5)
+float()       //converts to float
+bool() / boolean() //converts to boolean (0, "", [], {}, False, null become False, all else becomes True)
+
+//thus, our reserved words are:
+true, false, for, while, do, class, def, return, xor, and, or, when, if, else, elif, var, not, null, class, continue, break, in, global, const

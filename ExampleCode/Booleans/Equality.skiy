@@ -10,14 +10,13 @@ print(true == "true")       //false
 print(false == "false")     //false
 print(false == "")          //false
 
-//not implemented yet
-//print(true != true)         //false
-//print(true != false)        //true
-//print(false != true)        //true
-//print(false != false)       //false
+print(true != true)         //false
+print(true != false)        //true
+print(false != true)        //true
+print(false != false)       //false
 
-//print(true != 1)            //false
-//print(false != 0)           //false
-//print(true != "true")       //true
-//print(false != "false")     //true
-//print(false != "")          //true
+print(true != 1)            //false
+print(false != 0)           //false
+print(true != "true")       //true
+print(false != "false")     //true
+print(false != "")          //true

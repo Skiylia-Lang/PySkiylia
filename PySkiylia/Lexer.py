@@ -68,13 +68,29 @@ class Lexer:
         elif c == "<":
             return self.addToken("Less")
         elif c == "=":
+            if self.match("="):
+                return self.addToken("EqualEqual")
             return self.addToken("Equal")
         elif c == "&":
-            return self.addToken("Ampersand")
+            #Check for logical and
+            if self.match("&"):
+                #return the and token
+                return self.addToken("And")
+            else:
+                #second ampersand not given
+                self.skiylia.error(self.line, self.current, "Missing & in logical and")
         elif c == "|":
-            return self.addToken("Bar")
+            #Check for logical or
+            if self.match("|"):
+                #return the and token
+                return self.addToken("Or")
+            else:
+                #second bar not given
+                self.skiylia.error(self.line, self.current, "Missing | in logical or")
         elif c == "!":
-            return self.addToken("Bang")
+            if self.match("="):
+                return self.addToken("NotEqual")
+            return self.addToken("Not")
         elif c == "\n":
             #increment the line counter when we reach a newline
             self.line += 1

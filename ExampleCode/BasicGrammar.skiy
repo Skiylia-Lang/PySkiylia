@@ -34,9 +34,7 @@ a / c       //division
 
 //Comparisons and equalities
 a < b       //less than
-a <= b      //less than or equal to
 a > b       //greater than
-a >= b      //greater than or equal to
 a == b      //equal to
 a != b      //not equal to
 

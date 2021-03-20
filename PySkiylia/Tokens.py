@@ -2,8 +2,9 @@
 """Stores token definitions, may end up moving this elsewhere"""
 
 tokens = [#single character tokens
-            "LeftParenthesis", "RightParenthesis", "Colon", "Comma", "Dot", "Minus", "Plus", "Star", "Slash", "Greater", "Less", "Equal", "Ampersand", "Bar", "Bang",
+            "LeftParenthesis", "RightParenthesis", "Colon", "Comma", "Dot", "Minus", "Plus", "Star", "Slash", "Greater", "Less",
             #single or double character Tokens
+            "NotEqual", "Not", "EqualEqual", "Equal", "And", "Or",
             #Literal tokens
             "String", "Number", "Identifier",
             #keyword tokens

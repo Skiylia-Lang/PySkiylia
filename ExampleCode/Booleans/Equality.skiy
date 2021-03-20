@@ -1,0 +1,22 @@
+//Test the equality operator
+print(true == true)         //true
+print(true == false)        //false
+print(false == true)        //false
+print(false == false)       //true
+
+print(true == 1)            //true
+print(false == 0)           //true
+print(true == "true")       //false
+print(false == "false")     //false
+print(false == "")          //false
+
+print(true != true)         //false
+print(true != false)        //true
+print(false != true)        //true
+print(false != false)       //false
+
+print(true != 1)            //false
+print(false != 0)           //false
+print(true != "true")       //true
+print(false != "false")     //true
+print(false != "")          //true

@@ -1,0 +1,5 @@
+//explicitly declare a variable
+var a = 2
+
+//This allows a variable to be defined as null initially
+var b

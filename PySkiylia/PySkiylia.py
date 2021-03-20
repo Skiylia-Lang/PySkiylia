@@ -93,9 +93,9 @@ class Skiylia:
             print(token.type, token.lexeme)
 
     #define a way of showing an error to the user
-    def error(self, line=0, char=0, message=""):
+    def error(self, line=0, char=0, message="", where=""):
         #print the error in a lovely form
-        print("[Line {0}, Char {1}] Error: {2}".format(line, char, message))
+        print("[Line {0}, Char {1}] {2} Error: {3}".format(line, char, where, message))
         #update our internals to show we had an error
         self.haderror = True
 

@@ -10,7 +10,7 @@ tokens = [#single character tokens
             #keyword tokens
             "Class", "Def", "Do", "Elif", "Else", "False", "For", "If", "Null", "Print", "Return", "Self", "Super", "True", "Var","When", "While",
             #miscellaneous
-            "EOF"]
+            "EOF", "End"]
 
 #a dictionary mapping keywords to their equivalent tokens
 keywords = {"class":"Class", "def":"Def", "do":"Do", "elif":"Elif", "else":"Else",

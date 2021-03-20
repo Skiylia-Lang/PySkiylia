@@ -93,7 +93,7 @@ class Lexer:
     #define a way of fetching a string from sourcecode
     def findString(self):
         #keep going until we hit the end of the code, or the string terminator
-        while self.match('"', peek=True):
+        while not self.match('"', peek=True):
             #we support multi-line strings, so if we find a newline, increment the line counter
             if self.match("\n", peek=True):
                 self.line+=1

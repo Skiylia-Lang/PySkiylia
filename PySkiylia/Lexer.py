@@ -15,7 +15,7 @@ class Lexer:
         self.start = 0
         self.current = 0
         self.line = 1
-        self.char = 0
+        self.char = 1
 
     #create a method of scanning tokens
     def scanTokens(self):

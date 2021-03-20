@@ -56,7 +56,7 @@ class Skiylia:
     #startup the prompt if no arguments have been given
     def runPrompt(self):
         #print some base information
-        Print("PySkiylia 0.0.1")
+        print("PySkiylia 0.1.0")
         #keep looping the code
         while True:
             #fetch the user input
@@ -90,7 +90,7 @@ class Skiylia:
         tokens = lexer.scanTokens()
         #Lexer output for debugging
         print([token.type for token in tokens])
-        
+
         #fetch the Parser class
         parser = Parser(tokens)
         #run the parser

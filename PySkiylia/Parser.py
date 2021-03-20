@@ -28,6 +28,7 @@ class Parser:
             return self.expression()
         except Exception as e:
             #return nothing if an error was found
+            print(e)
             return None
 
     #define the expression grammar
@@ -41,7 +42,7 @@ class Parser:
             #fetch the comparisonassociated
             right = self.comparison()
             #create a binary expression from this
-            expr = self.Binary(expr, operator, right)
+            expr = Binary(expr, operator, right)
         #return the expression
         return expr
 
@@ -56,7 +57,7 @@ class Parser:
             #fetch the term associated
             right = self.term()
             #create a binary expression from this
-            expr = self.Binary(expr, operator, right)
+            expr = Binary(expr, operator, right)
         #return the comparison
         return expr
 
@@ -71,7 +72,7 @@ class Parser:
             #fetch the factir associated
             right = self.factor()
             #create a binary expression from this
-            expr = self.Binary(expr, operator, right)
+            expr = Binary(expr, operator, right)
         #return the comparison
         return expr
 
@@ -86,7 +87,7 @@ class Parser:
             #fetch the unary associated
             right = self.unary()
             #create a binary expression from this
-            expr = self.Binary(expr, operator, right)
+            expr = Binary(expr, operator, right)
         #return the comparison
         return expr
 
@@ -99,28 +100,28 @@ class Parser:
             #fetch the unary that might follow (as per our EBNF gramar)
             right = self.unary()
             #return the unary combination
-            return self.Unary(operator, right)
+            return Unary(operator, right)
         #otherwise return the literal
         return self.literal()
 
     def literal(self):
         #check if we have any known identifiers
         if self.match("False"):
-            return self.Literal(False)
+            return Literal(False)
         #check if true
         elif self.match("True"):
-            return self.Literal(True)
+            return Literal(True)
         #check if null
         elif self.match("Null"):
-            return self.Literal(None)
+            return Literal(None)
         #check if a number or string
         elif self.match("Number", "String"):
-            return self.Literal(self.previous().literal)
+            return Literal(self.previous().literal)
         #check if opening a parenthesis
         elif self.match("LeftParenthesis"):
             expr = self.expression()
             self.consume("RightParenthesis", "Expect ')' after an expression.")
-            return self.grouping(expr)
+            return Grouping(expr)
         elif self.match("End"):
             pass
         #if we found nothing, throw an error

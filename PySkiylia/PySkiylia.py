@@ -5,6 +5,7 @@ import sys, os
 
 #Our modules that are required
 from Lexer import Lexer
+from Parser import Parser
 
 #Main function to be called when executed
 class Skiylia:
@@ -55,12 +56,15 @@ class Skiylia:
     #startup the prompt if no arguments have been given
     def runPrompt(self):
         #print some base information
-        Print("PySkiylia 0.0.1")
+        print("PySkiylia 0.1.0")
         #keep looping the code
         while True:
             #fetch the user input
             line = input(">> ")
-            #try to run the code they just provided
+            #check they did not ask to quit
+            if line.lower() in ["quit", "exit"]:
+                break
+            #else, try to run the code they provided
             self.run(line)
             #reset the error flag, if it was set
             self.haderror = False
@@ -87,15 +91,25 @@ class Skiylia:
         lexer = Lexer(source)
         #and scan the sourcecode for tokens
         tokens = lexer.scanTokens()
+        #Lexer output for debugging
+        print([token.type for token in tokens])
 
-        #print them, as we're not doing a lot else with them yet
-        for token in tokens:
-            print(token.type, token.lexeme)
+        #fetch the Parser class
+        parser = Parser(tokens)
+        #run the parser
+        expression = parser.parse()
+
+        #stop if we had an error
+        if self.haderror:
+            return
+
+        #for now, print the parser output
+        print(expression)
 
     #define a way of showing an error to the user
-    def error(self, line=0, char=0, message=""):
+    def error(self, line=0, char=0, message="", where=""):
         #print the error in a lovely form
-        print("[Line {0}, Char {1}] Error: {2}".format(line, char, message))
+        print("[Line {0}, Char {1}] {2} Error: {3}".format(line, char, where, message))
         #update our internals to show we had an error
         self.haderror = True
 

@@ -15,7 +15,7 @@ class Lexer:
         self.start = 0
         self.current = 0
         self.line = 1
-        self.char = 1
+        self.char = 0
 
     #create a method of scanning tokens
     def scanTokens(self):
@@ -24,6 +24,7 @@ class Lexer:
         #while we are not at the end of the list, loop
         while not self.atEnd():
             #update the position of our lexer
+            self.char += (self.current-self.start)
             self.start = self.current
             #fetch the next token
             token = self.tokenFromChar()
@@ -31,7 +32,7 @@ class Lexer:
             if token:
                 tokens.append(token)
         #add an end of file token
-        tokens.append(Tokens.Token("EOF", "", None, self.line+1, 0))
+        tokens.append(Tokens.Token("EOF", "", None, self.line+1, 1))
         return tokens
 
     #create the appropriate token given the character
@@ -78,7 +79,7 @@ class Lexer:
                 return self.addToken("And")
             else:
                 #second ampersand not given
-                self.skiylia.error(self.line, self.current, "Missing & in logical and")
+                self.skiylia.error(self.line, self.char, "Missing & in logical and")
         elif c == "|":
             #Check for logical or
             if self.match("|"):
@@ -86,7 +87,7 @@ class Lexer:
                 return self.addToken("Or")
             else:
                 #second bar not given
-                self.skiylia.error(self.line, self.current, "Missing | in logical or")
+                self.skiylia.error(self.line, self.char, "Missing | in logical or")
         elif c == "!":
             if self.match("="):
                 return self.addToken("NotEqual")
@@ -94,6 +95,9 @@ class Lexer:
         elif c == "\n":
             #increment the line counter when we reach a newline
             self.line += 1
+            self.char = 0
+            #return the End token (This will be useful for the parser, as it can identify if a line, and thus statement, has finished)
+            return self.addToken("End")
         elif c == " ":
             #skip whitespace
             pass
@@ -110,7 +114,7 @@ class Lexer:
                 return self.findIdentifier()
             else:
                 #if nothing matches, throw an error
-                self.skiylia.error(self.line, self.current, "Unexpected character")
+                self.skiylia.error(self.line, self.char, "Unexpected character")
 
     #define a way of fetching keyword identifiers
     def findIdentifier(self):
@@ -133,11 +137,12 @@ class Lexer:
             #we support multi-line strings, so if we find a newline, increment the line counter
             if self.match("\n", peek=True):
                 self.line+=1
+                self.char=1
             #increment the lexer position
             self.advance()
         #if we havent seen the end of the string, raise an error
         if self.atEnd():
-            self.skiylia.error(self.line, self.current, "Unterminated string")
+            self.skiylia.error(self.line, self.char, "Unterminated string")
         #consume the string closure identifier
         self.advance()
         #fetch the contents of the string, removing the leading and trailing identifiers
@@ -183,7 +188,7 @@ class Lexer:
         #return the text from the sourcecode (characters between the start and current position)
         text = self.source[self.start:self.current]
         #create and return a token
-        return Tokens.Token(tokenType, text, literal, self.line, self.start)
+        return Tokens.Token(tokenType, text, literal, self.line, self.char)
 
     #advance through the source code if the current character matches what we would expect it to be
     def match(self, expected="", peek=False):
@@ -218,7 +223,7 @@ class Lexer:
     #advance through the source code and return the character
     def advance(self):
         #increment the Lexer position
-        self.current+=1
+        self.current += 1
         #return the character we just skiped over
         return self.source[self.current-1]
 

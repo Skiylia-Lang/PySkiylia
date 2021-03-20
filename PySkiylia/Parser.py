@@ -20,7 +20,7 @@ class Parser:
         self.tokens = tokens
 
     #define a way of starting up the parser
-    def parse():
+    def parse(self):
         #error handling
         try:
             #run a singular expression
@@ -120,6 +120,8 @@ class Parser:
             expr = self.expression()
             self.consume("RightParenthesis", "Expect ')' after an expression.")
             return self.grouping(expr)
+        elif self.match("End"):
+            pass
         #if we found nothing, throw an error
         return self.error(self.peek(), "Expected an expression.")
 
@@ -129,7 +131,7 @@ class Parser:
         if self.check(type):
             return self.advance()
         #else show an error
-        print self.error(self.peek, errorMessage)
+        print(self.error(self.peek, errorMessage))
         #could include a raise here instead I guess?
 
     #define a way of checking if the current token is any of the supplied types

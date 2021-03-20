@@ -29,7 +29,13 @@ True; False
 ""      //empty string, evaluates to false as in python
 "1425"  //string of a number
 
-//Non-type
+//Lists
+[]          //empty
+[1, 2]      //llist of one type
+[1, "4"]    //lists can contain all types
+[1, 23][1]  //searching in lists
+
+//None-type
 null    //equivalent to None in Python
 
 

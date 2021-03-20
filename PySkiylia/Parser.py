@@ -20,7 +20,7 @@ class Parser:
         self.tokens = tokens
 
     #define a way of starting up the parser
-    def Parse():
+    def parse():
         #error handling
         try:
             #run a singular expression

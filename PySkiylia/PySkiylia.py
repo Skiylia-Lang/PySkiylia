@@ -5,6 +5,7 @@ import sys, os
 
 #Our modules that are required
 from Lexer import Lexer
+from Parser import Parser
 
 #Main function to be called when executed
 class Skiylia:
@@ -87,10 +88,17 @@ class Skiylia:
         lexer = Lexer(source)
         #and scan the sourcecode for tokens
         tokens = lexer.scanTokens()
+        #fetch the Parser class
+        parser = Parser(tokens)
+        #run the parser
+        expression = parser.parse()
 
-        #print them, as we're not doing a lot else with them yet
-        for token in tokens:
-            print(token.type, token.lexeme)
+        #stop if we had an error
+        if self.haderror:
+            return
+
+        #for now, print the parser output
+        print(expression)
 
     #define a way of showing an error to the user
     def error(self, line=0, char=0, message="", where=""):

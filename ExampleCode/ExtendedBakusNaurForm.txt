@@ -1,0 +1,46 @@
+//Notation for Skiylia
+
+//vertical bar implies choices
+// rule > option 1 | option 2 | option 3
+//ie: option 1; or option 2
+
+//Parentheses implies a grouping, speech marks means that must appear exactly
+// rule > (option 1 | option 2) "done"
+//ie: option 1 done
+
+//Asterisk implies what it is attatched to repeats zero or more times
+// rule > "test" "example"*
+//ie: test example example example; or even test
+
+//Plus implies what it is attatched to repeats one or more times
+// rule > "test"+
+//ie: test; or test test test test test
+
+//Question mark implies something appears exactly zero or one times
+// rule > (option 1 | option 2)? "done"
+//ie: option1 "done"; or "done"; option1 option2 "done" not allowed
+
+
+//The entire grammar of Skiylia in EBNF Form
+Expressions       > LogicalAnd
+
+//Logical And has the highest precedence (and is computed last)
+LogicalAnd        > LogicalOr ( ( "&&" ) LogicalOr )*
+
+LogicalOr         > Equality ( ( "||" ) Equality )*
+
+Equality          > Comparison ( ( "!=" | "==" ) Comparison )*
+
+//Then comparisons
+Comparison        > Term ( ( ">" | "<" ) Term )*
+
+//Then terms
+Term              > Factor ( ( "-" | "+" ) Factor )*
+
+//Then factors
+Factor            > Unary ( ( "*" | "/" ) Unary )*
+
+//And finally unary has the lowest precedence (and are computed first)
+Unary             > ( "!" | "-" ) Unary | Literal
+
+Literal           > Number | String | "true" | "false" | "null" | "(" expression ")"

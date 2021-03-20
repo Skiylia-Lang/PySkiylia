@@ -88,6 +88,9 @@ class Skiylia:
         lexer = Lexer(source)
         #and scan the sourcecode for tokens
         tokens = lexer.scanTokens()
+        #Lexer output for debugging
+        print([token.type for token in tokens])
+        
         #fetch the Parser class
         parser = Parser(tokens)
         #run the parser

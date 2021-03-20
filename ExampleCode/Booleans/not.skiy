@@ -1,0 +1,4 @@
+#test the not operator
+print(!true)         #False
+print(!false)        #True
+print(!true)     #True

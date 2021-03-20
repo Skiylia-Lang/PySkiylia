@@ -4,7 +4,7 @@
 true, false, null, var, if, else, elif, while, for, do, when, def, class, super, self, print, str, string, int, integer, flt, float
 
 //required symbols:
-'()', ':', ',', '.', '>', '<', '=', '-', '+', '*', '/', '!', '"', '&', '|',
+'(', ')', ':', ',', '.', '-', '+', '*', '/', '//', '>', '<', '=', '!', '"', '&', '|',
 
 //GRAMMAR IDEAS BELOW
 //single line comments

@@ -86,9 +86,26 @@ class Lexer:
             if self.isDigit(c):
                 #return the number to be found
                 return self.findNumber()
+            #check if we have any keywords
+            elif self.isAlpha(c):
+                return self.findIdentifier()
             else:
                 #if nothing matches, throw an error
                 self.skiylia.error(self.line, self.current, "Unexpected character")
+
+    #define a way of fetching keyword identifiers
+    def findIdentifier(self):
+        #keep looping through sourcecode while there is an alphanumeric character to be found
+        while self.isAlphaNumeric(self.peek()):
+            self.advance()
+        #fetch the identifier text
+        thisIdentifier = self.source[self.start:self.current]
+        #check if it is a keyword first
+        if thisIdentifier in Tokens.keywords:
+
+            return self.addToken(Tokens.keywords[thisIdentifier])
+        #if nothing else, return a standard identifier
+        return self.addToken("Identifier")
 
     #define a way of fetching a string from sourcecode
     def findString(self):
@@ -131,6 +148,16 @@ class Lexer:
     def isDigit(self, char):
         #I realise i could just use the python isdigit, but this allows any 'digit' including squared symbol. Maybe later?
         return "0" <= char <= "9"
+
+    #define a way of checking if the value is a digit
+    def isAlpha(self, char):
+        #check if it is an alphabetical character or an underline
+        return ("a" <= char.lower() <= "z") or (char == "_")
+
+    #define a way of checking if the value is a digit
+    def isAlphaNumeric(self, char):
+        #check if it is an alphabetical character or an underline
+        return ("0" <= char <= "9") or ("a" <= char.lower() <= "z") or (char == "_")
 
     #create a token
     def addToken(self, tokenType, literal=None):

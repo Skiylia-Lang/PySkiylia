@@ -89,7 +89,8 @@ class Skiylia:
         tokens = lexer.scanTokens()
 
         #print them, as we're not doing a lot else with them yet
-        print(tokens)
+        for token in tokens:
+            print(token.type, token.lexeme)
 
     #define a way of showing an error to the user
     def error(self, line=0, char=0, message=""):

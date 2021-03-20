@@ -11,6 +11,12 @@ tokens = [#single character tokens
             #miscellaneous
             "EOF"]
 
+#a dictionary mapping keywords to their equivalent tokens
+keywords = {"class":"Class", "def":"Def", "do":"Do", "elif":"Elif", "else":"Else",
+            "false":"False", "for":"For", "if":"If", "null":"Null", "print":"Print",
+            "return":"Return", "self":"Self", "super":"Super", "true":"True", "var":"Var",
+            "when":"When", "while":"While",}
+
 class Token:
     def __init__(self, type, lexeme, literal, line, char):
         self.type = type

@@ -61,7 +61,10 @@ class Skiylia:
         while True:
             #fetch the user input
             line = input(">> ")
-            #try to run the code they just provided
+            #check they did not ask to quit
+            if line.lower() in ["quit", "exit"]:
+                break
+            #else, try to run the code they provided
             self.run(line)
             #reset the error flag, if it was set
             self.haderror = False

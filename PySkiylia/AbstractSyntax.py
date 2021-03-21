@@ -26,21 +26,10 @@ class Unary(Expr):
 class Stmt:
 	pass
 
-class Binary(Stmt):
-	def __init__(self, left,operator,right):
-		self.left = left
-		self.operator = operator
-		self.right = right
-
-class Grouping(Stmt):
+class Expression(Stmt):
 	def __init__(self, expression):
 		self.expression = expression
 
-class Literal(Stmt):
-	def __init__(self, value):
-		self.value = value
-
-class Unary(Stmt):
-	def __init__(self, operator,right):
-		self.operator = operator
-		self.right = right
+class Print(Stmt):
+	def __init__(self, expression):
+		self.expression = expression

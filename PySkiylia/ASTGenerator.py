@@ -50,14 +50,14 @@ class ASTGen:
         toWrite = ["class " + baseName +":",
                       "\tpass"]
         #And the children of that class
-        for x in ExprDict:
+        for x in baseDict:
             #fetch this child name
-            className, args = x, ExprDict[x]
+            className, args = x, baseDict[x]
             #write all the code
             toWrite.append("class "+className+"("+baseName+"):")
             toWrite.append("\tdef __init__(self, "+args+"):")
             #apply __init__ arguments
-            for y in (ExprDict[x]).split(","):
+            for y in (baseDict[x]).split(","):
                 toWrite.append("\t\tself."+y+" = "+y)
 
         #open the file

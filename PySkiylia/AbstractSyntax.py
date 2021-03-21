@@ -19,6 +19,12 @@ class Grouping(Expr):
 	def __init__(self, expression):
 		self.expression = expression
 
+class Logical(Expr):
+	def __init__(self, left,operator,right):
+		self.left = left
+		self.operator = operator
+		self.right = right
+
 class Literal(Expr):
 	def __init__(self, value):
 		self.value = value
@@ -43,6 +49,12 @@ class Expression(Stmt):
 	def __init__(self, expression):
 		self.expression = expression
 
+class If(Stmt):
+	def __init__(self, condition,thenBranch,elseBranch):
+		self.condition = condition
+		self.thenBranch = thenBranch
+		self.elseBranch = elseBranch
+
 class Print(Stmt):
 	def __init__(self, expression):
 		self.expression = expression
@@ -51,3 +63,8 @@ class Var(Stmt):
 	def __init__(self, name,initial):
 		self.name = name
 		self.initial = initial
+
+class While(Stmt):
+	def __init__(self, condition,body):
+		self.condition = condition
+		self.body = body

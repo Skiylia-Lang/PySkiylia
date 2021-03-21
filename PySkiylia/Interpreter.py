@@ -25,7 +25,7 @@ class misc:
                 except:
                     pass
             #if we get to here, throw an error
-            raise RuntimeError([operator,"operator requires a number."])
+            raise RuntimeError([operator,"'"+operator.lexeme+"' operator requires a number."])
 
     #define a way of testing if one, but not both, of two objects can be represented as an integer
     def xorNumber(self, a, b):
@@ -73,10 +73,14 @@ class misc:
         #if none, show null
         if obj==None:
             return "null"
-        elif obj==True:
-            return "true"
-        elif obj==False:
-            return "false"
+        #if the object is boolean
+        elif isinstance(obj, bool):
+            #if the object is true
+            if obj==True:
+                return "true"
+            #else the object is false
+            elif obj==False:
+                return "false"
         #if it's a number
         if isinstance(obj, float) or isinstance(obj, int):
             #if it's an integer, cast to integer first
@@ -90,10 +94,9 @@ class misc:
 #define the Interpreter class
 class Interpreter(misc):
     ##initialise
-    def __init__(self):
-        #fetch the Skiylia class so we have access to it's functions
-        from PySkiylia import Skiylia
-        self.skiylia = Skiylia()
+    def __init__(self, skiylia):
+        #return a method for accessing the skiylia class
+        self.skiylia = skiylia
         self.environment = Environment()
 
     #define the interpreter function
@@ -105,11 +108,7 @@ class Interpreter(misc):
                 #evaluate each statement
                 self.execute(statement)
         except Exception as e:
-            #if we have an empty node on the syntax tree
-            if statement == None:
-                self.skiylia.error(noloc=True, where="Fatal", message="Abstract Syntax Tree contains empty node.")
-                return
-            #otherwise fetch the token
+            #fetch the token
             token = e.args[0][0]
             #and message
             message = e.args[0][1]
@@ -128,6 +127,26 @@ class Interpreter(misc):
     #define a way of converting from the literal AST to a runtime value
     def LiteralExpr(self, expr):
         return expr.value
+
+    #define a way of unpacking abstracted Logicals
+    def LogicalExpr(self, expr):
+        #fetch the left
+        left = self.evaluate(expr.left)
+        #as 'or' will be true if left is true, and 'and' will be false is left is false, we can short circuit the logical
+        if expr.operator.type == "Or":
+            #if left is true, 'or' will be true
+            if self.isTruthy(left):
+                return left
+        elif expr.operator.type == "And":
+            #if left is false, 'and' will be false
+            if not self.isTruthy(left):
+                return left
+        elif expr.operator.type == "Xor":
+            #if left is true, 'xor' will be the opposite of right
+            if self.isTruthy(left):
+                return not self.evaluate(expr.right)
+
+        return self.evaluate(expr.right)
 
     #define a way of unpacking a grouped expression at runtime
     def GroupingExpr(self, expr):
@@ -230,6 +249,18 @@ class Interpreter(misc):
         #and return none
         return None
 
+    #define the way of interpreting an if statement
+    def IfStmt(self, stmt):
+        #evaluate the truthiness of the if condition
+        if self.isTruthy(self.evaluate(stmt.condition)):
+            #if true, execute
+            self.execute(stmt.thenBranch)
+        #if false, and we have an else branch
+        elif stmt.elseBranch != None:
+            #execute it
+            self.execute(stmt.elseBranch)
+        return None
+
     #define the way of interpreting a print statement
     def PrintStmt(self, stmt):
         #evaluate the expression
@@ -252,12 +283,22 @@ class Interpreter(misc):
         #and return none
         return None
 
+    #define how we handle the while abstraction
+    def WhileStmt(self, stmt):
+        #while the condition is truthy
+        while self.isTruthy(self.evaluate(stmt.condition)):
+            #execute the body of the while loop
+            self.execute(stmt.body)
+        #and return none
+        return None
+
     #define a way of sending the interpreter to the correct expression method
     def evaluate(self, expr):
         ##List of all supported expressions
         exprs = {"Assign":self.AssignExpr,
                  "Binary": self.BinaryExpr,
                  "Grouping": self.GroupingExpr,
+                 "Logical": self.LogicalExpr,
                  "Literal": self.LiteralExpr,
                  "Unary": self.UnaryExpr,
                  "Variable": self.VarExpr,}
@@ -272,8 +313,10 @@ class Interpreter(misc):
         ##List of all supported expressions
         stmts = {"Block": self.BlockStmt,
                  "Expression": self.ExpressionStmt,
+                 "If": self.IfStmt,
                  "Print": self.PrintStmt,
-                 "Var":self.VarStmt,}
+                 "Var":self.VarStmt,
+                 "While":self.WhileStmt,}
         #fetch the class name of the expression provided
         stmtName = stmt.__class__.__name__
         #return the correct method and pass in own value

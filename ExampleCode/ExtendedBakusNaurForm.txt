@@ -22,44 +22,53 @@
 
 
 //The entire grammar of Skiylia in EBNF Form
+{Block token}     > ":"
 {End token}       > '\n'
 
-Program           > declaration* EOF
+program           > declaration* EOF
 
-declaration       > variableDec | statement
+declaration       > vardeclaration | statement
 
-variableDec       > ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
-                  //| ( Idenitifer "=" expression )                     <=implicit requires "="       <- Removed implementation
+vardeclaration    > ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
 
-statement         > ExprStatement | PrintStatement | block
+statement         > exprstmt | forstmt | ifstmt | printstmt | whilestmt | block
 
 block             > {Indent level increases} declaration {End token}+ {token with lower indentation}
 
-ExprStatement     > Expressions {End token}+
+exprstmt          > expression {End token}+
 
-PrintStatement    > "print" "(" Expressions ")" {End token}+
+forstmt           > "for" (vardeclaration | exprstmt) ("when" expression)? ("do" expression)? {Block token} statement
+//allowed for loop types 1) for x:    2) for x when x<=10:    3) for x when x<10 do x=x+2:    4) for x do x=x+2:
 
-Expressions       > assignment
+ifstmt            > "if" expression {Block token} statement ("else" statement)?
 
-assignment        > Identifier "=" assignment | LogicalAnd
+printstmt         > "print" "(" expression ")" {End token}+
 
-//Logical And has the highest precedence (and is computed last)
-LogicalAnd        > LogicalOr ( ( "&&" ) LogicalOr )*
+whilestmt         > "while" expression {Block token} statement
 
-LogicalOr         > Equality ( ( "||" ) Equality )*
+expression        > assignment
 
-Equality          > Comparison ( ( "!=" | "==" ) Comparison )*
+assignment        > Identifier "=" assignment | logicalOr
+
+//Logical or has the highest precedence (and is computed last)
+logicalOr         > logicalXor ( "|" logicalXor )*
+
+logicalXor        > logicalAnd ( "^" logicalAnd )*
+
+logicalAnd        > equality ( ( "&" ) equality )*
+
+equality          > comparison ( ( "!=" | "==" ) comparison )*
 
 //Then comparisons
-Comparison        > Term ( ( ">" | "<" ) Term )*
+comparison        > term ( ( ">" | "<" ) term )*
 
 //Then terms
-Term              > Factor ( ( "-" | "+" ) Factor )*
+term              > factor ( ( "-" | "+" ) factor )*
 
 //Then factors
-Factor            > Unary ( ( "*" | "/" ) Unary )*
+factor            > unary ( ( "*" | "/" ) unary )*
 
 //And finally unary has the lowest precedence (and are computed first)
-Unary             > ( "!" | "-" ) Unary | Literal
+unary             > ( "!" | "-" ) unary | literal
 
-Literal           > Number | String | "true" | "false" | "null" | "(" expression ")" | Identifier
+literal           > Number | String | "true" | "false" | "null" | "(" expression ")" | Identifier

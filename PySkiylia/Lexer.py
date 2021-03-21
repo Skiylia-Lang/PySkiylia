@@ -6,10 +6,9 @@ import Tokens
 #create the Lexer class
 class Lexer:
     #the function to run at initialisation
-    def __init__(self, source):
-        #fetch the Skiylia class so we have access to it's functions
-        from PySkiylia import Skiylia
-        self.skiylia = Skiylia()
+    def __init__(self, skiylia, source):
+        #return a method for accessing the skiylia class
+        self.skiylia = skiylia
         #initialise the Lexer
         self.source = source
         self.start = 0
@@ -52,7 +51,10 @@ class Lexer:
         elif c == ")":
             return self.addToken("RightParenthesis")
         elif c == ":":
-            return self.addToken("Colon")
+            token = self.addToken("Colon")
+            #indent after creating the token, ensures that the following block has the appropriate indentation
+            self.indent += 1
+            return token
         elif c == ",":
             return self.addToken("Comma")
         elif c == ".":
@@ -81,26 +83,19 @@ class Lexer:
             return self.addToken("Equal")
         elif c == "&":
             #Check for logical and
-            if self.match("&"):
-                #return the and token
-                return self.addToken("And")
-            else:
-                #second ampersand not given
-                self.skiylia.error(self.line, self.char, "Missing & in logical and")
+            return self.addToken("And")
+        elif c == "^":
+            #Check for logical xor
+            return self.addToken("Xor")
         elif c == "|":
             #Check for logical or
-            if self.match("|"):
-                #return the and token
-                return self.addToken("Or")
-            else:
-                #second bar not given
-                self.skiylia.error(self.line, self.char, "Missing | in logical or")
+            return self.addToken("Or")
         elif c == "!":
             if self.match("="):
                 return self.addToken("NotEqual")
             return self.addToken("Not")
         elif c == "\t":
-            #if we met an indentation, then increment our indet tage
+            #if we met an indentation, then increment our indent tage
             self.indent += 1
         elif c == " ":
             #Two spaces are equivalent to and indent <- TEMPORARILY MIND YOU

@@ -73,10 +73,14 @@ class misc:
         #if none, show null
         if obj==None:
             return "null"
-        elif obj==True:
-            return "true"
-        elif obj==False:
-            return "false"
+        #if the object is boolean
+        elif isinstance(obj, bool):
+            #if the object is true
+            if obj==True:
+                return "true"
+            #else the object is false
+            elif obj==False:
+                return "false"
         #if it's a number
         if isinstance(obj, float) or isinstance(obj, int):
             #if it's an integer, cast to integer first

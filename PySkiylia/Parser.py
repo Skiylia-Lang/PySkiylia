@@ -62,13 +62,12 @@ class Parser:
 
     #define the statement grammar
     def statement(self):
-        print(self.previous().type, self.previous().line, self.previous().char)
         #if we see anything in the blockstart list (a Colon token currently)
         if self.match(*self.blockStart):
             #anything folowing a startblock character is the start of a new block
             return Block(self.block())
         #if an indentation follows something that isn't a block definer
-        elif (self.checkindent() == 1) and (self.previous().type not in self.blockStart):
+        elif (self.checkindent() > 0) and (self.previous().type not in self.blockStart):
             raise SyntaxError([self.peek(), "Incorect indentation for statement", "Indentation"])
         #if the next token is an if
         elif self.match("If"):
@@ -391,12 +390,7 @@ class Parser:
             #fetch the previous token indentation
             thatIndent = self.previous().indent
         #return 1 if the indent increases, -1 if it decreases, and 0 if it remains the same
-        if thisIndent > thatIndent:
-            return 1
-        elif thatIndent > thisIndent:
-            return -1
-        else:
-            return 0
+        return int(thisIndent - thatIndent)
 
     #same as peek, but with the previous token instead
     def previous(self):

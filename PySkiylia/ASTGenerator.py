@@ -4,7 +4,8 @@
 #Import base python
 import sys, os
 
-ExprDict = {"Binary":"left,operator,right",
+ExprDict = {"Assign":"name,value",
+            "Binary":"left,operator,right",
             "Grouping":"expression",
             "Literal":"value",
             "Unary":"operator,right",

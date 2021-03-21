@@ -3,6 +3,7 @@
 
 #import our code
 from AbstractSyntax import *
+from Environment import Environment
 
 #A class that will hold miscellaneous help code
 class misc:
@@ -93,6 +94,7 @@ class Interpreter(misc):
         #fetch the Skiylia class so we have access to it's functions
         from PySkiylia import Skiylia
         self.skiylia = Skiylia()
+        self.environment = Environment()
 
     #define the interpreter function
     def interpret(self, statements):
@@ -109,6 +111,15 @@ class Interpreter(misc):
             message = e.args[0][1]
             #and raise an error
             self.skiylia.error(token.line, token.char, message, "RuntimeError")
+
+    #define a way to assign variables abstractly
+    def AssignExpr(self, expr):
+        #evaluate what should be assignd
+        value = self.evaluate(expr.value)
+        #add that to the environment storage
+        self.environment.assign(expr.name, value)
+        #and return the value
+        return value
 
     #define a way of converting from the literal AST to a runtime value
     def LiteralExpr(self, expr):
@@ -197,6 +208,11 @@ class Interpreter(misc):
         #if we can't evaluate it at all, return None
         return None
 
+    #define the method of fetching a variables value
+    def VarExpr(self, expr):
+        #fetch the name from the Environment holder
+        return self.environment.fetch(expr.name)
+
     #define the way of interpreting an expression statement
     def ExpressionStmt(self, stmt):
         #evaluate the expression
@@ -213,13 +229,28 @@ class Interpreter(misc):
         #and return none
         return None
 
+    #define the ways of handling variables
+    def VarStmt(self, stmt):
+        #define the default value
+        value = None
+        #if the variable has an initial value assigned
+        if stmt.initial != None:
+            #evaluate and return the initial value
+            value = self.evaluate(stmt.initial)
+        #store the variable in our environment
+        self.environment.define(stmt.name.lexeme, value)
+        #and return none
+        return None
+
     #define a way of sending the interpreter to the correct expression method
     def evaluate(self, expr):
         ##List of all supported expressions
-        exprs = {"Binary": self.BinaryExpr,
+        exprs = {"Assign":self.AssignExpr,
+                 "Binary": self.BinaryExpr,
                  "Grouping": self.GroupingExpr,
                  "Literal": self.LiteralExpr,
-                 "Unary": self.UnaryExpr,}
+                 "Unary": self.UnaryExpr,
+                 "Variable": self.VarExpr,}
         #fetch the class name of the expression provided
         exprName = expr.__class__.__name__
         #return the correct method and pass in own value
@@ -230,7 +261,8 @@ class Interpreter(misc):
     def execute(self, stmt):
         ##List of all supported expressions
         stmts = {"Expression": self.ExpressionStmt,
-                 "Print": self.PrintStmt,}
+                 "Print": self.PrintStmt,
+                 "Var":self.VarStmt,}
         #fetch the class name of the expression provided
         stmtName = stmt.__class__.__name__
         #return the correct method and pass in own value

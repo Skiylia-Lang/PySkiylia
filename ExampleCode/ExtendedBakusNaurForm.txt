@@ -35,7 +35,9 @@ ExprStatement     > Expressions "\n"+
 
 PrintStatement    > "print" "(" Expressions ")" "\n"+
 
-Expressions       > LogicalAnd
+Expressions       > assignment
+
+assignment        > Identifier "=" assignment | LogicalAnd
 
 //Logical And has the highest precedence (and is computed last)
 LogicalAnd        > LogicalOr ( ( "&&" ) LogicalOr )*

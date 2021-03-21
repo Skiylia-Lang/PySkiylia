@@ -4,6 +4,11 @@
 class Expr:
 	pass
 
+class Assign(Expr):
+	def __init__(self, name,value):
+		self.name = name
+		self.value = value
+
 class Binary(Expr):
 	def __init__(self, left,operator,right):
 		self.left = left

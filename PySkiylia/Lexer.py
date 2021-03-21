@@ -99,8 +99,12 @@ class Lexer:
             #increment the line counter when we reach a newline
             self.line += 1
             self.char = 0
+            self.indent = 0
             #return the End token (This will be useful for the parser, as it can identify if a line, and thus statement, has finished)
             return self.addToken("End")
+        elif c == "\t":
+            #if we met an indentation, then increment our indet tage
+            self.indent += 1
         elif c == " ":
             #skip whitespace
             pass

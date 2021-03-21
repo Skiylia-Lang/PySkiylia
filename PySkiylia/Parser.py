@@ -105,6 +105,31 @@ class Parser:
 
     #define the expression grammar
     def expression(self):
+        #return an asignment
+        return self.assignment()
+
+    #define the asignment gramar
+    def assignment(self):
+        #return the equality
+        expr = self.equality()
+        #if there is an equals after the identifier
+        if self.match("Equal"):
+            #fetch the variable name
+            equals = self.previous
+            #fetch it's value
+            value = self.assignment()
+            #if it is a Variable type
+            if isinstance(expr, Variable):
+                name = expr.name
+                #return the assignment
+                return Assign(name, value)
+            #throw an error if not
+            self.skiylia.error([equals, "Invalid assignment target."])
+        #return the variable
+        return expr
+
+    #define the equality gramar
+    def equality(self):
         #define the first comparitive term
         expr = self.comparison()
         #loop the other possible terms in the equality
@@ -192,13 +217,13 @@ class Parser:
         #check if a variable is there
         elif self.match("Idenitifer"):
             #if it is followed by an equals, this is an implicit declaration
-            if self.peek("Equal"):
+            '''if self.peek("Equal"):
                 #if it an implicit declaration, backup and declare it
                 self.current-=1
                 return self.varDeclaration()
             #otherwise it's just the code using the variable
-            else:
-                return Variable(self.previous())
+            else:'''
+            return Variable(self.previous())
         #check if opening a parenthesis
         elif self.match("LeftParenthesis"):
             expr = self.expression()

@@ -77,6 +77,10 @@ class Parser:
         elif self.match("Print"):
             #compute the print statement
             return self.printstatement()
+        #if the next token is a while
+        elif self.match("While"):
+            #compute the while statement
+            return self.whilestatement()
         #else return an expression statement
         return self.expressionstatement()
 
@@ -85,7 +89,7 @@ class Parser:
         #fetch the if conditional
         condition = self.expression()
         #make sure we have semicolon grammar
-        if not self.check("Colon"):
+        if not self.check(*self.blockStart):
             raise RuntimeError(self.error(self.peek(), "Expect ':' after if condition"))
         #fetch the code to execute if the condition is true
         thenbranch = self.statement()
@@ -95,7 +99,7 @@ class Parser:
         if self.match("Else"):
             #WILL NEED TO ADD Indentation code to check else probably
             #check for grammar
-            if not self.check("Colon"):
+            if not self.check(*self.blockStart):
                 raise RuntimeError(self.error(self.peek(), "Expect ':' after else clause"))
             #and return the else statement
             elsebranch = self.statement()
@@ -129,6 +133,18 @@ class Parser:
         self.consume("End", "Unbounded variable declaration.")
         #return the variable abstraction
         return Var(name, initial)
+
+    #define the while statement grammar
+    def whilestatement(self):
+        #fetch the while conditional
+        condition = self.expression()
+        #make sure we have semicolon grammar
+        if not self.check(*self.blockStart):
+            raise RuntimeError(self.error(self.peek(), "Expect ':' after while condition"))
+        #fetch the body of the while loop
+        body = self.statement()
+        #return the While abstraction
+        return While(condition, body)
 
     #define the expression statement grammar
     def expressionstatement(self):
@@ -346,13 +362,13 @@ class Parser:
         return False
 
     #basically match, but only on a single token type
-    def check(self, expected):
+    def check(self, *expected):
         #if we've run off the end of the tokens
         if self.atEnd():
             #return false
             return False
-        #else return if the token is the expected one
-        return self.peek().type == expected
+        #else return if the token is one of the expected ones
+        return self.peek().type in expected
 
     #define a way of fetching the next tokens
     def advance(self):

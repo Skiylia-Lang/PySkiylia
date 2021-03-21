@@ -279,6 +279,15 @@ class Interpreter(misc):
         #and return none
         return None
 
+    #define how we handle the while abstraction
+    def WhileStmt(self, stmt):
+        #while the condition is truthy
+        while self.isTruthy(self.evaluate(stmt.condition)):
+            #execute the body of the while loop
+            self.execute(stmt.body)
+        #and return none
+        return None
+
     #define a way of sending the interpreter to the correct expression method
     def evaluate(self, expr):
         ##List of all supported expressions
@@ -297,13 +306,13 @@ class Interpreter(misc):
 
     #define a way of sending the interpreter to the correct statement method
     def execute(self, stmt):
-        print(stmt)
         ##List of all supported expressions
         stmts = {"Block": self.BlockStmt,
                  "Expression": self.ExpressionStmt,
                  "If": self.IfStmt,
                  "Print": self.PrintStmt,
-                 "Var":self.VarStmt,}
+                 "Var":self.VarStmt,
+                 "While":self.WhileStmt,}
         #fetch the class name of the expression provided
         stmtName = stmt.__class__.__name__
         #return the correct method and pass in own value

@@ -63,3 +63,8 @@ class Var(Stmt):
 	def __init__(self, name,initial):
 		self.name = name
 		self.initial = initial
+
+class While(Stmt):
+	def __init__(self, condition,body):
+		self.condition = condition
+		self.body = body

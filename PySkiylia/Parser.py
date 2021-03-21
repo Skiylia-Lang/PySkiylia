@@ -25,13 +25,15 @@ class Parser:
     #define a way of starting up the parser
     def parse(self):
         #start with an empty list
-        stmnt = []
+        stmt = []
         #while we have more sourcecode to parse
         while not self.atEnd():
             #compile the nex statement and add to the list
-            stmnt.append(self.declaration())
+            stmt.append(self.declaration())
+        #trim any Null AST nodes
+        #stmt = [x for x in stmt if x!=None]
         #return all the statements
-        return stmnt
+        return stmt
 
     #define the declaration grammar
     def declaration(self):
@@ -43,12 +45,17 @@ class Parser:
             #return the statement after
             return self.statement()
         #if we encountered an error, try to return to coherent code
-        except Exception as e:#fetch the token
+        except Exception as e:
+            #fetch the token
             token = e.args[0][0]
             #and message
             message = e.args[0][1]
+            #and location if given
+            where = "RuntimeError"
+            if len(e.args[0]) > 1:
+                where = e.args[0][2]
             #and raise an error
-            self.skiylia.error(token.line, token.char, message, "RuntimeError")
+            self.skiylia.error(token.line, token.char, message, where)
             #try to re-synchronise with the code
             self.synchronise()
             return None
@@ -61,7 +68,7 @@ class Parser:
             return Block(self.block())
         #if an indentation follows something that isn't a block definer
         elif (self.checkindent() == 1) and (self.previous().type not in self.blockStart):
-            raise SyntaxError([self.peek(), "Indentation error"])
+            raise SyntaxError([self.peek(), "Indentation cannot follow statements", "Indentation"])
         #if the next token is a print
         elif self.match("Print"):
             #compute the print statement
@@ -78,7 +85,7 @@ class Parser:
         #ensure we have brackets
         self.consume("RightParenthesis", "Expect ')' after print.")
         #the print statement must also be bound
-        #self.consume("End", "Unbounded expression.")
+        self.consume("End", "Unbounded expression.")
         #return the abstract for print
         return Print(value)
 
@@ -101,7 +108,7 @@ class Parser:
                 #fetch the value
                 initial = self.expression()
         #make sure the variable is bounded
-        #self.consume("End", "Unbounded variable declaration.")
+        self.consume("End", "Unbounded variable declaration.")
         #return the variable abstraction
         return Var(name, initial)
 
@@ -110,7 +117,7 @@ class Parser:
         #fetch the expression
         expr = self.expression()
         #consume the end token
-        #self.consume("End", "Unbounded expression.")
+        self.consume("End", "Unbounded expression.")
         #return the abstraction
         return Expression(expr)
 
@@ -120,9 +127,8 @@ class Parser:
         statements, myIndent = [], self.peek().indent
         #continue to search for new statements while we have more sourcecode, and the indentation does not decrease
         while (not self.atEnd()) and (self.checkindent(myIndent) != -1):
+            #keep adding statements while the block is open
             statements.append(self.declaration())
-        print("Block closed at indent", self.peek().indent)
-        print(self.peek().lexeme, self.peek().line, self.peek().char)
         #self.consume("End", "Unexpected indentation error")
         #return the statement array
         return statements
@@ -339,12 +345,12 @@ class Parser:
     def error(self, token, message):
         #if we reached the end of the file, show an EOF error
         if token.type == "EOF":
-            self.skiylia.error(token.line, token.char, message, "at end of file")
+            self.skiylia.error(token.line, token.char, message, "at end of file, Syntax")
         #otherwise show the user what the exact location and token was
         else:
-            self.skiylia.error(token.line, token.char, message, "at '"+token.lexeme+"'")
+            self.skiylia.error(token.line, token.char, message, "at '"+token.lexeme+"', Syntax")
         #and return our base Parse error
-        return "Parse error: "+message
+        return [token, message, "Parse"]
 
     #define a way of returning to execution if an error was encountered
     def synchronise(self):

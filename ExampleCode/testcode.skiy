@@ -1,6 +1,11 @@
 //hi
 print(2 + 6)
-print(2 + 7):
-  print(7 + 23545)
 
+
+
+
+
+
+print(2 + 7)
+print(7 + 23545)
 print("yes")

@@ -105,7 +105,11 @@ class Interpreter(misc):
                 #evaluate each statement
                 self.execute(statement)
         except Exception as e:
-            #fetch the token
+            #if we have an empty node on the syntax tree
+            if statement == None:
+                self.skiylia.error(noloc=True, where="Fatal", message="Abstract Syntax Tree contains empty node.")
+                return
+            #otherwise fetch the token
             token = e.args[0][0]
             #and message
             message = e.args[0][1]

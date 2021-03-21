@@ -21,7 +21,7 @@ class Lexer:
     #create a method of scanning tokens
     def scanTokens(self):
         #empty token list
-        tokens = []
+        self.tokens = []
         #while we are not at the end of the list, loop
         while not self.atEnd():
             #update the position of our lexer
@@ -31,15 +31,16 @@ class Lexer:
             token = self.tokenFromChar()
             #append the token to our list of tokens, provided we recieved one
             if token:
-                tokens.append(token)
+                self.tokens.append(token)
         #add an end token if none exists
         #if tokens[-1].type != "End":
         #    tokens.append(Tokens.Token("End", "", None, self.line, self.char+1, self.indent))
         #add an EOF token
-        tokens.append(Tokens.Token("EOF", "", None, self.line, self.char+1, 0))
-        #while tokens[0].type == "End":
-        #    tokens.pop(0)
-        return tokens
+        self.tokens.append(Tokens.Token("EOF", "", None, self.line, self.char+1, 0))
+        #remove any leading end tokens
+        while self.tokens[0].type == "End":
+            self.tokens.pop(0)
+        return self.tokens
 
     #create the appropriate token given the character
     def tokenFromChar(self):
@@ -98,14 +99,6 @@ class Lexer:
             if self.match("="):
                 return self.addToken("NotEqual")
             return self.addToken("Not")
-        elif c == "\n":
-            #increment the line counter when we reach a newline
-            self.line += 1
-            self.char = 0
-            tempindent = self.indent
-            self.indent = 0
-            #return the End token (This will be useful for the parser, as it can identify if a line, and thus statement, has finished)
-            #return self.addToken("End", indent=tempindent)
         elif c == "\t":
             #if we met an indentation, then increment our indet tage
             self.indent += 1
@@ -118,6 +111,16 @@ class Lexer:
         elif c == '"':
             #if we have a string identifier
             return self.findString()
+        elif c == "\n":
+            #increment the line counter when we reach a newline
+            self.line += 1
+            self.char = 0
+            tempindent = self.indent
+            self.indent = 0
+            #check we don't have a string of ending tokens
+            if not self.previousToken("End"):
+                #return the ending token (This will be useful for the parser, as it can identify if a line, and thus statement, has finished)
+                return self.addToken("End", indent=tempindent)
         else:
             #check if we have a number to parse
             if self.isDigit(c):
@@ -236,6 +239,14 @@ class Lexer:
             return '\0'
         #otherwise return the character
         return self.source[self.current+1]
+
+    #return if the previous token was of an appropriate type
+    def previousToken(self, type):
+        #if we don't have any tokens, this is false
+        if len(self.tokens)==0:
+            return False
+        #otherwise, get the last token and test
+        return self.tokens[-1].type == type
 
     #advance through the source code and return the character
     def advance(self):

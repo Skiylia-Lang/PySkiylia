@@ -22,6 +22,8 @@
 
 
 //The entire grammar of Skiylia in EBNF Form
+{End token}       > '\n'
+
 Program           > declaration* EOF
 
 declaration       > variableDec | statement
@@ -31,11 +33,11 @@ variableDec       > ( Idenitifer "=" expression )                     <=implicit
 
 statement         > ExprStatement | PrintStatement | block
 
-block             > {Indent level increases} declaration {End followed by a token with lower indentation}
+block             > {Indent level increases} declaration {End token}+ {token with lower indentation}
 
-ExprStatement     > Expressions
+ExprStatement     > Expressions {End token}+
 
-PrintStatement    > "print" "(" Expressions ")"
+PrintStatement    > "print" "(" Expressions ")" {End token}+
 
 Expressions       > assignment
 

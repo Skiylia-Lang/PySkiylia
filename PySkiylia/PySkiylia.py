@@ -6,6 +6,7 @@ import sys, os
 #Our modules that are required
 from Lexer import Lexer
 from Parser import Parser
+from Interpreter import Interpreter
 
 #Main function to be called when executed
 class Skiylia:
@@ -56,7 +57,7 @@ class Skiylia:
     #startup the prompt if no arguments have been given
     def runPrompt(self):
         #print some base information
-        print("PySkiylia 0.1.0")
+        print("PySkiylia 0.3.0")
         #keep looping the code
         while True:
             #fetch the user input
@@ -103,8 +104,10 @@ class Skiylia:
         if self.haderror:
             return
 
-        #for now, print the parser output
-        print(expression)
+        #initialise the interpreter
+        interpreter = Interpreter()
+        #and run it with the parsed code
+        interpreter.interpret(expression)
 
     #define a way of showing an error to the user
     def error(self, line=0, char=0, message="", where=""):

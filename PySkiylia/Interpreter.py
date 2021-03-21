@@ -213,6 +213,12 @@ class Interpreter(misc):
         #fetch the name from the Environment holder
         return self.environment.fetch(expr.name)
 
+    #define the methods for dealing with block abstractions
+    def BlockStmt(self, stmt):
+        #execute the next block, passing in the statements and creating a new environment
+        self.executeBlock(stmt.statements, Environment(self.environment))
+        return None
+
     #define the way of interpreting an expression statement
     def ExpressionStmt(self, stmt):
         #evaluate the expression
@@ -260,10 +266,26 @@ class Interpreter(misc):
     #define a way of sending the interpreter to the correct statement method
     def execute(self, stmt):
         ##List of all supported expressions
-        stmts = {"Expression": self.ExpressionStmt,
+        stmts = {"Block": self.BlockStmt,
+                 "Expression": self.ExpressionStmt,
                  "Print": self.PrintStmt,
                  "Var":self.VarStmt,}
         #fetch the class name of the expression provided
         stmtName = stmt.__class__.__name__
         #return the correct method and pass in own value
         return stmts[stmtName](stmt)
+
+    #define a way of executing block code
+    def executeBlock(self, statements, environment):
+        #store the parent environment
+        previous = environment
+        try:
+            #make sure the current scope is the one to compute with
+            self.environment = environment
+            #loop through the given statements
+            for statement in statements:
+                #and execute them
+                self.execute(statement)
+        finally:
+            #restore the parent scope now we have finished
+            self.environment = previous

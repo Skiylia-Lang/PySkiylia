@@ -35,6 +35,10 @@ class Variable(Expr):
 class Stmt:
 	pass
 
+class Block(Stmt):
+	def __init__(self, statements):
+		self.statements = statements
+
 class Expression(Stmt):
 	def __init__(self, expression):
 		self.expression = expression

@@ -29,11 +29,13 @@ declaration       > variableDec | statement
 variableDec       > ( Idenitifer "=" expression )                     <=implicit requires "="
                   | ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
 
-statement         > ExprStatement | PrintStatement
+statement         > ExprStatement | PrintStatement | block
 
-ExprStatement     > Expressions "\n"+
+block             > {Indent level increases} declaration {End followed by a token with lower indentation}
 
-PrintStatement    > "print" "(" Expressions ")" "\n"+
+ExprStatement     > Expressions
+
+PrintStatement    > "print" "(" Expressions ")"
 
 Expressions       > assignment
 

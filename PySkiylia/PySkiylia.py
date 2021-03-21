@@ -99,6 +99,8 @@ class Skiylia:
         parser = Parser(tokens)
         #run the parser
         statements = parser.parse()
+        #Parser output for debugging
+        print(statements)
 
         #stop if we had an error
         if self.haderror:

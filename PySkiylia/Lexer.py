@@ -32,11 +32,13 @@ class Lexer:
             #append the token to our list of tokens, provided we recieved one
             if token:
                 tokens.append(token)
-        #add an end of file token
-        tokens.append(Tokens.Token("End", "", None, self.line, self.char+1, self.indent))
-        tokens.append(Tokens.Token("EOF", "", None, self.line+1, 1, 0))
-        while tokens[0].type == "End":
-            tokens.pop(0)
+        #add an end token if none exists
+        #if tokens[-1].type != "End":
+        #    tokens.append(Tokens.Token("End", "", None, self.line, self.char+1, self.indent))
+        #add an EOF token
+        tokens.append(Tokens.Token("EOF", "", None, self.line, self.char+1, 0))
+        #while tokens[0].type == "End":
+        #    tokens.pop(0)
         return tokens
 
     #create the appropriate token given the character
@@ -103,14 +105,13 @@ class Lexer:
             tempindent = self.indent
             self.indent = 0
             #return the End token (This will be useful for the parser, as it can identify if a line, and thus statement, has finished)
-            return self.addToken("End", indent=tempindent)
+            #return self.addToken("End", indent=tempindent)
         elif c == "\t":
             #if we met an indentation, then increment our indet tage
             self.indent += 1
         elif c == " ":
             #Two spaces are equivalent to and indent <- TEMPORARILY MIND YOU
             if self.match(" "):
-                self.advance()
                 self.indent +=1
             #skip whitespace
             pass

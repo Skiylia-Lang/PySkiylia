@@ -19,6 +19,8 @@ class Parser:
         self.final = []
         #set the tokens
         self.tokens = tokens
+        #define all of the tokens that can start a block (not a lot as of current)
+        self.blockStart = ["Colon"]
 
     #define a way of starting up the parser
     def parse(self):
@@ -41,18 +43,27 @@ class Parser:
             #return the statement after
             return self.statement()
         #if we encountered an error, try to return to coherent code
-        except Exception as e:
-            print(e)
+        except Exception as e:#fetch the token
+            token = e.args[0][0]
+            #and message
+            message = e.args[0][1]
+            #and raise an error
+            self.skiylia.error(token.line, token.char, message, "RuntimeError")
+            #try to re-synchronise with the code
             self.synchronise()
             return None
 
     #define the statement grammar
     def statement(self):
-        #if the user has used multiple newlines, discard them
-        while self.match("End"):
-            pass
+        #if we see anything in the blockstart list (a Colon token currently)
+        if self.match(*self.blockStart):
+            #anything folowing a startblock character is the start of a new block
+            return Block(self.block())
+        #if an indentation follows something that isn't a block definer
+        elif (self.checkindent() == 1) and (self.previous().type not in self.blockStart):
+            raise SyntaxError([self.peek(), "Indentation error"])
         #if the next token is a print
-        if self.match("Print"):
+        elif self.match("Print"):
             #compute the print statement
             return self.printstatement()
         #else return an expression statement
@@ -67,7 +78,7 @@ class Parser:
         #ensure we have brackets
         self.consume("RightParenthesis", "Expect ')' after print.")
         #the print statement must also be bound
-        self.consume("End", "Unbounded expression.")
+        #self.consume("End", "Unbounded expression.")
         #return the abstract for print
         return Print(value)
 
@@ -90,7 +101,7 @@ class Parser:
                 #fetch the value
                 initial = self.expression()
         #make sure the variable is bounded
-        self.consume("End", "Unbounded variable declaration.")
+        #self.consume("End", "Unbounded variable declaration.")
         #return the variable abstraction
         return Var(name, initial)
 
@@ -99,9 +110,22 @@ class Parser:
         #fetch the expression
         expr = self.expression()
         #consume the end token
-        self.consume("End", "Unbounded expression.")
+        #self.consume("End", "Unbounded expression.")
         #return the abstraction
         return Expression(expr)
+
+    #define the block grammar
+    def block(self):
+        #initialise an empty statement array, and fetch the current indentation leve;
+        statements, myIndent = [], self.peek().indent
+        #continue to search for new statements while we have more sourcecode, and the indentation does not decrease
+        while (not self.atEnd()) and (self.checkindent(myIndent) != -1):
+            statements.append(self.declaration())
+        print("Block closed at indent", self.peek().indent)
+        print(self.peek().lexeme, self.peek().line, self.peek().char)
+        #self.consume("End", "Unexpected indentation error")
+        #return the statement array
+        return statements
 
     #define the expression grammar
     def expression(self):
@@ -240,7 +264,7 @@ class Parser:
         if self.check(type):
             return self.advance()
         #else show an error
-        raise RuntimeError(self.error(self.peek, errorMessage))
+        raise RuntimeError(self.error(self.peek(), errorMessage))
         #could include a raise here instead I guess?
 
     #define a way of checking if the current token is any of the supplied types
@@ -283,6 +307,30 @@ class Parser:
         #return the token at the current position
         return self.tokens[self.current]
 
+    #define a way of returning the next token, without moving the parser position
+    def peekNext(self):
+        #if we're at the end of the file, return the EOF token
+        if self.atEnd():
+            return self.tokens[self.current]
+        #else return the token at the next position
+        return self.tokens[self.current + 1]
+
+    #define a way of checking if the next token has a higher or lower indentation than the current one does
+    def checkindent(self, thatIndent=""):
+        #fetch the current tokens indentation
+        thisIndent = self.peek().indent
+        #if the code has not supplied an indent value
+        if not thatIndent:
+            #fetch the previous token indentation
+            thatIndent = self.previous().indent
+        #return 1 if the indent increases, -1 if it decreases, and 0 if it remains the same
+        if thisIndent > thatIndent:
+            return 1
+        elif thatIndent > thisIndent:
+            return -1
+        else:
+            return 0
+
     #same as peek, but with the previous token instead
     def previous(self):
         return self.tokens[self.current - 1]
@@ -304,8 +352,8 @@ class Parser:
         self.advance()
         #keep going until we get to the end
         while not self.atEnd():
-            #check if we have found a statement ending token (newline)
-            if self.previous().type == "End":
+            #check if we have exited the current indentation level
+            if self.checkindent() == -1:
                 #break the loop
                 break
             #otherise, get the current token type
@@ -313,5 +361,5 @@ class Parser:
             #if it is one of the token types that starts a statement, stop the loop
             if thisToken in ["Class", "Def", "Var", "For", "If", "While", "Print", "Return"]:
                 break
-        #move past the token we just found
-        self.advance()
+            #move past the token we just found
+            self.advance()

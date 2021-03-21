@@ -11,7 +11,8 @@ ExprDict = {"Assign":"name,value",
             "Unary":"operator,right",
             "Variable":"name"}
 
-StmtDict = {"Expression":"expression",
+StmtDict = {"Block":"statements",
+            "Expression":"expression",
             "Print":"expression",
             "Var":"name,initial",}
 

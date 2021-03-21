@@ -135,13 +135,17 @@ class Interpreter(misc):
         left = self.evaluate(expr.left)
         #as 'or' will be true if left is true, and 'and' will be false is left is false, we can short circuit the logical
         if expr.operator.type == "Or":
-            #if left is true, or will be true
+            #if left is true, 'or' will be true
             if self.isTruthy(left):
                 return left
         elif expr.operator.type == "And":
-            #if left is false, and will be false
+            #if left is false, 'and' will be false
             if not self.isTruthy(left):
                 return left
+        elif expr.operator.type == "Xor":
+            #if left is true, 'xor' will be the opposite of right
+            if self.isTruthy(left):
+                return not self.evaluate(expr.right)
 
         return self.evaluate(expr.right)
 

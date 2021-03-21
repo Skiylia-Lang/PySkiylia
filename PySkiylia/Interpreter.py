@@ -49,9 +49,11 @@ class Interpreter:
         optype = expr.operator.type
         #check the optype
         if optype == "Greater":
+            self.checkNumbers(expr.operator, left, right)
             #greater comparison
             return float(left) > float(right)
         if optype == "Less":
+            self.checkNumbers(expr.operator, left, right)
             #greater comparison
             return float(left) < float(right)
         if optype == "NotEqual":
@@ -61,12 +63,15 @@ class Interpreter:
             #equality comparison
             return self.isEqual(left, right)
         if optype == "Minus":
+            self.checkNumbers(expr.operator, left, right)
             #subtract if given
             return float(left) - float(right)
         elif optype == "Slash":
+            self.checkNumbers(expr.operator, left, right)
             #divide if given
             return float(left) / float(right)
         elif optype == "Star":
+            self.checkNumbers(expr.operator, left, right)
             #multiply if given
             return float(left) * float(right)
         elif optype == "Plus":
@@ -76,6 +81,8 @@ class Interpreter:
             #check if they are strings to concatenate
             if isinstance(left, string) and isinstance(right, string):
                 return str(left) + str(right)
+            #if neither triggered, this is probably wrong
+            raise RuntimeError(expr.operator.lexeme+" operator requires two numbers or two strings.")
         #if we can't evaluate it at all, return None
         return None
 
@@ -93,7 +100,27 @@ class Interpreter:
             except:
                 pass
         #raise an error if not
-        raise RuntimeError(operator+" operator requires a number")
+        raise RuntimeError(operator.lexeme+" operator requires a number.")
+
+    #define a way of checking if multiple objects are numbers
+    def checkNumber(self, operator, *args):
+        #loop through all provided arguments
+        for operand in args:
+            #if it is a float or int
+            if isinstance(operand, float) or isinstance(operand, int):
+                #jump to the next value
+                continue
+            #if it's a string
+            if isinstance(operand, str):
+                #test if it can be converted to a float
+                try:
+                    float(operand)
+                    #if no errors, jump to the next value
+                    continue
+                except:
+                    pass
+            #if we get to here, throw an error
+            raise RuntimeError(operator.lexeme+" operator requires numbers.")
 
     #define a way of checking if something is truthy
     def isTruthy(self, obj):

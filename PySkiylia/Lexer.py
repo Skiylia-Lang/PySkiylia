@@ -33,6 +33,8 @@ class Lexer:
                 tokens.append(token)
         #add an end of file token
         tokens.append(Tokens.Token("EOF", "", None, self.line+1, 1))
+        while tokens[0].type == "End":
+            tokens.pop(0)
         return tokens
 
     #create the appropriate token given the character

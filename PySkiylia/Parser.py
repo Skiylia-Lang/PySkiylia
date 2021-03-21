@@ -33,6 +33,9 @@ class Parser:
 
     #define the statement grammar
     def statement(self):
+        #if the user has used multiple newlines, discard them
+        while self.match("End"):
+            pass
         #if the next token is a print
         if self.match("Print"):
             #compute the print statement
@@ -43,11 +46,13 @@ class Parser:
     #define the print statement grammar
     def printstatement(self):
         #ensure we have brackets
-        self.consume("(", "Expect '(' after print.")
+        self.consume("LeftParenthesis", "Expect '(' after print.")
         #fetch the enclosed expression
         value = self.expression()
         #ensure we have brackets
-        self.consume(")", "Expect ')' after print.")
+        self.consume("RightParenthesis", "Expect ')' after print.")
+        #the print statement must also be bound
+        self.consume("End", "Unbounded expression.")
         #return the abstract for print
         return Print(value)
 

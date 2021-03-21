@@ -31,11 +31,14 @@ declaration       > vardeclaration | statement
 
 vardeclaration    > ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
 
-statement         > exprstmt | ifstmt | printstmt | whilestmt | block
+statement         > exprstmt | forstmt | ifstmt | printstmt | whilestmt | block
 
 block             > {Indent level increases} declaration {End token}+ {token with lower indentation}
 
 exprstmt          > expression {End token}+
+
+forstmt           > "for" (vardeclaration | exprstmt) ("when" expression)? ("do" expression)? {Block token} statement
+//allowed for loop types 1) for x:    2) for x when x<=10:    3) for x when x<10 do x=x+2:    4) for x do x=x+2:
 
 ifstmt            > "if" expression {Block token} statement ("else" statement)?
 

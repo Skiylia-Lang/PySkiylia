@@ -1,0 +1,12 @@
+//tests a simple if statement
+var a = 6
+
+if a > 8:
+    print(a)
+  print("a is greater than 8")
+else:
+  print(a)
+    print("a is not greater than 8")
+
+//6
+//a is not greater than 8

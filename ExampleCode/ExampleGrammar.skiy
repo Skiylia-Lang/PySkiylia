@@ -77,20 +77,20 @@ not a   //not a
 
 Binary
 a and b //a and b
-a && b  //a and b
+a & b  //a and b
 a or b  //a or b
-a || b  //a or b
+a | b  //a or b
 a xor b //a or b, but not both
-a ^^ b  //a or b, but not both
-a ?? b  //return b if a is null (ie: a = b??4 gives b if not null, or 4 if b is null)
+a ^ b  //a or b, but not both
+a ? b  //return b if a is null (ie: a = b??4 gives b if not null, or 4 if b is null)
 
 //Bitwise
-a & b   //bitwise and
-a | b   //bitwise or
-a ^ b   //bitwise xor
-~a      //bitwise not
-a << 3  //bitwise left shift of 3
-a >> 3  //bitwise right shift of 3
+a && b   //bitwise and
+a || b   //bitwise or
+a ^^ b   //bitwise xor
+~a       //bitwise not
+a << 3    //bitwise left shift of 3
+a >> 3    //bitwise right shift of 3
 
 //Ternary Technically these are control flow as well
 a ? b : c //if a is true, then b, else c    //ie: v = (a>5) ? "6" : "8" (if 'a' is greater than 5, then v='6', else v='8')

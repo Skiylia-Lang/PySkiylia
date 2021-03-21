@@ -9,10 +9,9 @@ import Tokens
 #define the parser class
 class Parser:
     #initialise
-    def __init__(self, tokens=[]):
-        #fetch the Skiylia class so we have access to it's functions
-        from PySkiylia import Skiylia
-        self.skiylia = Skiylia()
+    def __init__(self, skiylia, tokens=[]):
+        #return a method for accessing the skiylia class
+        self.skiylia = skiylia
         #set our parser position to zero
         self.current = 0
         #set the output list to empty
@@ -33,7 +32,7 @@ class Parser:
         #trim any Null AST nodes
         #stmt = [x for x in stmt if x!=None]
         #return all the statements
-        print()
+        #print()
         return stmt
 
     #define the declaration grammar
@@ -42,7 +41,7 @@ class Parser:
             #if we found an explicit variable declaration
             if self.match("Var"):
                 #declare the variable
-                return self.varDeclaration(Explicit=True)
+                return self.varDeclaration()
             #return the statement after
             return self.statement()
         #if we encountered an error, try to return to coherent code
@@ -68,51 +67,148 @@ class Parser:
             #anything folowing a startblock character is the start of a new block
             return Block(self.block())
         #if an indentation follows something that isn't a block definer
-        elif (self.checkindent() == 1) and (self.previous().type not in self.blockStart):
-            raise SyntaxError([self.peek(), "Indentation cannot follow statements", "Indentation"])
+        elif (self.checkindent() > 0) and (self.previous().type not in self.blockStart):
+            raise SyntaxError([self.peek(), "Incorect indentation for statement", "Indentation"])
+        #if the next token is an if
+        elif self.match("If"):
+            #compute the if statement
+            return self.ifstatement()
+        #if the next token is a for
+        elif self.match("For"):
+            #compute the for
+            return self.forstatement()
         #if the next token is a print
         elif self.match("Print"):
             #compute the print statement
             return self.printstatement()
+        #if the next token is a while
+        elif self.match("While"):
+            #compute the while statement
+            return self.whilestatement()
         #else return an expression statement
         return self.expressionstatement()
+
+    #define the if statement grammar
+    def ifstatement(self):
+        #fetch the if conditional
+        condition = self.expression()
+        #make sure we have semicolon grammar
+        if not self.check(*self.blockStart):
+            raise RuntimeError(self.error(self.peek(), "Expect ':' after if condition"))
+        #fetch the code to execute if the condition is true
+        thenbranch = self.statement()
+        #set else to none by default
+        elsebranch = None
+        #if there is an else
+        if self.match("Else"):
+            #WILL NEED TO ADD Indentation code to check else probably
+            #check for grammar
+            if not self.check(*self.blockStart):
+                raise RuntimeError(self.error(self.peek(), "Expect ':' after else clause"))
+            #and return the else statement
+            elsebranch = self.statement()
+        #return the abstracted If statement
+        return If(condition, thenbranch, elsebranch)
+
+    #define the for loop grammar
+    def forstatement(self):
+        #fetch the increment variable
+        if self.match("Var"):
+            #if we see an explicit variable declaration, do that
+            initialiser = self.varDeclaration("When", "Do", "Colon")
+            #as we consumed the last token, back up one
+            self.current -=1
+        else:
+            #else assume it's an expression
+            initialiser = self.expressionstatement()
+
+        #condition
+        condition = None
+        #check it has not been ommited
+        if self.match("When"):
+            #fetch the conditional
+            condition = self.expression()
+
+        #increment operator
+        increment = None
+        #check it has not been ommited
+        if self.match("Do"):
+            increment = self.expression()
+
+        #check for the colon grammar
+        if not self.check(*self.blockStart):
+            raise RuntimeError(self.error(self.peek(), "Expect ':' after for condition"))
+        #fetch the body of the for loop
+        body = self.statement()
+
+        #desugar / deconstruct into a while
+        #check if we have been given an increment operation
+        if increment != None:
+            #add the incremental to the end of the body, so it will be executed then
+            body = Block([body, Expression(increment)])
+
+        #check if we didn't have a conditional
+        if condition == None:
+            #if none supplied, assume true
+            condition = Literal(True)
+        #construct the while loop from the conditional and body
+        body = While(condition, body)
+
+        #as we require an initialiser, wrap it into the body code
+        body = Block([initialiser, body])
+
+        #return the for loop in its' fully deconstructed form
+        return body
 
     #define the print statement grammar
     def printstatement(self):
         #ensure we have brackets
-        self.consume("LeftParenthesis", "Expect '(' after print.")
+        self.consume("Expect '(' after print.", "LeftParenthesis")
         #fetch the enclosed expression
         value = self.expression()
         #ensure we have brackets
-        self.consume("RightParenthesis", "Expect ')' after print.")
+        self.consume("Expect ')' after print.", "RightParenthesis")
         #the print statement must also be bound
-        self.consume("End", "Unbounded expression.")
+        self.consume("Unbounded expression.", "End")
         #return the abstract for print
         return Print(value)
 
     #define the variable declaration grammar
-    def varDeclaration(self, Explicit=False):
+    def varDeclaration(self, *Endings):
+        #if the variable terminator is not defined, pass an end token
+        if len(Endings) < 1:
+            Endings=("End",)
         #fetch the variable name
-        name = self.consume("Identifier", "Expect variable name.")
+        name = self.consume("Expect variable name.", "Identifier")
         #define it's initial value as null
-        initial = None
+        initial = Literal(0.0) #None
         #if there is an equals, set it
         if self.match("Equal"):
             #fetch the value
             initial = self.expression()
         #make sure the variable is bounded
-        self.consume("End", "Unbounded variable declaration.")
+        self.consume("Unbounded variable declaration.", *Endings)
         #return the variable abstraction
-        print("variable")
-        print(name, initial)
         return Var(name, initial)
+
+    #define the while statement grammar
+    def whilestatement(self):
+        #fetch the while conditional
+        condition = self.expression()
+        #make sure we have semicolon grammar
+        if not self.check(*self.blockStart):
+            raise RuntimeError(self.error(self.peek(), "Expect ':' after while condition"))
+        #fetch the body of the while loop
+        body = self.statement()
+        #return the While abstraction
+        return While(condition, body)
 
     #define the expression statement grammar
     def expressionstatement(self):
         #fetch the expression
         expr = self.expression()
         #consume the end token
-        self.consume("End", "Unbounded expression.")
+        self.consume("Unbounded expression.", "End")
         #return the abstraction
         return Expression(expr)
 
@@ -120,6 +216,10 @@ class Parser:
     def block(self):
         #initialise an empty statement array, and fetch the current indentation leve;
         statements, myIndent = [], self.peek().indent
+        #if we have an ending token
+        if self.check("End"):
+            #skip it
+            self.advance()
         #continue to search for new statements while we have more sourcecode, and the indentation does not decrease
         while (not self.atEnd()) and (self.checkindent(myIndent) != -1):
             #keep adding statements while the block is open
@@ -136,7 +236,7 @@ class Parser:
     #define the asignment gramar
     def assignment(self):
         #return the equality
-        expr = self.equality()
+        expr = self.logicalor()
         #if there is an equals after the identifier
         if self.match("Equal"):
             #fetch the variable name
@@ -151,6 +251,51 @@ class Parser:
             #throw an error if not
             self.skiylia.error([equals, "Invalid assignment target."])
         #return the variable
+        return expr
+
+    #define the logical or grammar
+    def logicalor(self):
+        #fetch the expression
+        expr = self.logicalxor()
+        #while we have an 'Or' operand
+        while self.match("Or"):
+            #fetch the token
+            operator = self.previous()
+            #and the right hand side
+            right = self.logicalxor()
+            #construct the abstract Logical
+            expr = Logical(expr, operator, right)
+        #return the expression
+        return expr
+
+    #define the logical xor grammar
+    def logicalxor(self):
+        #fetch the expression
+        expr = self.logicaland()
+        #while we have an 'Or' operand
+        while self.match("Xor"):
+            #fetch the token
+            operator = self.previous()
+            #and the right hand side
+            right = self.logicaland()
+            #construct the abstract Logical
+            expr = Logical(expr, operator, right)
+        #return the expression
+        return expr
+
+    #define the logical and grammar
+    def logicaland(self):
+        #fetch the expression
+        expr = self.equality()
+        #while we have an 'Or' operand
+        while self.match("And"):
+            #fetch the token
+            operator = self.previous()
+            #and the right hand side
+            right = self.equality()
+            #construct the abstract Logical
+            expr = Logical(expr, operator, right)
+        #return the expression
         return expr
 
     #define the equality gramar
@@ -245,7 +390,7 @@ class Parser:
         #check if opening a parenthesis
         elif self.match("LeftParenthesis"):
             expr = self.expression()
-            self.consume("RightParenthesis", "Expect ')' after an expression.")
+            self.consume("Expect ')' after an expression.", "RightParenthesis")
             return Grouping(expr)
         elif self.match("End"):
             pass
@@ -253,9 +398,9 @@ class Parser:
         return self.error(self.peek(), "Expected an expression.")
 
     #define a way of checking if a token is found, and consuming it
-    def consume(self, type, errorMessage):
+    def consume(self, errorMessage, *type):
         #if it's the token we want, return it
-        if self.check(type):
+        if self.check(*type):
             return self.advance()
         #else show an error
         raise RuntimeError(self.error(self.peek(), errorMessage))
@@ -274,13 +419,13 @@ class Parser:
         return False
 
     #basically match, but only on a single token type
-    def check(self, expected):
+    def check(self, *expected):
         #if we've run off the end of the tokens
         if self.atEnd():
             #return false
             return False
-        #else return if the token is the expected one
-        return self.peek().type == expected
+        #else return if the token is one of the expected ones
+        return self.peek().type in expected
 
     #define a way of fetching the next tokens
     def advance(self):
@@ -318,12 +463,7 @@ class Parser:
             #fetch the previous token indentation
             thatIndent = self.previous().indent
         #return 1 if the indent increases, -1 if it decreases, and 0 if it remains the same
-        if thisIndent > thatIndent:
-            return 1
-        elif thatIndent > thisIndent:
-            return -1
-        else:
-            return 0
+        return int(thisIndent - thatIndent)
 
     #same as peek, but with the previous token instead
     def previous(self):

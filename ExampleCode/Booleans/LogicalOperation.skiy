@@ -1,0 +1,18 @@
+//test the logical operations
+//logical and
+print(true & true)          //true
+print(true & false)         //false
+print(false & true)         //false
+print(false & false)        //false
+
+//logical or
+print(true | true)          //true
+print(true | false)         //true
+print(false | true)         //true
+print(false | false)        //false
+
+//logical xor
+print(true ^ true)          //false
+print(true ^ false)         //true
+print(false ^ true)         //true
+print(false ^ false)        //false

@@ -7,14 +7,17 @@ import sys, os
 ExprDict = {"Assign":"name,value",
             "Binary":"left,operator,right",
             "Grouping":"expression",
+            "Logical":"left,operator,right",
             "Literal":"value",
             "Unary":"operator,right",
             "Variable":"name"}
 
 StmtDict = {"Block":"statements",
             "Expression":"expression",
+            "If":"condition,thenBranch,elseBranch",
             "Print":"expression",
-            "Var":"name,initial",}
+            "Var":"name,initial",
+            "While":"condition,body"}
 
 #create the class for the AST generator
 class ASTGen:

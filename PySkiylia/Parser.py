@@ -70,12 +70,36 @@ class Parser:
         #if an indentation follows something that isn't a block definer
         elif (self.checkindent() == 1) and (self.previous().type not in self.blockStart):
             raise SyntaxError([self.peek(), "Indentation cannot follow statements", "Indentation"])
+        #if the next token is an if
+        elif self.match("If"):
+            #compute the if statement
+            return self.ifstatement()
         #if the next token is a print
         elif self.match("Print"):
             #compute the print statement
             return self.printstatement()
         #else return an expression statement
         return self.expressionstatement()
+
+    #define the if statement grammar
+    def ifstatement(self):
+        #fetch the if conditional
+        condition = self.expression()
+        #make sure we have semicolon grammar
+        consume("Colon", "Expect ':' after if condition")
+        #fetch the code to execute if the condition is true
+        thenbranch = self.statement()
+        #set else to none by default
+        elsebranch = None
+        #if there is an else
+        if self.match("Else"):
+            #WILL NEED TO ADD Indentation code to check else probably
+            #check for grammar
+            consume("Colon", "Expect ':' after else condition")
+            #and return the else statement
+            elsebranch = self.statement()
+        #return the abstracted If statement
+        return If(condition, thenbranch, elsebranch)
 
     #define the print statement grammar
     def printstatement(self):

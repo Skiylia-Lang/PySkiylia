@@ -230,6 +230,18 @@ class Interpreter(misc):
         #and return none
         return None
 
+    #define the way of interpreting an if statement
+    def IfStmt(self, stmt):
+        #evaluate the truthiness of the if condition
+        if self.isTruthy(self.evaluate(stmt.condition)):
+            #if true, execute
+            self.execute(stmt.thenbranch)
+        #if false, and we have an else branch
+        elif stmt.elsebranch != None:
+            #execute it
+            self.execute(stmt.elsebranch)
+        return None
+
     #define the way of interpreting a print statement
     def PrintStmt(self, stmt):
         #evaluate the expression
@@ -272,6 +284,7 @@ class Interpreter(misc):
         ##List of all supported expressions
         stmts = {"Block": self.BlockStmt,
                  "Expression": self.ExpressionStmt,
+                 "If": self.IfStmt,
                  "Print": self.PrintStmt,
                  "Var":self.VarStmt,}
         #fetch the class name of the expression provided

@@ -13,6 +13,7 @@ ExprDict = {"Assign":"name,value",
 
 StmtDict = {"Block":"statements",
             "Expression":"expression",
+            "If":"condition,thenBranch,elseBranch",
             "Print":"expression",
             "Var":"name,initial",}
 

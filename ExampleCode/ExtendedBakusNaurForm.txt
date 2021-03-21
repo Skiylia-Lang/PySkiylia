@@ -43,12 +43,12 @@ printstmt         > "print" "(" expression ")" {End token}+
 
 expression        > assignment
 
-assignment        > Identifier "=" assignment | logicalAnd
+assignment        > Identifier "=" assignment | logicalOr
 
-//Logical And has the highest precedence (and is computed last)
-logicalAnd        > logicalOr ( ( "&&" ) logicalOr )*
+//Logical or has the highest precedence (and is computed last)
+logicalOr         > logicalAnd ( "||" logicalAnd )*
 
-logicalOr         > equality ( ( "||" ) equality )*
+logicalAnd        > equality ( ( "&&" ) equality )*
 
 equality          > comparison ( ( "!=" | "==" ) comparison )*
 

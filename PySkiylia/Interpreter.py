@@ -25,7 +25,7 @@ class misc:
                 except:
                     pass
             #if we get to here, throw an error
-            raise RuntimeError([operator,"operator requires a number."])
+            raise RuntimeError([operator,"'"+operator.lexeme+"' operator requires a number."])
 
     #define a way of testing if one, but not both, of two objects can be represented as an integer
     def xorNumber(self, a, b):

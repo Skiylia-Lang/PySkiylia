@@ -32,7 +32,7 @@ class Parser:
         #trim any Null AST nodes
         #stmt = [x for x in stmt if x!=None]
         #return all the statements
-        print()
+        #print()
         return stmt
 
     #define the declaration grammar
@@ -41,7 +41,7 @@ class Parser:
             #if we found an explicit variable declaration
             if self.match("Var"):
                 #declare the variable
-                return self.varDeclaration(Explicit=True)
+                return self.varDeclaration()
             #return the statement after
             return self.statement()
         #if we encountered an error, try to return to coherent code
@@ -73,6 +73,10 @@ class Parser:
         elif self.match("If"):
             #compute the if statement
             return self.ifstatement()
+        #if the next token is a for
+        elif self.match("For"):
+            #compute the for
+            return self.forstatement()
         #if the next token is a print
         elif self.match("Print"):
             #compute the print statement
@@ -106,31 +110,84 @@ class Parser:
         #return the abstracted If statement
         return If(condition, thenbranch, elsebranch)
 
+    #define the for loop grammar
+    def forstatement(self):
+        #fetch the increment variable
+        if self.match("Var"):
+            #if we see an explicit variable declaration, do that
+            initialiser = self.varDeclaration("When", "Do", "Colon")
+            #as we consumed the last token, back up one
+            self.current -=1
+        else:
+            #else assume it's an expression
+            initialiser = self.expressionstatement()
+
+        #condition
+        condition = None
+        #check it has not been ommited
+        if self.match("When"):
+            #fetch the conditional
+            condition = self.expression()
+
+        #increment operator
+        increment = None
+        #check it has not been ommited
+        if self.match("Do"):
+            increment = self.expression()
+
+        #check for the colon grammar
+        if not self.check(*self.blockStart):
+            raise RuntimeError(self.error(self.peek(), "Expect ':' after for condition"))
+        #fetch the body of the for loop
+        body = self.statement()
+
+        #desugar / deconstruct into a while
+        #check if we have been given an increment operation
+        if increment != None:
+            #add the incremental to the end of the body, so it will be executed then
+            body = Block([body, Expression(increment)])
+
+        #check if we didn't have a conditional
+        if condition == None:
+            #if none supplied, assume true
+            condition = Literal(True)
+        #construct the while loop from the conditional and body
+        body = While(condition, body)
+
+        #as we require an initialiser, wrap it into the body code
+        body = Block([initialiser, body])
+
+        #return the for loop in its' fully deconstructed form
+        return body
+
     #define the print statement grammar
     def printstatement(self):
         #ensure we have brackets
-        self.consume("LeftParenthesis", "Expect '(' after print.")
+        self.consume("Expect '(' after print.", "LeftParenthesis")
         #fetch the enclosed expression
         value = self.expression()
         #ensure we have brackets
-        self.consume("RightParenthesis", "Expect ')' after print.")
+        self.consume("Expect ')' after print.", "RightParenthesis")
         #the print statement must also be bound
-        self.consume("End", "Unbounded expression.")
+        self.consume("Unbounded expression.", "End")
         #return the abstract for print
         return Print(value)
 
     #define the variable declaration grammar
-    def varDeclaration(self, Explicit=False):
+    def varDeclaration(self, *Endings):
+        #if the variable terminator is not defined, pass an end token
+        if len(Endings) < 1:
+            Endings=("End",)
         #fetch the variable name
-        name = self.consume("Identifier", "Expect variable name.")
+        name = self.consume("Expect variable name.", "Identifier")
         #define it's initial value as null
-        initial = None
+        initial = Literal(0.0) #None
         #if there is an equals, set it
         if self.match("Equal"):
             #fetch the value
             initial = self.expression()
         #make sure the variable is bounded
-        self.consume("End", "Unbounded variable declaration.")
+        self.consume("Unbounded variable declaration.", *Endings)
         #return the variable abstraction
         return Var(name, initial)
 
@@ -151,7 +208,7 @@ class Parser:
         #fetch the expression
         expr = self.expression()
         #consume the end token
-        self.consume("End", "Unbounded expression.")
+        self.consume("Unbounded expression.", "End")
         #return the abstraction
         return Expression(expr)
 
@@ -333,7 +390,7 @@ class Parser:
         #check if opening a parenthesis
         elif self.match("LeftParenthesis"):
             expr = self.expression()
-            self.consume("RightParenthesis", "Expect ')' after an expression.")
+            self.consume("Expect ')' after an expression.", "RightParenthesis")
             return Grouping(expr)
         elif self.match("End"):
             pass
@@ -341,9 +398,9 @@ class Parser:
         return self.error(self.peek(), "Expected an expression.")
 
     #define a way of checking if a token is found, and consuming it
-    def consume(self, type, errorMessage):
+    def consume(self, errorMessage, *type):
         #if it's the token we want, return it
-        if self.check(type):
+        if self.check(*type):
             return self.advance()
         #else show an error
         raise RuntimeError(self.error(self.peek(), errorMessage))

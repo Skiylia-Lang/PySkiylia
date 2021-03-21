@@ -25,6 +25,7 @@ false
 
 //miscellaneous
 null        //None-type
+//null can be implicitly converted to zero if required
 
 //Expressions
 a + b       //addition

@@ -93,12 +93,14 @@ class Skiylia:
         #and scan the sourcecode for tokens
         tokens = lexer.scanTokens()
         #Lexer output for debugging
-        print([token.type for token in tokens])
+        print([(token.type, token.indent) for token in tokens])
 
         #fetch the Parser class
         parser = Parser(tokens)
         #run the parser
-        expression = parser.parse()
+        statements = parser.parse()
+        #Parser output for debugging
+        print(statements)
 
         #stop if we had an error
         if self.haderror:
@@ -107,12 +109,17 @@ class Skiylia:
         #initialise the interpreter
         interpreter = Interpreter()
         #and run it with the parsed code
-        interpreter.interpret(expression)
+        interpreter.interpret(statements)
 
     #define a way of showing an error to the user
-    def error(self, line=0, char=0, message="", where=""):
-        #print the error in a lovely form
-        print("[Line {0}, Char {1}] {2} Error: {3}".format(line, char, where, message))
+    def error(self, line=0, char=0, message="", where="", noloc=False):
+        #check if we don't have a position to give to the user
+        if noloc:
+            #print the error in a lovely form
+            print("{2} Error: {3}".format(line, char, where, message))
+        else:
+            #print the error in a lovely form
+            print("[Line {0}, Char {1}] {2} Error: {3}".format(line, char, where, message))
         #update our internals to show we had an error
         self.haderror = True
 

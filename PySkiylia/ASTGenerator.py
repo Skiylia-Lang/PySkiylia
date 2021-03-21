@@ -4,10 +4,17 @@
 #Import base python
 import sys, os
 
-ExprDict = {"Binary":"left, operator, right",
+ExprDict = {"Assign":"name,value",
+            "Binary":"left,operator,right",
             "Grouping":"expression",
             "Literal":"value",
-            "Unary":"operator, right"}
+            "Unary":"operator,right",
+            "Variable":"name"}
+
+StmtDict = {"Block":"statements",
+            "Expression":"expression",
+            "Print":"expression",
+            "Var":"name,initial",}
 
 #create the class for the AST generator
 class ASTGen:
@@ -24,35 +31,41 @@ class ASTGen:
             #exit cleanly
             sys.exit(0)
         #otherwise, save the directory provided
-        self.dir = args[0]
+        self.dir = args[0] + "/" + "AbstractSyntax" + ".py"
 
     #run this to start generating the AST
     def init(self):
+        try:
+            #try to remove any old versions of the Abstract Syntax
+            os.remove(self.dir)
+        except OSError:
+            pass
+        with open(self.dir, "a") as f:
+            f.write('#!/usr/bin/env python\n"""Stores the abstracted syntax for Skiylia"""\n')
         self.defineAST("Expr", ExprDict)
+        self.defineAST("Stmt", StmtDict)
 
     #Actual do the AST definitions
     def defineAST(self, baseName, baseDict):
         #ensure baseName is a string
         baseName = str(baseName)
-        #find the path of the file to write
-        path = self.dir + "/" + baseName + ".py"
 
         #define each of the classes
         toWrite = ["class " + baseName +":",
                       "\tpass"]
         #And the children of that class
-        for x in ExprDict:
+        for x in baseDict:
             #fetch this child name
-            className, args = x, ExprDict[x]
+            className, args = x, baseDict[x]
             #write all the code
             toWrite.append("class "+className+"("+baseName+"):")
             toWrite.append("\tdef __init__(self, "+args+"):")
             #apply __init__ arguments
-            for y in (ExprDict[x]).split(","):
+            for y in (baseDict[x]).split(","):
                 toWrite.append("\t\tself."+y+" = "+y)
 
         #open the file
-        with open(path, "w") as f:
+        with open(self.dir, "a") as f:
             #write to file
             f.writelines(self.listToLines(toWrite))
 
@@ -60,10 +73,12 @@ class ASTGen:
     def listToLines(self, lines):
         #loop through all lines
         for line in lines:
+            if "class" in line:
+                yield "\n"
             #yield the current line
             yield line
             #yield a newline
-            yield '\n'
+            yield "\n"
 
 if __name__ == "__main__":
     #startup the script, fetching any arguments passed

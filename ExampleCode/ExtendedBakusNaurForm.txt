@@ -22,7 +22,26 @@
 
 
 //The entire grammar of Skiylia in EBNF Form
-Expressions       > LogicalAnd
+{End token}       > '\n'
+
+Program           > declaration* EOF
+
+declaration       > variableDec | statement
+
+variableDec       > ( Idenitifer "=" expression )                     <=implicit requires "="
+                  | ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
+
+statement         > ExprStatement | PrintStatement | block
+
+block             > {Indent level increases} declaration {End token}+ {token with lower indentation}
+
+ExprStatement     > Expressions {End token}+
+
+PrintStatement    > "print" "(" Expressions ")" {End token}+
+
+Expressions       > assignment
+
+assignment        > Identifier "=" assignment | LogicalAnd
 
 //Logical And has the highest precedence (and is computed last)
 LogicalAnd        > LogicalOr ( ( "&&" ) LogicalOr )*
@@ -43,4 +62,4 @@ Factor            > Unary ( ( "*" | "/" ) Unary )*
 //And finally unary has the lowest precedence (and are computed first)
 Unary             > ( "!" | "-" ) Unary | Literal
 
-Literal           > Number | String | "true" | "false" | "null" | "(" expression ")"
+Literal           > Number | String | "true" | "false" | "null" | "(" expression ")" | Identifier

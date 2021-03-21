@@ -41,9 +41,9 @@ a != b      //not equal to
 //Logical operators
 -a          //negates the value of a  -6 -> 6, "-6" causes an error (at the present)
 !a          //not a
-a && b      //a and b
-a || b      //a or b
-a ^^ b      //a xor b
+a & b      //a and b
+a | b      //a or b
+a ^ b      //a xor b
 
 //Variables and assignment
 var a       //initialise as null

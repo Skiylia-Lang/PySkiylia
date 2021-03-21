@@ -46,11 +46,11 @@ expression        > assignment
 assignment        > Identifier "=" assignment | logicalOr
 
 //Logical or has the highest precedence (and is computed last)
-logicalOr         > logicalXor ( "||" logicalXor )*
+logicalOr         > logicalXor ( "|" logicalXor )*
 
-logicalXor        > logicalAnd ( "^^" logicalAnd )*
+logicalXor        > logicalAnd ( "^" logicalAnd )*
 
-logicalAnd        > equality ( ( "&&" ) equality )*
+logicalAnd        > equality ( ( "&" ) equality )*
 
 equality          > comparison ( ( "!=" | "==" ) comparison )*
 

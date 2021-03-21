@@ -81,28 +81,13 @@ class Lexer:
             return self.addToken("Equal")
         elif c == "&":
             #Check for logical and
-            if self.match("&"):
-                #return the and token
-                return self.addToken("And")
-            else:
-                #second ampersand not given
-                self.skiylia.error(self.line, self.char, "Missing & in logical and")
+            return self.addToken("And")
         elif c == "^":
             #Check for logical xor
-            if self.match("^"):
-                #return the xor token
-                return self.addToken("Xor")
-            else:
-                #second up thingy not given
-                self.skiylia.error(self.line, self.char, "Missing ^ in logical xor")
+            return self.addToken("Xor")
         elif c == "|":
             #Check for logical or
-            if self.match("|"):
-                #return the or token
-                return self.addToken("Or")
-            else:
-                #second bar not given
-                self.skiylia.error(self.line, self.char, "Missing | in logical or")
+            return self.addToken("Or")
         elif c == "!":
             if self.match("="):
                 return self.addToken("NotEqual")

@@ -46,7 +46,7 @@ a || b      //a or b
 
 //Variables and assignment
 var a       //initialise as null
-a = 5       //implicitly initialise a as 5
+a = 5       //reassign a as 5. a must already exist
 
 //control flow
 //if statements

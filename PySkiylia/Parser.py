@@ -3,7 +3,7 @@
 #The gramar of Skiylia is encoded in the Parser Class
 
 #import our code
-from Expr import *
+from AbstractSyntax import *
 import Tokens
 
 #define the parser class
@@ -19,20 +19,142 @@ class Parser:
         self.final = []
         #set the tokens
         self.tokens = tokens
+        #define all of the tokens that can start a block (not a lot as of current)
+        self.blockStart = ["Colon"]
 
     #define a way of starting up the parser
     def parse(self):
-        #error handling
+        #start with an empty list
+        stmt = []
+        #while we have more sourcecode to parse
+        while not self.atEnd():
+            #compile the nex statement and add to the list
+            stmt.append(self.declaration())
+        #trim any Null AST nodes
+        #stmt = [x for x in stmt if x!=None]
+        #return all the statements
+        print()
+        return stmt
+
+    #define the declaration grammar
+    def declaration(self):
         try:
-            #run a singular expression
-            return self.expression()
+            #if we found an explicit variable declaration
+            if self.match("Var"):
+                #declare the variable
+                return self.varDeclaration(Explicit=True)
+            #return the statement after
+            return self.statement()
+        #if we encountered an error, try to return to coherent code
         except Exception as e:
-            #return nothing if an error was found
-            print(e)
+            #fetch the token
+            token = e.args[0][0]
+            #and message
+            message = e.args[0][1]
+            #and location if given
+            where = "RuntimeError"
+            if len(e.args[0]) > 1:
+                where = e.args[0][2]
+            #and raise an error
+            self.skiylia.error(token.line, token.char, message, where)
+            #try to re-synchronise with the code
+            self.synchronise()
             return None
+
+    #define the statement grammar
+    def statement(self):
+        #if we see anything in the blockstart list (a Colon token currently)
+        if self.match(*self.blockStart):
+            #anything folowing a startblock character is the start of a new block
+            return Block(self.block())
+        #if an indentation follows something that isn't a block definer
+        elif (self.checkindent() == 1) and (self.previous().type not in self.blockStart):
+            raise SyntaxError([self.peek(), "Indentation cannot follow statements", "Indentation"])
+        #if the next token is a print
+        elif self.match("Print"):
+            #compute the print statement
+            return self.printstatement()
+        #else return an expression statement
+        return self.expressionstatement()
+
+    #define the print statement grammar
+    def printstatement(self):
+        #ensure we have brackets
+        self.consume("LeftParenthesis", "Expect '(' after print.")
+        #fetch the enclosed expression
+        value = self.expression()
+        #ensure we have brackets
+        self.consume("RightParenthesis", "Expect ')' after print.")
+        #the print statement must also be bound
+        self.consume("End", "Unbounded expression.")
+        #return the abstract for print
+        return Print(value)
+
+    #define the variable declaration grammar
+    def varDeclaration(self, Explicit=False):
+        #fetch the variable name
+        name = self.consume("Identifier", "Expect variable name.")
+        #define it's initial value as null
+        initial = None
+        #if there is an equals, set it
+        if self.match("Equal"):
+            #fetch the value
+            initial = self.expression()
+        #make sure the variable is bounded
+        self.consume("End", "Unbounded variable declaration.")
+        #return the variable abstraction
+        print("variable")
+        print(name, initial)
+        return Var(name, initial)
+
+    #define the expression statement grammar
+    def expressionstatement(self):
+        #fetch the expression
+        expr = self.expression()
+        #consume the end token
+        self.consume("End", "Unbounded expression.")
+        #return the abstraction
+        return Expression(expr)
+
+    #define the block grammar
+    def block(self):
+        #initialise an empty statement array, and fetch the current indentation leve;
+        statements, myIndent = [], self.peek().indent
+        #continue to search for new statements while we have more sourcecode, and the indentation does not decrease
+        while (not self.atEnd()) and (self.checkindent(myIndent) != -1):
+            #keep adding statements while the block is open
+            statements.append(self.declaration())
+        #self.consume("End", "Unexpected indentation error")
+        #return the statement array
+        return statements
 
     #define the expression grammar
     def expression(self):
+        #return an asignment
+        return self.assignment()
+
+    #define the asignment gramar
+    def assignment(self):
+        #return the equality
+        expr = self.equality()
+        #if there is an equals after the identifier
+        if self.match("Equal"):
+            #fetch the variable name
+            equals = self.previous
+            #fetch it's value
+            value = self.assignment()
+            #if it is a Variable type
+            if isinstance(expr, Variable):
+                name = expr.name
+                #return the assignment
+                return Assign(name, value)
+            #throw an error if not
+            self.skiylia.error([equals, "Invalid assignment target."])
+        #return the variable
+        return expr
+
+    #define the equality gramar
+    def equality(self):
         #define the first comparitive term
         expr = self.comparison()
         #loop the other possible terms in the equality
@@ -117,6 +239,9 @@ class Parser:
         #check if a number or string
         elif self.match("Number", "String"):
             return Literal(self.previous().literal)
+        #check if a variable is there
+        elif self.match("Identifier"):
+            return Variable(self.previous())
         #check if opening a parenthesis
         elif self.match("LeftParenthesis"):
             expr = self.expression()
@@ -133,7 +258,7 @@ class Parser:
         if self.check(type):
             return self.advance()
         #else show an error
-        raise RuntimeError(self.error(self.peek, errorMessage))
+        raise RuntimeError(self.error(self.peek(), errorMessage))
         #could include a raise here instead I guess?
 
     #define a way of checking if the current token is any of the supplied types
@@ -176,6 +301,30 @@ class Parser:
         #return the token at the current position
         return self.tokens[self.current]
 
+    #define a way of returning the next token, without moving the parser position
+    def peekNext(self):
+        #if we're at the end of the file, return the EOF token
+        if self.atEnd():
+            return self.tokens[self.current]
+        #else return the token at the next position
+        return self.tokens[self.current + 1]
+
+    #define a way of checking if the next token has a higher or lower indentation than the current one does
+    def checkindent(self, thatIndent=""):
+        #fetch the current tokens indentation
+        thisIndent = self.peek().indent
+        #if the code has not supplied an indent value
+        if not thatIndent:
+            #fetch the previous token indentation
+            thatIndent = self.previous().indent
+        #return 1 if the indent increases, -1 if it decreases, and 0 if it remains the same
+        if thisIndent > thatIndent:
+            return 1
+        elif thatIndent > thisIndent:
+            return -1
+        else:
+            return 0
+
     #same as peek, but with the previous token instead
     def previous(self):
         return self.tokens[self.current - 1]
@@ -184,12 +333,12 @@ class Parser:
     def error(self, token, message):
         #if we reached the end of the file, show an EOF error
         if token.type == "EOF":
-            self.skiylia.error(token.line, token.char, message, "at end of file")
+            self.skiylia.error(token.line, token.char, message, "at end of file, Syntax")
         #otherwise show the user what the exact location and token was
         else:
-            self.skiylia.error(token.line, token.char, message, "at '"+token.lexeme+"'")
+            self.skiylia.error(token.line, token.char, message, "at '"+token.lexeme+"', Syntax")
         #and return our base Parse error
-        return "Parse error: "+message
+        return [token, message, "Parse"]
 
     #define a way of returning to execution if an error was encountered
     def synchronise(self):
@@ -197,8 +346,8 @@ class Parser:
         self.advance()
         #keep going until we get to the end
         while not self.atEnd():
-            #check if we have found a statement ending token (newline)
-            if self.previous().type == "End":
+            #check if we have exited the current indentation level
+            if self.checkindent() == -1:
                 #break the loop
                 break
             #otherise, get the current token type
@@ -206,5 +355,5 @@ class Parser:
             #if it is one of the token types that starts a statement, stop the loop
             if thisToken in ["Class", "Def", "Var", "For", "If", "While", "Print", "Return"]:
                 break
-        #move past the token we just found
-        self.advance()
+            #move past the token we just found
+            self.advance()

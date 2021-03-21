@@ -2,7 +2,8 @@
 """Generates a sequence of tokens from plaintext"""
 
 #import our code
-from Expr import *
+from AbstractSyntax import *
+from Environment import Environment
 
 #A class that will hold miscellaneous help code
 class misc:
@@ -93,22 +94,36 @@ class Interpreter(misc):
         #fetch the Skiylia class so we have access to it's functions
         from PySkiylia import Skiylia
         self.skiylia = Skiylia()
+        self.environment = Environment()
 
     #define the interpreter function
-    def interpret(self, expression):
+    def interpret(self, statements):
         #try to execute code, escape if error
         try:
-            #compute the evaluation
-            value = self.evaluate(expression)
-            #print the evaluation
-            print(self.stringify(value))
+            #loop through all statements provided
+            for statement in statements:
+                #evaluate each statement
+                self.execute(statement)
         except Exception as e:
-            #fetch the token
+            #if we have an empty node on the syntax tree
+            if statement == None:
+                self.skiylia.error(noloc=True, where="Fatal", message="Abstract Syntax Tree contains empty node.")
+                return
+            #otherwise fetch the token
             token = e.args[0][0]
             #and message
             message = e.args[0][1]
             #and raise an error
             self.skiylia.error(token.line, token.char, message, "RuntimeError")
+
+    #define a way to assign variables abstractly
+    def AssignExpr(self, expr):
+        #evaluate what should be assignd
+        value = self.evaluate(expr.value)
+        #add that to the environment storage
+        self.environment.assign(expr.name, value)
+        #and return the value
+        return value
 
     #define a way of converting from the literal AST to a runtime value
     def LiteralExpr(self, expr):
@@ -197,14 +212,84 @@ class Interpreter(misc):
         #if we can't evaluate it at all, return None
         return None
 
-    #define a way of sending the interpreter to the correct method
+    #define the method of fetching a variables value
+    def VarExpr(self, expr):
+        #fetch the name from the Environment holder
+        return self.environment.fetch(expr.name)
+
+    #define the methods for dealing with block abstractions
+    def BlockStmt(self, stmt):
+        #execute the next block, passing in the statements and creating a new environment
+        self.executeBlock(stmt.statements, Environment(self.environment))
+        return None
+
+    #define the way of interpreting an expression statement
+    def ExpressionStmt(self, stmt):
+        #evaluate the expression
+        self.evaluate(stmt.expression)
+        #and return none
+        return None
+
+    #define the way of interpreting a print statement
+    def PrintStmt(self, stmt):
+        #evaluate the expression
+        value = self.evaluate(stmt.expression)
+        #print the output
+        print(self.stringify(value))
+        #and return none
+        return None
+
+    #define the ways of handling variables
+    def VarStmt(self, stmt):
+        #define the default value
+        value = None
+        #if the variable has an initial value assigned
+        if stmt.initial != None:
+            #evaluate and return the initial value
+            value = self.evaluate(stmt.initial)
+        #store the variable in our environment
+        self.environment.define(stmt.name.lexeme, value)
+        #and return none
+        return None
+
+    #define a way of sending the interpreter to the correct expression method
     def evaluate(self, expr):
         ##List of all supported expressions
-        exprs = {"Binary": self.BinaryExpr,
+        exprs = {"Assign":self.AssignExpr,
+                 "Binary": self.BinaryExpr,
                  "Grouping": self.GroupingExpr,
                  "Literal": self.LiteralExpr,
-                 "Unary": self.UnaryExpr,}
+                 "Unary": self.UnaryExpr,
+                 "Variable": self.VarExpr,}
         #fetch the class name of the expression provided
         exprName = expr.__class__.__name__
         #return the correct method and pass in own value
         return exprs[exprName](expr)
+
+
+    #define a way of sending the interpreter to the correct statement method
+    def execute(self, stmt):
+        ##List of all supported expressions
+        stmts = {"Block": self.BlockStmt,
+                 "Expression": self.ExpressionStmt,
+                 "Print": self.PrintStmt,
+                 "Var":self.VarStmt,}
+        #fetch the class name of the expression provided
+        stmtName = stmt.__class__.__name__
+        #return the correct method and pass in own value
+        return stmts[stmtName](stmt)
+
+    #define a way of executing block code
+    def executeBlock(self, statements, environment):
+        #store the parent environment
+        previous = environment
+        try:
+            #make sure the current scope is the one to compute with
+            self.environment = environment
+            #loop through the given statements
+            for statement in statements:
+                #and execute them
+                self.execute(statement)
+        finally:
+            #restore the parent scope now we have finished
+            self.environment = previous

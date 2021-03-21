@@ -1,0 +1,6 @@
+//declare a variable, print, reasign a new value, print
+var a = "Hello World!"
+print(a)                //Hello World
+
+a = "Goodbye!"
+print(a)                //Goodbye

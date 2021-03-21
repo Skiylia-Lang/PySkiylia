@@ -12,6 +12,7 @@ from Interpreter import Interpreter
 class Skiylia:
     #set the default values here
     haderror = False
+    version = "v0.3.1"
     #run this at initialisation
     def __init__(self, args=""):
         #we won't support more than one argument
@@ -57,7 +58,7 @@ class Skiylia:
     #startup the prompt if no arguments have been given
     def runPrompt(self):
         #print some base information
-        print("PySkiylia 0.3.0")
+        print("PySkiylia "+self.version)
         #keep looping the code
         while True:
             #fetch the user input

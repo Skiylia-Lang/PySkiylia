@@ -33,8 +33,8 @@ class Lexer:
             if token:
                 self.tokens.append(token)
         #add an end token if none exists
-        #if tokens[-1].type != "End":
-        #    tokens.append(Tokens.Token("End", "", None, self.line, self.char+1, self.indent))
+        if not self.previousToken("End"):
+            self.tokens.append(Tokens.Token("End", "", None, self.line, self.char+1, self.indent))
         #add an EOF token
         self.tokens.append(Tokens.Token("EOF", "", None, self.line, self.char+1, 0))
         #remove any leading end tokens

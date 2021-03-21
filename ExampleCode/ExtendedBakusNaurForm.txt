@@ -28,8 +28,8 @@ Program           > declaration* EOF
 
 declaration       > variableDec | statement
 
-variableDec       > ( Idenitifer "=" expression )                     <=implicit requires "="
-                  | ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
+variableDec       > ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
+                  //| ( Idenitifer "=" expression )                     <=implicit requires "="       <- Removed implementation
 
 statement         > ExprStatement | PrintStatement | block
 

@@ -33,6 +33,7 @@ class Parser:
         #trim any Null AST nodes
         #stmt = [x for x in stmt if x!=None]
         #return all the statements
+        print()
         return stmt
 
     #define the declaration grammar
@@ -95,21 +96,15 @@ class Parser:
         name = self.consume("Identifier", "Expect variable name.")
         #define it's initial value as null
         initial = None
-        #if this is an implicit declaration
-        if not Explicit:
-            #then we require a value to equate to
-            self.consume("Equal", "Value required for implicit variable declaration")
+        #if there is an equals, set it
+        if self.match("Equal"):
             #fetch the value
             initial = self.expression()
-        #otherwise this is an explicit declaration
-        else:
-            #if there is an equals, set it
-            if self.match("Equal"):
-                #fetch the value
-                initial = self.expression()
         #make sure the variable is bounded
         self.consume("End", "Unbounded variable declaration.")
         #return the variable abstraction
+        print("variable")
+        print(name, initial)
         return Var(name, initial)
 
     #define the expression statement grammar
@@ -245,14 +240,7 @@ class Parser:
         elif self.match("Number", "String"):
             return Literal(self.previous().literal)
         #check if a variable is there
-        elif self.match("Idenitifer"):
-            #if it is followed by an equals, this is an implicit declaration
-            '''if self.peek("Equal"):
-                #if it an implicit declaration, backup and declare it
-                self.current-=1
-                return self.varDeclaration()
-            #otherwise it's just the code using the variable
-            else:'''
+        elif self.match("Identifier"):
             return Variable(self.previous())
         #check if opening a parenthesis
         elif self.match("LeftParenthesis"):

@@ -16,6 +16,7 @@ class Lexer:
         self.current = 0
         self.line = 1
         self.char = 1
+        self.indent = 0
 
     #create a method of scanning tokens
     def scanTokens(self):
@@ -32,8 +33,8 @@ class Lexer:
             if token:
                 tokens.append(token)
         #add an end of file token
-        tokens.append(Tokens.Token("End", "", None, self.line, self.char+1))
-        tokens.append(Tokens.Token("EOF", "", None, self.line+1, 1))
+        tokens.append(Tokens.Token("End", "", None, self.line, self.char+1, self.indent))
+        tokens.append(Tokens.Token("EOF", "", None, self.line+1, 1, 0))
         while tokens[0].type == "End":
             tokens.pop(0)
         return tokens
@@ -99,13 +100,18 @@ class Lexer:
             #increment the line counter when we reach a newline
             self.line += 1
             self.char = 0
+            tempindent = self.indent
             self.indent = 0
             #return the End token (This will be useful for the parser, as it can identify if a line, and thus statement, has finished)
-            return self.addToken("End")
+            return self.addToken("End", indent=tempindent)
         elif c == "\t":
             #if we met an indentation, then increment our indet tage
             self.indent += 1
         elif c == " ":
+            #Two spaces are equivalent to and indent <- TEMPORARILY MIND YOU
+            if self.match(" "):
+                self.advance()
+                self.indent +=1
             #skip whitespace
             pass
         elif c == '"':
@@ -191,11 +197,14 @@ class Lexer:
         return ("0" <= char <= "9") or ("a" <= char.lower() <= "z") or (char == "_")
 
     #create a token
-    def addToken(self, tokenType, literal=None):
+    def addToken(self, tokenType, literal=None, indent=""):
+        #if we haven't been given an intentation, then fetch it from memory
+        if not indent:
+            indent = self.indent
         #return the text from the sourcecode (characters between the start and current position)
         text = self.source[self.start:self.current]
         #create and return a token
-        return Tokens.Token(tokenType, text, literal, self.line, self.char)
+        return Tokens.Token(tokenType, text, literal, self.line, self.char, indent)
 
     #advance through the source code if the current character matches what we would expect it to be
     def match(self, expected="", peek=False):

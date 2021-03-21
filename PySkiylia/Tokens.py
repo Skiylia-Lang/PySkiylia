@@ -19,12 +19,13 @@ keywords = {"class":"Class", "def":"Def", "do":"Do", "elif":"Elif", "else":"Else
             "when":"When", "while":"While",}
 
 class Token:
-    def __init__(self, type, lexeme, literal, line, char):
+    def __init__(self, type, lexeme, literal, line, char, indent):
         self.type = type
         self.lexeme = lexeme
         self.literal = literal
         self.line = line
         self.char = char
+        self.indent = indent
 
     def toString(self):
         return self.type + " " + self.lexeme + " " + self.literal

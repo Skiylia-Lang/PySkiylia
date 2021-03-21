@@ -133,7 +133,7 @@ class Parser:
         if self.check(type):
             return self.advance()
         #else show an error
-        print(self.error(self.peek, errorMessage))
+        raise RuntimeError(self.error(self.peek, errorMessage))
         #could include a raise here instead I guess?
 
     #define a way of checking if the current token is any of the supplied types
@@ -189,7 +189,7 @@ class Parser:
         else:
             self.skiylia.error(token.line, token.char, message, "at '"+token.lexeme+"'")
         #and return our base Parse error
-        return "Parse error:"+message
+        return "Parse error: "+message
 
     #define a way of returning to execution if an error was encountered
     def synchronise(self):

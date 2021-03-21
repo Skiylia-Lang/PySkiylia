@@ -2,7 +2,7 @@
 """Generates a sequence of tokens from plaintext"""
 
 #import our code
-from Expr import *
+from AbstractSyntax import *
 
 #A class that will hold miscellaneous help code
 class misc:

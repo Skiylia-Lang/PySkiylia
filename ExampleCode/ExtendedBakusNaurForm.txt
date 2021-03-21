@@ -22,6 +22,14 @@
 
 
 //The entire grammar of Skiylia in EBNF Form
+Program           > statement* EOF
+
+statement         > ExprStatement | PrintStatement
+
+ExprStatement     > Expressions "\n"*
+
+PrintStatement    > "print" "(" Expressions ")"
+
 Expressions       > LogicalAnd
 
 //Logical And has the highest precedence (and is computed last)

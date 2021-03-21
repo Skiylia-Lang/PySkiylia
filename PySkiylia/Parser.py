@@ -3,7 +3,7 @@
 #The gramar of Skiylia is encoded in the Parser Class
 
 #import our code
-from Expr import *
+from AbstractSyntax import *
 import Tokens
 
 #define the parser class

@@ -87,10 +87,18 @@ class Lexer:
             else:
                 #second ampersand not given
                 self.skiylia.error(self.line, self.char, "Missing & in logical and")
+        elif c == "^":
+            #Check for logical xor
+            if self.match("^"):
+                #return the xor token
+                return self.addToken("Xor")
+            else:
+                #second up thingy not given
+                self.skiylia.error(self.line, self.char, "Missing ^ in logical xor")
         elif c == "|":
             #Check for logical or
             if self.match("|"):
-                #return the and token
+                #return the or token
                 return self.addToken("Or")
             else:
                 #second bar not given

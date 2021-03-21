@@ -129,6 +129,22 @@ class Interpreter(misc):
     def LiteralExpr(self, expr):
         return expr.value
 
+    #define a way of unpacking abstracted Logicals
+    def LogicalExpr(self, expr):
+        #fetch the left
+        left = self.evaluate(expr.left)
+        #as 'or' will be true if left is true, and 'and' will be false is left is false, we can short circuit the logical
+        if expr.operator.type == "Or":
+            #if left is true, or will be true
+            if self.isTruthy(left):
+                return left
+        elif expr.operator.type == "And":
+            #if left is false, and will be false
+            if not self.isTruthy(left):
+                return left
+
+        return self.evaluate(expr.right)
+
     #define a way of unpacking a grouped expression at runtime
     def GroupingExpr(self, expr):
         return self.evaluate(expr.expression)
@@ -270,6 +286,7 @@ class Interpreter(misc):
         exprs = {"Assign":self.AssignExpr,
                  "Binary": self.BinaryExpr,
                  "Grouping": self.GroupingExpr,
+                 "Logical": self.LogicalExpr,
                  "Literal": self.LiteralExpr,
                  "Unary": self.UnaryExpr,
                  "Variable": self.VarExpr,}

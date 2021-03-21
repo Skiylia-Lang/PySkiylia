@@ -7,6 +7,7 @@ import sys, os
 ExprDict = {"Assign":"name,value",
             "Binary":"left,operator,right",
             "Grouping":"expression",
+            "Logical":"left,operator,right",
             "Literal":"value",
             "Unary":"operator,right",
             "Variable":"name"}

@@ -19,6 +19,12 @@ class Grouping(Expr):
 	def __init__(self, expression):
 		self.expression = expression
 
+class Logical(Expr):
+	def __init__(self, left,operator,right):
+		self.left = left
+		self.operator = operator
+		self.right = right
+
 class Literal(Expr):
 	def __init__(self, value):
 		self.value = value

@@ -43,6 +43,7 @@ a != b      //not equal to
 !a          //not a
 a && b      //a and b
 a || b      //a or b
+a ^^ b      //a xor b
 
 //Variables and assignment
 var a       //initialise as null

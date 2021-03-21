@@ -160,7 +160,7 @@ class Parser:
     #define the asignment gramar
     def assignment(self):
         #return the equality
-        expr = self.equality()
+        expr = self.logicalor()
         #if there is an equals after the identifier
         if self.match("Equal"):
             #fetch the variable name
@@ -175,6 +175,51 @@ class Parser:
             #throw an error if not
             self.skiylia.error([equals, "Invalid assignment target."])
         #return the variable
+        return expr
+
+    #define the logical or grammar
+    def logicalor(self):
+        #fetch the expression
+        expr = self.logicalxor()
+        #while we have an 'Or' operand
+        while self.match("Or"):
+            #fetch the token
+            operator = self.previous()
+            #and the right hand side
+            right = self.logicalxor()
+            #construct the abstract Logical
+            expr = Logical(expr, operator, right)
+        #return the expression
+        return expr
+
+    #define the logical xor grammar
+    def logicalxor(self):
+        #fetch the expression
+        expr = self.logicaland()
+        #while we have an 'Or' operand
+        while self.match("Xor"):
+            #fetch the token
+            operator = self.previous()
+            #and the right hand side
+            right = self.logicaland()
+            #construct the abstract Logical
+            expr = Logical(expr, operator, right)
+        #return the expression
+        return expr
+
+    #define the logical and grammar
+    def logicaland(self):
+        #fetch the expression
+        expr = self.equality()
+        #while we have an 'Or' operand
+        while self.match("And"):
+            #fetch the token
+            operator = self.previous()
+            #and the right hand side
+            right = self.equality()
+            #construct the abstract Logical
+            expr = Logical(expr, operator, right)
+        #return the expression
         return expr
 
     #define the equality gramar

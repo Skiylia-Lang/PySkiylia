@@ -23,6 +23,10 @@ class Unary(Expr):
 		self.operator = operator
 		self.right = right
 
+class Variable(Expr):
+	def __init__(self, name):
+		self.name = name
+
 class Stmt:
 	pass
 
@@ -33,3 +37,8 @@ class Expression(Stmt):
 class Print(Stmt):
 	def __init__(self, expression):
 		self.expression = expression
+
+class Var(Stmt):
+	def __init__(self, name,initial):
+		self.name = name
+		self.initial = initial

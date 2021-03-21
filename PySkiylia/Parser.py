@@ -27,9 +27,24 @@ class Parser:
         #while we have more sourcecode to parse
         while not self.atEnd():
             #compile the nex statement and add to the list
-            stmnt.append(self.statement())
+            stmnt.append(self.declaration())
         #return all the statements
         return stmnt
+
+    #define the declaration grammar
+    def declaration(self):
+        try:
+            #if we found an explicit variable declaration
+            if self.match("Var"):
+                #declare the variable
+                return self.varDeclaration(Explicit=True)
+            #return the statement after
+            return self.statement()
+        #if we encountered an error, try to return to coherent code
+        except Exception as e:
+            print(e)
+            self.synchronise()
+            return None
 
     #define the statement grammar
     def statement(self):
@@ -55,6 +70,29 @@ class Parser:
         self.consume("End", "Unbounded expression.")
         #return the abstract for print
         return Print(value)
+
+    #define the variable declaration grammar
+    def varDeclaration(self, Explicit=False):
+        #fetch the variable name
+        name = self.consume("Identifier", "Expect variable name.")
+        #define it's initial value as null
+        initial = None
+        #if this is an implicit declaration
+        if not Explicit:
+            #then we require a value to equate to
+            self.consume("Equal", "Value required for implicit variable declaration")
+            #fetch the value
+            initial = self.expression()
+        #otherwise this is an explicit declaration
+        else:
+            #if there is an equals, set it
+            if self.match("Equal"):
+                #fetch the value
+                initial = self.expression()
+        #make sure the variable is bounded
+        self.consume("End", "Unbounded variable declaration.")
+        #return the variable abstraction
+        return Var(name, initial)
 
     #define the expression statement grammar
     def expressionstatement(self):
@@ -151,6 +189,16 @@ class Parser:
         #check if a number or string
         elif self.match("Number", "String"):
             return Literal(self.previous().literal)
+        #check if a variable is there
+        elif self.match("Idenitifer"):
+            #if it is followed by an equals, this is an implicit declaration
+            if self.peek("Equal"):
+                #if it an implicit declaration, backup and declare it
+                self.current-=1
+                return self.varDeclaration()
+            #otherwise it's just the code using the variable
+            else:
+                return Variable(self.previous())
         #check if opening a parenthesis
         elif self.match("LeftParenthesis"):
             expr = self.expression()

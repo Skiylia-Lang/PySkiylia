@@ -7,10 +7,12 @@ import sys, os
 ExprDict = {"Binary":"left,operator,right",
             "Grouping":"expression",
             "Literal":"value",
-            "Unary":"operator,right"}
+            "Unary":"operator,right",
+            "Variable":"name"}
 
 StmtDict = {"Expression":"expression",
-            "Print":"expression"}
+            "Print":"expression",
+            "Var":"name,initial",}
 
 #create the class for the AST generator
 class ASTGen:

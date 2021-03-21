@@ -95,13 +95,13 @@ class Interpreter(misc):
         self.skiylia = Skiylia()
 
     #define the interpreter function
-    def interpret(self, expression):
+    def interpret(self, statements):
         #try to execute code, escape if error
         try:
-            #compute the evaluation
-            value = self.evaluate(expression)
-            #print the evaluation
-            print(self.stringify(value))
+            #loop through all statements provided
+            for statement in statements:
+                #evaluate each statement
+                self.execute(statement)
         except Exception as e:
             #fetch the token
             token = e.args[0][0]
@@ -197,7 +197,23 @@ class Interpreter(misc):
         #if we can't evaluate it at all, return None
         return None
 
-    #define a way of sending the interpreter to the correct method
+    #define the way of interpreting an expression statement
+    def ExpressionStmt(self, stmt):
+        #evaluate the expression
+        self.evaluate(stmt.expression)
+        #and return none
+        return None
+
+    #define the way of interpreting a print statement
+    def PrintStmt(self, stmt):
+        #evaluate the expression
+        value = self.evaluate(stmt.expression)
+        #print the output
+        print(self.stringify(value))
+        #and return none
+        return None
+
+    #define a way of sending the interpreter to the correct expression method
     def evaluate(self, expr):
         ##List of all supported expressions
         exprs = {"Binary": self.BinaryExpr,
@@ -208,3 +224,14 @@ class Interpreter(misc):
         exprName = expr.__class__.__name__
         #return the correct method and pass in own value
         return exprs[exprName](expr)
+
+
+    #define a way of sending the interpreter to the correct statement method
+    def execute(self, stmt):
+        ##List of all supported expressions
+        stmts = {"Expression": self.ExpressionStmt,
+                 "Print": self.PrintStmt,}
+        #fetch the class name of the expression provided
+        stmtName = stmt.__class__.__name__
+        #return the correct method and pass in own value
+        return stmts[stmtName](stmt)

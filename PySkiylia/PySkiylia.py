@@ -98,7 +98,7 @@ class Skiylia:
         #fetch the Parser class
         parser = Parser(tokens)
         #run the parser
-        expression = parser.parse()
+        statements = parser.parse()
 
         #stop if we had an error
         if self.haderror:
@@ -107,7 +107,7 @@ class Skiylia:
         #initialise the interpreter
         interpreter = Interpreter()
         #and run it with the parsed code
-        interpreter.interpret(expression)
+        interpreter.interpret(statements)
 
     #define a way of showing an error to the user
     def error(self, line=0, char=0, message="", where=""):

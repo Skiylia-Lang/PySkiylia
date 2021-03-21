@@ -22,14 +22,43 @@ class Parser:
 
     #define a way of starting up the parser
     def parse(self):
-        #error handling
-        try:
-            #run a singular expression
-            return self.expression()
-        except Exception as e:
-            #return nothing if an error was found
-            print(e)
-            return None
+        #start with an empty list
+        stmnt = []
+        #while we have more sourcecode to parse
+        while not self.atEnd():
+            #compile the nex statement and add to the list
+            stmnt.append(self.statement())
+        #return all the statements
+        return stmnt
+
+    #define the statement grammar
+    def statement(self):
+        #if the next token is a print
+        if self.match("Print"):
+            #compute the print statement
+            return self.printstatement()
+        #else return an expression statement
+        return self.expressionstatement()
+
+    #define the print statement grammar
+    def printstatement(self):
+        #ensure we have brackets
+        self.consume("(", "Expect '(' after print.")
+        #fetch the enclosed expression
+        value = self.expression()
+        #ensure we have brackets
+        self.consume(")", "Expect ')' after print.")
+        #return the abstract for print
+        return Print(value)
+
+    #define the expression statement grammar
+    def expressionstatement(self):
+        #fetch the expression
+        expr = self.expression()
+        #consume the end token
+        self.consume("End", "Unbounded expression.")
+        #return the abstraction
+        return Expression(expr)
 
     #define the expression grammar
     def expression(self):

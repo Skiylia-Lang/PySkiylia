@@ -31,15 +31,17 @@ declaration       > vardeclaration | statement
 
 vardeclaration    > ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
 
-statement         > exprstmt | ifstmt | printstmt | block
+statement         > exprstmt | ifstmt | printstmt | whilestmt | block
 
 block             > {Indent level increases} declaration {End token}+ {token with lower indentation}
 
 exprstmt          > expression {End token}+
 
-ifstmt            > "if" expression {Block token}? statement ("else" statement)?
+ifstmt            > "if" expression {Block token} statement ("else" statement)?
 
 printstmt         > "print" "(" expression ")" {End token}+
+
+whilestmt         > "while" expression {Block token} statement
 
 expression        > assignment
 

@@ -255,11 +255,11 @@ class Interpreter(misc):
         #evaluate the truthiness of the if condition
         if self.isTruthy(self.evaluate(stmt.condition)):
             #if true, execute
-            self.execute(stmt.thenbranch)
+            self.execute(stmt.thenBranch)
         #if false, and we have an else branch
-        elif stmt.elsebranch != None:
+        elif stmt.elseBranch != None:
             #execute it
-            self.execute(stmt.elsebranch)
+            self.execute(stmt.elseBranch)
         return None
 
     #define the way of interpreting a print statement

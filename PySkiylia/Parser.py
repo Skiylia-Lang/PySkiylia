@@ -86,7 +86,8 @@ class Parser:
         #fetch the if conditional
         condition = self.expression()
         #make sure we have semicolon grammar
-        consume("Colon", "Expect ':' after if condition")
+        if not self.check("Colon"):
+            raise RuntimeError(self.error(self.peek(), "Expect ':' after if condition"))
         #fetch the code to execute if the condition is true
         thenbranch = self.statement()
         #set else to none by default
@@ -95,7 +96,8 @@ class Parser:
         if self.match("Else"):
             #WILL NEED TO ADD Indentation code to check else probably
             #check for grammar
-            consume("Colon", "Expect ':' after else condition")
+            if not self.check("Colon"):
+                raise RuntimeError(self.error(self.peek(), "Expect ':' after else clause"))
             #and return the else statement
             elsebranch = self.statement()
         #return the abstracted If statement
@@ -127,8 +129,6 @@ class Parser:
         #make sure the variable is bounded
         self.consume("End", "Unbounded variable declaration.")
         #return the variable abstraction
-        print("variable")
-        print(name, initial)
         return Var(name, initial)
 
     #define the expression statement grammar
@@ -144,6 +144,10 @@ class Parser:
     def block(self):
         #initialise an empty statement array, and fetch the current indentation leve;
         statements, myIndent = [], self.peek().indent
+        #if we have an ending token
+        if self.check("End"):
+            #skip it
+            self.advance()
         #continue to search for new statements while we have more sourcecode, and the indentation does not decrease
         while (not self.atEnd()) and (self.checkindent(myIndent) != -1):
             #keep adding statements while the block is open

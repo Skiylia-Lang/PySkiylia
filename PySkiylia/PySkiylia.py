@@ -13,6 +13,7 @@ class Skiylia:
     #set the default values here
     haderror = False
     version = "v0.4.0"
+    debug = False
     #run this at initialisation
     def __init__(self, args=""):
         #we won't support more than one argument
@@ -94,14 +95,16 @@ class Skiylia:
         #and scan the sourcecode for tokens
         tokens = lexer.scanTokens()
         #Lexer output for debugging
-        print([(token.type, token.indent) for token in tokens])
+        if self.debug:
+            print([(token.type, token.indent) for token in tokens])
 
         #fetch the Parser class
         parser = Parser(tokens)
         #run the parser
         statements = parser.parse()
         #Parser output for debugging
-        print(statements)
+        if self.debug:
+            print(statements)
 
         #stop if we had an error
         if self.haderror:

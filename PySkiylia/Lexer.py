@@ -52,7 +52,10 @@ class Lexer:
         elif c == ")":
             return self.addToken("RightParenthesis")
         elif c == ":":
-            return self.addToken("Colon")
+            token = self.addToken("Colon")
+            #indent after creating the token, ensures that the following block has the appropriate indentation
+            self.indent += 1
+            return token
         elif c == ",":
             return self.addToken("Comma")
         elif c == ".":
@@ -93,7 +96,7 @@ class Lexer:
                 return self.addToken("NotEqual")
             return self.addToken("Not")
         elif c == "\t":
-            #if we met an indentation, then increment our indet tage
+            #if we met an indentation, then increment our indent tage
             self.indent += 1
         elif c == " ":
             #Two spaces are equivalent to and indent <- TEMPORARILY MIND YOU

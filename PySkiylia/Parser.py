@@ -9,10 +9,9 @@ import Tokens
 #define the parser class
 class Parser:
     #initialise
-    def __init__(self, tokens=[]):
-        #fetch the Skiylia class so we have access to it's functions
-        from PySkiylia import Skiylia
-        self.skiylia = Skiylia()
+    def __init__(self, skiylia, tokens=[]):
+        #return a method for accessing the skiylia class
+        self.skiylia = skiylia
         #set our parser position to zero
         self.current = 0
         #set the output list to empty
@@ -63,13 +62,14 @@ class Parser:
 
     #define the statement grammar
     def statement(self):
+        print(self.previous().type, self.previous().line, self.previous().char)
         #if we see anything in the blockstart list (a Colon token currently)
         if self.match(*self.blockStart):
             #anything folowing a startblock character is the start of a new block
             return Block(self.block())
         #if an indentation follows something that isn't a block definer
         elif (self.checkindent() == 1) and (self.previous().type not in self.blockStart):
-            raise SyntaxError([self.peek(), "Indentation cannot follow statements", "Indentation"])
+            raise SyntaxError([self.peek(), "Incorect indentation for statement", "Indentation"])
         #if the next token is an if
         elif self.match("If"):
             #compute the if statement

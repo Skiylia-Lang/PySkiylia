@@ -1,0 +1,7 @@
+//a single if statement block should be able to lie on the same line
+var a = 6
+
+if a > 8: print("a is greater than 8")
+else: print("a is not greater than 8")
+
+//a is not greater than 8

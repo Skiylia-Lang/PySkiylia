@@ -13,7 +13,7 @@ class Skiylia:
     #set the default values here
     haderror = False
     version = "v0.4.0"
-    debug = False
+    debug = True
     #run this at initialisation
     def __init__(self, args=""):
         #we won't support more than one argument
@@ -91,7 +91,7 @@ class Skiylia:
 
     def run(self, source):
         #fetch the Lexer class
-        lexer = Lexer(source)
+        lexer = Lexer(self, source)
         #and scan the sourcecode for tokens
         tokens = lexer.scanTokens()
         #Lexer output for debugging
@@ -99,7 +99,7 @@ class Skiylia:
             print([(token.type, token.indent) for token in tokens])
 
         #fetch the Parser class
-        parser = Parser(tokens)
+        parser = Parser(self, tokens)
         #run the parser
         statements = parser.parse()
         #Parser output for debugging
@@ -111,7 +111,7 @@ class Skiylia:
             return
 
         #initialise the interpreter
-        interpreter = Interpreter()
+        interpreter = Interpreter(self)
         #and run it with the parsed code
         interpreter.interpret(statements)
 

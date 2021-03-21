@@ -90,10 +90,9 @@ class misc:
 #define the Interpreter class
 class Interpreter(misc):
     ##initialise
-    def __init__(self):
-        #fetch the Skiylia class so we have access to it's functions
-        from PySkiylia import Skiylia
-        self.skiylia = Skiylia()
+    def __init__(self, skiylia):
+        #return a method for accessing the skiylia class
+        self.skiylia = skiylia
         self.environment = Environment()
 
     #define the interpreter function
@@ -105,11 +104,7 @@ class Interpreter(misc):
                 #evaluate each statement
                 self.execute(statement)
         except Exception as e:
-            #if we have an empty node on the syntax tree
-            if statement == None:
-                self.skiylia.error(noloc=True, where="Fatal", message="Abstract Syntax Tree contains empty node.")
-                return
-            #otherwise fetch the token
+            #fetch the token
             token = e.args[0][0]
             #and message
             message = e.args[0][1]
@@ -302,6 +297,7 @@ class Interpreter(misc):
 
     #define a way of sending the interpreter to the correct statement method
     def execute(self, stmt):
+        print(stmt)
         ##List of all supported expressions
         stmts = {"Block": self.BlockStmt,
                  "Expression": self.ExpressionStmt,

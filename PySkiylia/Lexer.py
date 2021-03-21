@@ -6,10 +6,9 @@ import Tokens
 #create the Lexer class
 class Lexer:
     #the function to run at initialisation
-    def __init__(self, source):
-        #fetch the Skiylia class so we have access to it's functions
-        from PySkiylia import Skiylia
-        self.skiylia = Skiylia()
+    def __init__(self, skiylia, source):
+        #return a method for accessing the skiylia class
+        self.skiylia = skiylia
         #initialise the Lexer
         self.source = source
         self.start = 0

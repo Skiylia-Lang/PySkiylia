@@ -12,7 +12,7 @@ from Interpreter import Interpreter
 class Skiylia:
     #set the default values here
     haderror = False
-    version = "v0.3.1"
+    version = "v0.4.0"
     #run this at initialisation
     def __init__(self, args=""):
         #we won't support more than one argument

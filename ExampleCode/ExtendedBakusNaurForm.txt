@@ -22,44 +22,46 @@
 
 
 //The entire grammar of Skiylia in EBNF Form
+{Block token}     > ":"
 {End token}       > '\n'
 
-Program           > declaration* EOF
+program           > declaration* EOF
 
-declaration       > variableDec | statement
+declaration       > vardeclaration | statement
 
-variableDec       > ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
-                  //| ( Idenitifer "=" expression )                     <=implicit requires "="       <- Removed implementation
+vardeclaration    > ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
 
-statement         > ExprStatement | PrintStatement | block
+statement         > exprstmt | ifstmt | printstmt | block
 
 block             > {Indent level increases} declaration {End token}+ {token with lower indentation}
 
-ExprStatement     > Expressions {End token}+
+exprstmt          > expression {End token}+
 
-PrintStatement    > "print" "(" Expressions ")" {End token}+
+ifstmt            > "if" expression {Block token}? statement ("else" statement)?
 
-Expressions       > assignment
+printstmt         > "print" "(" expression ")" {End token}+
 
-assignment        > Identifier "=" assignment | LogicalAnd
+expression        > assignment
+
+assignment        > Identifier "=" assignment | logicalAnd
 
 //Logical And has the highest precedence (and is computed last)
-LogicalAnd        > LogicalOr ( ( "&&" ) LogicalOr )*
+logicalAnd        > logicalOr ( ( "&&" ) logicalOr )*
 
-LogicalOr         > Equality ( ( "||" ) Equality )*
+logicalOr         > equality ( ( "||" ) equality )*
 
-Equality          > Comparison ( ( "!=" | "==" ) Comparison )*
+equality          > comparison ( ( "!=" | "==" ) comparison )*
 
 //Then comparisons
-Comparison        > Term ( ( ">" | "<" ) Term )*
+comparison        > term ( ( ">" | "<" ) term )*
 
 //Then terms
-Term              > Factor ( ( "-" | "+" ) Factor )*
+term              > factor ( ( "-" | "+" ) factor )*
 
 //Then factors
-Factor            > Unary ( ( "*" | "/" ) Unary )*
+factor            > unary ( ( "*" | "/" ) unary )*
 
 //And finally unary has the lowest precedence (and are computed first)
-Unary             > ( "!" | "-" ) Unary | Literal
+unary             > ( "!" | "-" ) unary | literal
 
-Literal           > Number | String | "true" | "false" | "null" | "(" expression ")" | Identifier
+literal           > Number | String | "true" | "false" | "null" | "(" expression ")" | Identifier

@@ -5,6 +5,7 @@
 from AbstractSyntax import *
 from Environment import Environment
 from SkiyliaCallable import SkiyliaCallable
+import Primitives
 
 #A class that will hold miscellaneous help code
 class misc:
@@ -103,24 +104,18 @@ class Interpreter(misc):
         #and a our current variable scope
         self.environment = self.globals
         #and add our primitives to the global scope
-        self.primitives()
+        self.fetchprimitives()
 
     #define the primitives
-    def primitives(self):
-        #create the clock primitive
-        clock = SkiyliaCallable()
-        #create the code that will execute when ran
-        def clockcall(interpreter, arguments):
-            return time.time()
-        #define it's arity
-        clock.arity=0
-        #overwrite its call function
-        clock.call = clockcall
-        #and add the string that is shown
-        clock.string = "primitive function"
-        #and add it to the global scope
-        self.globals.define("clock", clock)
-
+    def fetchprimitives(self):
+        #fetch all classes who are a subclass of SkiyliaCallable
+        primitives = SkiyliaCallable.__subclasses__()
+        #itterate through them
+        for primitive in primitives:
+            #if they are from the primitives module
+            if primitive.__module__ == "Primitives":
+                #add them to the global scope
+                self.globals.define(primitive.__name__, primitive())
 
     #define the interpreter function
     def interpret(self, statements):
@@ -267,11 +262,11 @@ class Interpreter(misc):
         #check the callee is actually callable
         if not isinstance(callee, SkiyliaCallable):
             #throw an error if it's not a callable object
-            raise RuntimeError([expr.paren, "Can only call functions and classes"])
+            raise RuntimeError([expr.parenthesis, "Can only call functions and classes"])
         #check we have been given the correct number of arguments
         if len(args) != callee.arity:
             #raise an error if it was different
-            raise RuntimeError([expr.paren, "Expected {} arguments but got {}.".format(callee.arity, len(args))])
+            raise RuntimeError([expr.parenthesis, "Expected {} arguments but got {}.".format(callee.arity, len(args))])
         #return and call the callable
         return callee.call(self, args)
 

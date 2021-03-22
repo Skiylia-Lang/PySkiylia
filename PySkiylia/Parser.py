@@ -390,7 +390,7 @@ class Parser:
                 #fetch and append the next argument
                 arguments.append(self.expression())
         #fetch the final parenthesis
-        paren = self.consume("Expect ')' after arguments.")
+        paren = self.consume("Expect ')' after arguments.", "RightParenthesis")
         #return the function call
         return Call(callee, paren, arguments)
 

@@ -1,8 +1,5 @@
  #!/usr/bin/env python
-"""Generates a sequence of tokens from plaintext"""
-
-#base python code
-import time
+"""Executes code from Abstractions"""
 
 #import our code
 from AbstractSyntax import *
@@ -109,7 +106,7 @@ class Interpreter(misc):
         self.primitives()
 
     #define the primitives
-    def primitives():
+    def primitives(self):
         #create the clock primitive
         clock = SkiyliaCallable()
         #create the code that will execute when ran
@@ -119,8 +116,11 @@ class Interpreter(misc):
         clock.arity=0
         #overwrite its call function
         clock.call = clockcall
+        #and add the string that is shown
+        clock.string = "primitive function"
         #and add it to the global scope
         self.globals.define("clock", clock)
+
 
     #define the interpreter function
     def interpret(self, statements):
@@ -268,14 +268,12 @@ class Interpreter(misc):
         if not isinstance(callee, SkiyliaCallable):
             #throw an error if it's not a callable object
             raise RuntimeError([expr.paren, "Can only call functions and classes"])
-        #create a callable object
-        function = SkiyliaCallable(callee)
         #check we have been given the correct number of arguments
-        if len(args) != function.arity:
+        if len(args) != callee.arity:
             #raise an error if it was different
-            raise RuntimeError([expr.paren, "Expected {} arguments but got {}.".format(function.arity, len(args))])
+            raise RuntimeError([expr.paren, "Expected {} arguments but got {}.".format(callee.arity, len(args))])
         #return and call the callable
-        return function.call(self, args)
+        return callee.call(self, args)
 
     #define the method of fetching a variables value
     def VarExpr(self, expr):

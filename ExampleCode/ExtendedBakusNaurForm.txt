@@ -68,7 +68,12 @@ term              > factor ( ( "-" | "+" ) factor )*
 //Then factors
 factor            > unary ( ( "*" | "/" ) unary )*
 
-//And finally unary has the lowest precedence (and are computed first)
-unary             > ( "!" | "-" ) unary | literal
+//then unaries
+unary             > ( "!" | "-" ) unary | call
+
+//And finally call has the lowest precedence (and is computed first)
+call              > literal ( "(" arguments? ")" )*
+
+arguments         > expression ( "," expression )*
 
 literal           > Number | String | "true" | "false" | "null" | "(" expression ")" | Identifier

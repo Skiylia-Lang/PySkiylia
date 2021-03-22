@@ -1,11 +1,12 @@
 #!/usr/bin/env python
-"""Generates an Abstract Syntax Tree (I hope)"""
+"""Generates the Abstract Syntax Tree Syntax file"""
 
 #Import base python
 import sys, os
 
 ExprDict = {"Assign":"name,value",
             "Binary":"left,operator,right",
+            "Call":"callee,parenthesis,arguments",
             "Grouping":"expression",
             "Logical":"left,operator,right",
             "Literal":"value",

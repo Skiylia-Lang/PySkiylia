@@ -14,7 +14,7 @@ for var x when x < 10 do x = x+2:
 
 //4) only incremental
 
-for var x do x = x+2:
-  print(x)
+//for var x do x = x+2:
+//  print(x)
 
 //0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, ...

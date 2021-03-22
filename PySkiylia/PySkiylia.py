@@ -7,12 +7,13 @@ import sys, os
 from Lexer import Lexer
 from Parser import Parser
 from Interpreter import Interpreter
+from ASTPrinter import ASTPrinter
 
 #Main function to be called when executed
 class Skiylia:
     #set the default values here
     haderror = False
-    version = "v0.5.0"
+    version = "v0.4.1"
     debug = True
     #run this at initialisation
     def __init__(self, args=""):
@@ -96,6 +97,7 @@ class Skiylia:
         tokens = lexer.scanTokens()
         #Lexer output for debugging
         if self.debug:
+            print("Tokenised source code:")
             print([(token.type, token.indent) for token in tokens])
 
         #fetch the Parser class
@@ -104,7 +106,9 @@ class Skiylia:
         statements = parser.parse()
         #Parser output for debugging
         if self.debug:
-            print(statements)
+            print("\nAbstracted source code:")
+            astprinter = ASTPrinter()
+            astprinter.display(statements)
 
         #stop if we had an error
         if self.haderror:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Generates an Abstract Syntax Tree (I hope)"""
+"""Generates the Abstract Syntax Tree Syntax file"""
 
 #Import base python
 import sys, os

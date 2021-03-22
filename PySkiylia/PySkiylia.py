@@ -114,7 +114,7 @@ class Skiylia:
             astprinter.display(statements)
 
         #initialise the interpreter
-        interpreter = Interpreter(self)
+        interpreter = Interpreter(self, parser.arglimit)
         #and run it with the parsed code
         interpreter.interpret(statements)
 

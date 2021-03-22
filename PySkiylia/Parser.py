@@ -80,9 +80,9 @@ class Parser:
             #compute the for
             return self.forstatement()
         #if the next token is a print
-        elif self.match("Print"):
+        #elif self.match("Print"):
             #compute the print statement
-            return self.printstatement()
+        #    return self.printstatement()'''
         #if the next token is a while
         elif self.match("While"):
             #compute the while statement
@@ -162,7 +162,7 @@ class Parser:
         #return the for loop in its' fully deconstructed form
         return body
 
-    #define the print statement grammar
+    '''#define the print statement grammar
     def printstatement(self):
         #ensure we have brackets
         self.consume("Expect '(' after print.", "LeftParenthesis")
@@ -173,7 +173,7 @@ class Parser:
         #the print statement must also be bound
         self.consume("Unbounded expression.", "End")
         #return the abstract for print
-        return Print(value)
+        return Print(value)'''
 
     #define the variable declaration grammar
     def varDeclaration(self, *Endings):
@@ -532,7 +532,7 @@ class Parser:
             #otherise, get the current token type
             thisToken = self.peek().type
             #if it is one of the token types that starts a statement, stop the loop
-            if thisToken in ["Class", "Def", "Var", "For", "If", "While", "Print", "Return"]:
+            if thisToken in ["Class", "Def", "End", "For", "If", "Return", "Var", "While"]:
                 break
             #move past the token we just found
             self.advance()

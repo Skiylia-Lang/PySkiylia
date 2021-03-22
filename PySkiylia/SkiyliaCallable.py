@@ -5,6 +5,7 @@
 class SkiyliaCallable:
     arity=0
     string=""
+    callname = ""
     #initialiser
     def __init__(self, callee=""):
         #we're given the callee name

@@ -96,13 +96,15 @@ class misc:
 #define the Interpreter class
 class Interpreter(misc):
     ##initialise
-    def __init__(self, skiylia):
+    def __init__(self, skiylia, arglimit):
         #return a method for accessing the skiylia class
         self.skiylia = skiylia
         #track the current global environment scope
         self.globals = Environment()
         #and a our current variable scope
         self.environment = self.globals
+        #define the maximum number of allowed arguments in a function call
+        self.arglimit = arglimit
         #and add our primitives to the global scope
         self.fetchprimitives()
 
@@ -114,8 +116,13 @@ class Interpreter(misc):
         for primitive in primitives:
             #if they are from the primitives module
             if primitive.__module__ == "Primitives":
+                #fetch the call name
+                callname = primitive.__name__
+                #check if a custom one has been defined
+                if primitive.callname:
+                    callname=primitive.callname
                 #add them to the global scope
-                self.globals.define(primitive.__name__, primitive())
+                self.globals.define(callname, primitive())
 
     #define the interpreter function
     def interpret(self, statements):
@@ -263,10 +270,15 @@ class Interpreter(misc):
         if not isinstance(callee, SkiyliaCallable):
             #throw an error if it's not a callable object
             raise RuntimeError([expr.parenthesis, "Can only call functions and classes"])
+        if isinstance(callee.arity, str):
+            minargs, maxargs = [int(x.replace("*", str(self.arglimit))) for x in callee.arity.split(",")]
+            arglim = str(minargs)+" to "+str(maxargs)
+        else:
+            minargs = maxargs = arglim = callee.arity
         #check we have been given the correct number of arguments
-        if len(args) != callee.arity:
+        if not (minargs <= len(args) <= maxargs):
             #raise an error if it was different
-            raise RuntimeError([expr.parenthesis, "Expected {} arguments but got {}.".format(callee.arity, len(args))])
+            raise RuntimeError([expr.parenthesis, "Expected {} argument{} but got {}.".format(arglim, "s"*(arglim!=1), len(args))])
         #return and call the callable
         return callee.call(self, args)
 
@@ -300,14 +312,14 @@ class Interpreter(misc):
             self.evaluate(stmt.elseBranch)
         return None
 
-    #define the way of interpreting a print statement
+    '''#define the way of interpreting a print statement
     def PrintStmt(self, stmt):
         #evaluate the expression
         value = self.evaluate(stmt.expression)
         #print the output
         print(self.stringify(value))
         #and return none
-        return None
+        return None'''
 
     #define the ways of handling variables
     def VarStmt(self, stmt):
@@ -345,7 +357,7 @@ class Interpreter(misc):
                      "Block": self.BlockStmt,
                      "Expression": self.ExpressionStmt,
                      "If": self.IfStmt,
-                     "Print": self.PrintStmt,
+                     #"Print": self.PrintStmt,
                      "Var":self.VarStmt,
                      "While":self.WhileStmt,}
         #fetch the class name of the abstract provided

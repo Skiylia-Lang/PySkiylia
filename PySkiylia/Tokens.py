@@ -8,13 +8,13 @@ tokens = [#single character tokens
             #Literal tokens
             "String", "Number", "Identifier",
             #keyword tokens
-            "Class", "Def", "Do", "Elif", "Else", "False", "For", "If", "Null", "Print", "Return", "Self", "Super", "True", "Var","When", "While",
+            "Class", "Def", "Do", "Elif", "Else", "False", "For", "If", "Null", "Return", "Self", "Super", "True", "Var","When", "While",
             #miscellaneous
             "EOF", "End"]
 
 #a dictionary mapping keywords to their equivalent tokens
 keywords = {"class":"Class", "def":"Def", "do":"Do", "elif":"Elif", "else":"Else",
-            "false":"False", "for":"For", "if":"If", "null":"Null", "print":"Print",
+            "false":"False", "for":"For", "if":"If", "null":"Null",
             "return":"Return", "self":"Self", "super":"Super", "true":"True", "var":"Var",
             "when":"When", "while":"While",}
 

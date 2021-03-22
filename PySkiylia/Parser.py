@@ -374,7 +374,7 @@ class Parser:
         return self.call()
 
     #define the function that checks for the end of a call
-    def finishCall(callee):
+    def finishCall(self, callee):
         #empty arguments list
         arguments = []
         #check we have arguments to parse

@@ -1,6 +1,9 @@
  #!/usr/bin/env python
 """Generates a sequence of tokens from plaintext"""
 
+#base python code
+import time
+
 #import our code
 from AbstractSyntax import *
 from Environment import Environment
@@ -98,7 +101,26 @@ class Interpreter(misc):
     def __init__(self, skiylia):
         #return a method for accessing the skiylia class
         self.skiylia = skiylia
-        self.environment = Environment()
+        #track the current global environment scope
+        self.globals = Environment()
+        #and a our current variable scope
+        self.environment = self.globals
+        #and add our primitives to the global scope
+        self.primitives()
+
+    #define the primitives
+    def primitives():
+        #create the clock primitive
+        clock = SkiyliaCallable()
+        #create the code that will execute when ran
+        def clockcall(interpreter, arguments):
+            return time.time()
+        #define it's arity
+        clock.arity=0
+        #overwrite its call function
+        clock.call = clockcall
+        #and add it to the global scope
+        self.globals.define("clock", clock)
 
     #define the interpreter function
     def interpret(self, statements):

@@ -131,7 +131,7 @@ class Interpreter(misc):
             #and message
             message = e.args[0][1]
             #and raise an error
-            self.skiylia.error(token.line, token.char, message, "RuntimeError")
+            self.skiylia.error(token.line, token.char, message, "Runtime")
 
     #define a way to assign variables abstractly
     def AssignExpr(self, expr):

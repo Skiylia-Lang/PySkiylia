@@ -27,7 +27,13 @@
 
 program           > declaration* EOF
 
-declaration       > vardeclaration | statement
+declaration       > functiondeclaration | vardeclaration | statement
+
+funcdeclaration   > "def" function
+
+function          > Identifier "(" parameters? ")" {Block token} block
+
+parameters        > Identifier ( "," Identifier )*
 
 vardeclaration    > ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
 

@@ -55,6 +55,12 @@ class Expression(Stmt):
 	def __init__(self, expression):
 		self.expression = expression
 
+class Function(Stmt):
+	def __init__(self, name,params,body):
+		self.name = name
+		self.params = params
+		self.body = body
+
 class If(Stmt):
 	def __init__(self, condition,thenBranch,elseBranch):
 		self.condition = condition

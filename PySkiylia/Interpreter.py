@@ -4,6 +4,7 @@
 #import our code
 from AbstractSyntax import *
 from Environment import Environment
+from SkiyliaCallable import SkiyliaCallable
 
 #A class that will hold miscellaneous help code
 class misc:
@@ -106,7 +107,7 @@ class Interpreter(misc):
             #loop through all statements provided
             for statement in statements:
                 #evaluate each statement
-                self.execute(statement)
+                self.evaluate(statement)
         except Exception as e:
             #fetch the token
             token = e.args[0][0]
@@ -231,6 +232,29 @@ class Interpreter(misc):
         #if we can't evaluate it at all, return None
         return None
 
+    #define a way of performing a call
+    def CallExpr(self, expr):
+        #fetch the function name
+        callee = self.evaluate(expr.callee)
+        #empty args list
+        args=[]
+        #if we have arguments, loop through them
+        for arg in expr.arguments:
+            #append each argument to the list
+            args.append(self.evaluate(arg))
+        #check the callee is actually callable
+        if not isinstance(callee, SkiyliaCallable):
+            #throw an error if it's not a callable object
+            raise RuntimeError([expr.paren, "Can only call functions and classes"])
+        #create a callable object
+        function = SkiyliaCallable(callee)
+        #check we have been given the correct number of arguments
+        if len(args) != function.arity:
+            #raise an error if it was different
+            raise RuntimeError([expr.paren, "Expected {} arguments but got {}.".format(function.arity, len(args))])
+        #return and call the callable
+        return function.call(self, args)
+
     #define the method of fetching a variables value
     def VarExpr(self, expr):
         #fetch the name from the Environment holder
@@ -254,11 +278,11 @@ class Interpreter(misc):
         #evaluate the truthiness of the if condition
         if self.isTruthy(self.evaluate(stmt.condition)):
             #if true, execute
-            self.execute(stmt.thenBranch)
+            self.evaluate(stmt.thenBranch)
         #if false, and we have an else branch
         elif stmt.elseBranch != None:
             #execute it
-            self.execute(stmt.elseBranch)
+            self.evaluate(stmt.elseBranch)
         return None
 
     #define the way of interpreting a print statement
@@ -288,39 +312,31 @@ class Interpreter(misc):
         #while the condition is truthy
         while self.isTruthy(self.evaluate(stmt.condition)):
             #execute the body of the while loop
-            self.execute(stmt.body)
+            self.evaluate(stmt.body)
         #and return none
         return None
 
-    #define a way of sending the interpreter to the correct expression method
-    def evaluate(self, expr):
-        ##List of all supported expressions
-        exprs = {"Assign":self.AssignExpr,
-                 "Binary": self.BinaryExpr,
-                 "Grouping": self.GroupingExpr,
-                 "Logical": self.LogicalExpr,
-                 "Literal": self.LiteralExpr,
-                 "Unary": self.UnaryExpr,
-                 "Variable": self.VarExpr,}
-        #fetch the class name of the expression provided
-        exprName = expr.__class__.__name__
+    #define a way of sending the interpreter to the correct method
+    def evaluate(self, abstract):
+        ##List of all supported expressions and statements
+        abstracts = {"Assign":self.AssignExpr,
+                     "Binary": self.BinaryExpr,
+                     "Call": self.CallExpr,
+                     "Grouping": self.GroupingExpr,
+                     "Logical": self.LogicalExpr,
+                     "Literal": self.LiteralExpr,
+                     "Unary": self.UnaryExpr,
+                     "Variable": self.VarExpr,
+                     "Block": self.BlockStmt,
+                     "Expression": self.ExpressionStmt,
+                     "If": self.IfStmt,
+                     "Print": self.PrintStmt,
+                     "Var":self.VarStmt,
+                     "While":self.WhileStmt,}
+        #fetch the class name of the abstract provided
+        abstractName = abstract.__class__.__name__
         #return the correct method and pass in own value
-        return exprs[exprName](expr)
-
-
-    #define a way of sending the interpreter to the correct statement method
-    def execute(self, stmt):
-        ##List of all supported expressions
-        stmts = {"Block": self.BlockStmt,
-                 "Expression": self.ExpressionStmt,
-                 "If": self.IfStmt,
-                 "Print": self.PrintStmt,
-                 "Var":self.VarStmt,
-                 "While":self.WhileStmt,}
-        #fetch the class name of the expression provided
-        stmtName = stmt.__class__.__name__
-        #return the correct method and pass in own value
-        return stmts[stmtName](stmt)
+        return abstracts[abstractName](abstract)
 
     #define a way of executing block code
     def executeBlock(self, statements, environment):
@@ -332,7 +348,7 @@ class Interpreter(misc):
             #loop through the given statements
             for statement in statements:
                 #and execute them
-                self.execute(statement)
+                self.evaluate(statement)
         finally:
             #restore the parent scope now we have finished
             self.environment = previous

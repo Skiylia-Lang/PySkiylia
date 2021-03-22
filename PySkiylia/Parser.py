@@ -8,6 +8,8 @@ import Tokens
 
 #define the parser class
 class Parser:
+    #limit the number of arguments a function can utilise
+    arglimit=255
     #initialise
     def __init__(self, skiylia, tokens=[]):
         #return a method for accessing the skiylia class
@@ -369,7 +371,44 @@ class Parser:
             #return the unary combination
             return Unary(operator, right)
         #otherwise return the literal
-        return self.literal()
+        return self.call()
+
+    #define the function that checks for the end of a call
+    def finishCall(callee):
+        #empty arguments list
+        arguments = []
+        #check we have arguments to parse
+        if not self.check("RightParenthesis"):
+            #append the first argument to our list
+            arguments.append(self.expression())
+            #while there is a comma
+            while self.match("Comma"):
+                #if we have seen more arguments than our limit
+                if len(arguments) >= self.arglimit:
+                    #show an error
+                    self.error(self.peek(), "Can't have more than {} arguments.".format(self.arglimit))
+                #fetch and append the next argument
+                arguments.append(self.expression())
+        #fetch the final parenthesis
+        paren = self.consume("Expect ')' after arguments.")
+        #return the function call
+        return Call(callee, paren, arguments)
+
+    #define the function call grammar
+    def call(self):
+        #fetch the literal in front
+        expr = self.literal()
+        #keep looping
+        while True:
+            #if we have an open parenthesis
+            if self.match("LeftParenthesis"):
+                #fetch the rest of the call
+                expr = self.finishCall(expr)
+            else:
+                #otherwise stop here
+                break
+        #return the call
+        return expr
 
     def literal(self):
         #check if we have any known identifiers

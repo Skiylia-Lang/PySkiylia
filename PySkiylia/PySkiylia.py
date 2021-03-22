@@ -13,7 +13,7 @@ from ASTPrinter import ASTPrinter
 class Skiylia:
     #set the default values here
     haderror = False
-    version = "v0.4.2"
+    version = "v0.4.3"
     debug = True
     #run this at initialisation
     def __init__(self, args=""):
@@ -101,7 +101,7 @@ class Skiylia:
             print([(token.type, token.indent) for token in tokens])
 
         #fetch the Parser class
-        parser = Parser(self, tokens)
+        parser = Parser(self, tokens, lexer.primitives)
         #run the parser
         statements = parser.parse()
         #stop if we had an error
@@ -114,7 +114,7 @@ class Skiylia:
             astprinter.display(statements)
 
         #initialise the interpreter
-        interpreter = Interpreter(self)
+        interpreter = Interpreter(self, parser.arglimit)
         #and run it with the parsed code
         interpreter.interpret(statements)
 

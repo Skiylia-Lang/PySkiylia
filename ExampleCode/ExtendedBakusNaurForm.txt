@@ -27,7 +27,13 @@
 
 program           > declaration* EOF
 
-declaration       > vardeclaration | statement
+declaration       > functiondeclaration | vardeclaration | statement
+
+funcdeclaration   > "def" function
+
+function          > Identifier "(" parameters? ")" {Block token} block
+
+parameters        > Identifier ( "," Identifier )*
 
 vardeclaration    > ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
 
@@ -41,8 +47,6 @@ forstmt           > "for" (vardeclaration | exprstmt) ("when" expression)? ("do"
 //allowed for loop types 1) for x:    2) for x when x<=10:    3) for x when x<10 do x=x+2:    4) for x do x=x+2:
 
 ifstmt            > "if" expression {Block token} statement ("else" statement)?
-
-printstmt         > "print" "(" expression ")" {End token}+
 
 whilestmt         > "while" expression {Block token} statement
 
@@ -73,6 +77,8 @@ unary             > ( "!" | "-" ) unary | call
 
 //And finally call has the lowest precedence (and is computed first)
 call              > literal ( "(" arguments? ")" )*
+printstmt         > "print" "(" expression ")" {End token}+
+//extends call instead of being a seperate function
 
 arguments         > expression ( "," expression )*
 

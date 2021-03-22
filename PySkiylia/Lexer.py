@@ -11,11 +11,33 @@ class Lexer:
         self.skiylia = skiylia
         #initialise the Lexer
         self.source = source
-        self.start = 0
-        self.current = 0
-        self.line = 1
-        self.char = 1
-        self.indent = 0
+        #start pointer at zeroth character
+        self.start = self.current = self.indent = 0
+        #start at first character
+        self.line = self.char = 1
+        #start empty primitives
+        self.primitives = []
+        self.fetchprimitives()
+
+    #create tokens for primitives, so we do not have to search for a call
+    def fetchprimitives(self):
+        from SkiyliaCallable import SkiyliaCallable
+        import Primitives
+        #fetch all classes who are a subclass of SkiyliaCallable
+        primitives = SkiyliaCallable.__subclasses__()
+        #itterate through them
+        for primitive in primitives:
+            #if they are from the primitives module
+            if primitive.__module__ == "Primitives":
+                #fetch the call name
+                callname = primitive.__name__
+                #check if a custom one has been defined
+                if primitive.callname:
+                    callname=primitive.callname
+                #add them to the token list
+                Tokens.keywords[callname] = "Identifier"
+                #and append to an internal primitives list
+                self.primitives.append(callname)
 
     #create a method of scanning tokens
     def scanTokens(self):
@@ -137,7 +159,6 @@ class Lexer:
         thisIdentifier = self.source[self.start:self.current]
         #check if it is a keyword first
         if thisIdentifier in Tokens.keywords:
-
             return self.addToken(Tokens.keywords[thisIdentifier])
         #if nothing else, return a standard identifier
         return self.addToken("Identifier")

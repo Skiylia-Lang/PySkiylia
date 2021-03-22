@@ -11,7 +11,7 @@ class Parser:
     #limit the number of arguments a function can utilise
     arglimit=255
     #initialise
-    def __init__(self, skiylia, tokens=[]):
+    def __init__(self, skiylia, tokens=[], primitives=[]):
         #return a method for accessing the skiylia class
         self.skiylia = skiylia
         #set our parser position to zero
@@ -20,6 +20,8 @@ class Parser:
         self.final = []
         #set the tokens
         self.tokens = tokens
+        #set the primitives
+        self.primitives = primitives
         #define all of the tokens that can start a block (not a lot as of current)
         self.blockStart = ["Colon"]
 
@@ -79,14 +81,18 @@ class Parser:
         elif self.match("For"):
             #compute the for
             return self.forstatement()
-        #if the next token is a print
-        #elif self.match("Print"):
-            #compute the print statement
-        #    return self.printstatement()'''
         #if the next token is a while
         elif self.match("While"):
             #compute the while statement
             return self.whilestatement()
+        #check if the token matches a primitive, and shortcut to the call logic
+        elif self.peek().lexeme in self.primitives:
+            #fetch the primitive code
+            callfunc = self.call()
+            #make sure the primitive closes
+            self.consume("Unbounded function.", "End")
+            #and return it
+            return callfunc
         #else return an expression statement
         return self.expressionstatement()
 
@@ -161,19 +167,6 @@ class Parser:
 
         #return the for loop in its' fully deconstructed form
         return body
-
-    '''#define the print statement grammar
-    def printstatement(self):
-        #ensure we have brackets
-        self.consume("Expect '(' after print.", "LeftParenthesis")
-        #fetch the enclosed expression
-        value = self.expression()
-        #ensure we have brackets
-        self.consume("Expect ')' after print.", "RightParenthesis")
-        #the print statement must also be bound
-        self.consume("Unbounded expression.", "End")
-        #return the abstract for print
-        return Print(value)'''
 
     #define the variable declaration grammar
     def varDeclaration(self, *Endings):
@@ -432,8 +425,9 @@ class Parser:
             self.consume("Expect ')' after an expression.", "RightParenthesis")
             return Grouping(expr)
         elif self.match("End"):
-            pass
-        #if we found nothing, throw an error
+            print("End")
+            return
+            #if we found nothing, throw an error
         return self.error(self.peek(), "Expected an expression.")
 
     #define a way of checking if a token is found, and consuming it

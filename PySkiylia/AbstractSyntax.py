@@ -67,10 +67,6 @@ class If(Stmt):
 		self.thenBranch = thenBranch
 		self.elseBranch = elseBranch
 
-class Print(Stmt):
-	def __init__(self, expression):
-		self.expression = expression
-
 class Var(Stmt):
 	def __init__(self, name,initial):
 		self.name = name

@@ -7,6 +7,29 @@ import time
 #import our code
 from SkiyliaCallable import SkiyliaCallable
 
+#convert internal representation to user readible code
+def stringify(obj):
+    #if none, show null
+    if obj==None:
+        return "null"
+    #if the object is boolean
+    elif isinstance(obj, bool):
+        #if the object is true
+        if obj==True:
+            return "true"
+        #else the object is false
+        elif obj==False:
+            return "false"
+    #if it's a number
+    if isinstance(obj, float) or isinstance(obj, int):
+        #if it's an integer, cast to integer first
+        if obj.is_integer():
+            return str(int(obj))
+        #else just return it
+        return str(obj)
+    #return the string of the object
+    return str(obj)
+
 #print function
 class skiyliaprint(SkiyliaCallable):
     #define the functional input
@@ -16,7 +39,7 @@ class skiyliaprint(SkiyliaCallable):
     callname = "print"
     #overwrite the call
     def call(self, interpreter, arguments):
-        print(*arguments)
+        print(*map(stringify, arguments))
         return None
 
 #clock

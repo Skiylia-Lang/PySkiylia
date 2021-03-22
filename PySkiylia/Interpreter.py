@@ -9,6 +9,7 @@ import Primitives
 
 #A class that will hold miscellaneous help code
 class misc:
+    stringify = Primitives.stringify
     #define a way of checking if objects are numbers
     def checkNumber(self, operator, *args):
         #loop through all provided arguments
@@ -69,29 +70,6 @@ class misc:
             return False
         #else return the python equality
         return a==b
-
-    #convert internal representation to user readible code
-    def stringify(self, obj):
-        #if none, show null
-        if obj==None:
-            return "null"
-        #if the object is boolean
-        elif isinstance(obj, bool):
-            #if the object is true
-            if obj==True:
-                return "true"
-            #else the object is false
-            elif obj==False:
-                return "false"
-        #if it's a number
-        if isinstance(obj, float) or isinstance(obj, int):
-            #if it's an integer, cast to integer first
-            if obj.is_integer():
-                return str(int(obj))
-            #else just return it
-            return str(obj)
-        #return the string of the object
-        return str(obj)
 
 #define the Interpreter class
 class Interpreter(misc):
@@ -312,15 +290,6 @@ class Interpreter(misc):
             self.evaluate(stmt.elseBranch)
         return None
 
-    '''#define the way of interpreting a print statement
-    def PrintStmt(self, stmt):
-        #evaluate the expression
-        value = self.evaluate(stmt.expression)
-        #print the output
-        print(self.stringify(value))
-        #and return none
-        return None'''
-
     #define the ways of handling variables
     def VarStmt(self, stmt):
         #define the default value
@@ -357,7 +326,6 @@ class Interpreter(misc):
                      "Block": self.BlockStmt,
                      "Expression": self.ExpressionStmt,
                      "If": self.IfStmt,
-                     #"Print": self.PrintStmt,
                      "Var":self.VarStmt,
                      "While":self.WhileStmt,}
         #fetch the class name of the abstract provided

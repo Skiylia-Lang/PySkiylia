@@ -15,6 +15,12 @@ class Binary(Expr):
 		self.operator = operator
 		self.right = right
 
+class Call(Expr):
+	def __init__(self, callee,parenthesis,arguments):
+		self.callee = callee
+		self.parenthesis = parenthesis
+		self.arguments = arguments
+
 class Grouping(Expr):
 	def __init__(self, expression):
 		self.expression = expression

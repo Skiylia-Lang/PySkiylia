@@ -16,7 +16,7 @@ Dynamically typed Object Oriented Program Language.
 ## Releases
 
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/SK1Y101/PySkiylia?include_prereleases)
-![GitHub commits since latest release (by date including pre-releases)](https://img.shields.io/github/commits-since/SK1Y101/PySkiylia/latest?include_prereleases)
+![GitHub commits since latest release (by date including pre-releases)](https://img.shields.io/github/commits-since/SK1Y101/PySkiylia/latest/develop?include_prereleases)
 ![GitHub milestone](https://img.shields.io/github/milestones/progress/SK1Y101/PySkiylia/1)
 ![GitHub milestones](https://img.shields.io/github/milestones/open/SK1Y101/PySkiylia)
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/SK1Y101/PySkiylia.svg)](http://isitmaintained.com/project/SK1Y101/PySkiylia "Percentage of issues still open")

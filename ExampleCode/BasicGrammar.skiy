@@ -150,3 +150,7 @@ print(thing-to-print)   //shows display to screen, can be any data-type or varia
 str(a) / string(a)      //explicitly converts a to a string
 int(a) / integer(a)     //explicitly converts a to an integer
 flt(a) / float(a)       //explicitly converts a to a float
+
+//primitives (Functions from the base language, rather than ones I wrote myself)
+clock                   //returns the current utc time
+runtime                 //returns the time since the script started executing code <- NOT SURE HOW TO DO THIS YET

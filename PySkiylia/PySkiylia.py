@@ -13,7 +13,7 @@ from ASTPrinter import ASTPrinter
 class Skiylia:
     #set the default values here
     haderror = False
-    version = "v0.4.1"
+    version = "v0.4.2"
     debug = True
     #run this at initialisation
     def __init__(self, args=""):
@@ -104,15 +104,14 @@ class Skiylia:
         parser = Parser(self, tokens)
         #run the parser
         statements = parser.parse()
+        #stop if we had an error
+        if self.haderror:
+            return
         #Parser output for debugging
         if self.debug:
             print("\nAbstracted source code:")
             astprinter = ASTPrinter()
             astprinter.display(statements)
-
-        #stop if we had an error
-        if self.haderror:
-            return
 
         #initialise the interpreter
         interpreter = Interpreter(self)

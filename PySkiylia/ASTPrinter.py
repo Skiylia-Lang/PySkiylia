@@ -20,6 +20,9 @@ class ASTPrinter:
     def BlockStmt(self, stmt):
         return self.toparenthesis("block", stmt.statements)
 
+    def CallExpr(self, expr):
+        return self.toparenthesis("call", expr.callee, expr.arguments)
+
     def ExpressionStmt(self, stmt):
         return self.toparenthesis("",stmt.expression)
 
@@ -78,6 +81,7 @@ class ASTPrinter:
         absts = {"Assign":self.AssignExpr,
                 "Binary": self.BinaryExpr,
                 "Block": self.BlockStmt,
+                "Call": self.CallExpr,
                 "Expression": self.ExpressionStmt,
                 "Grouping": self.GroupingExpr,
                 "If": self.IfStmt,

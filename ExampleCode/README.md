@@ -25,7 +25,11 @@ All the people who have contributed ([emoji key](https://allcontributors.org/doc
 <!-- markdownlint-disable -->
 <table>
   <tr>
+<<<<<<< HEAD
     <td align="center"><a href="https://github.com/SK1Y101"><img src="https://avatars.githubusercontent.com/u/8695579?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jack Lloyd-Walters</b></sub></a><br /><a href="https://github.com/SK1Y101/PySkiylia/commits?author=SK1Y101" title="Code">💻</a></td>
+=======
+    <td align="center"><a href="https://github.com/SK1Y101"><img src="https://avatars.githubusercontent.com/u/8695579?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jack Lloyd-Walters</b></sub></a><br /><a href="https://github.com/SK1Y101/PySkiylia/commits?author=SK1Y101" title="Code">💻</a> <a href="https://github.com/SK1Y101/PySkiylia/pulls?q=is%3Apr+reviewed-by%3ASK1Y101" title="Reviewed Pull Requests">👀</a></td>
+>>>>>>> 5576f0d... docs: update ExampleCode/README.md [skip ci]
     <td align="center"><a href="https://github.com/SK2Y202"><img src="https://avatars.githubusercontent.com/u/81203841?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jack Lloyd-Walters</b></sub></a><br /><a href="https://github.com/SK1Y101/PySkiylia/pulls?q=is%3Apr+reviewed-by%3ASK2Y202" title="Reviewed Pull Requests">👀</a></td>
   </tr>
 </table>

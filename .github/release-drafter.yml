@@ -1,14 +1,6 @@
 name-template: 'version $RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
 #the template to display
-template: |
-  # What's Changed
-  
-  $CHANGES
-  
-  ## Who helped
-  
-  $CONTRIBUTORS
 categories:
   - title: 'Major'
     labels:
@@ -19,15 +11,13 @@ categories:
   - title: 'Bug Fixes'
     labels:
       - 'bug'
-      - 'bugfix'
-      - 'fix'
   - title: 'Maintenance'
     labels:
       - 'maintenance'
       - 'hotfix'
   - title: 'Documentation'
     labels:
-      - 'docs'
+      - 'documentation'
   - title: 'Dependency Updates'
     labels:
       - 'dependencies'
@@ -58,3 +48,12 @@ version-resolver:
 
 exclude-labels:
   - 'skip-changelog'
+
+template: |
+  # What's Changed
+  
+  $CHANGES
+  
+  ## Who helped
+  
+  $CONTRIBUTORS

@@ -4,9 +4,6 @@ Dynamically typed Object Oriented Program Language.
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
 ![GitHub](https://img.shields.io/github/license/SK1Y101/PySkiylia)
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat)](#contributors)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
 ![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/SK1Y101/PySkiylia)
 [![codecov](https://codecov.io/gh/SK1Y101/PySkiylia/branch/main/graph/badge.svg?token=DRJ67ZQA7M)](https://codecov.io/gh/SK1Y101/PySkiylia)
 [![time tracker](https://wakatime.com/badge/github/SK1Y101/PySkiylia.svg?style=flat-square)](https://wakatime.com/badge/github/SK1Y101/PySkiylia)
@@ -14,6 +11,10 @@ Dynamically typed Object Oriented Program Language.
 ![GitHub top language](https://img.shields.io/github/languages/top/SK1Y101/PySkiylia)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/SK1Y101/PySkiylia)
 ![Lines of code](https://img.shields.io/tokei/lines/github.com/SK1Y101/PySkiylia)
+
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat)](#contributors)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Releases
 

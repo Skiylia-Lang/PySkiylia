@@ -2,6 +2,11 @@
 """Generates callable objects"""
 from Environment import Environment
 
+#the return exception class for
+class Return(Exception):
+    def __init__(self, value):
+        self.message = value
+
 #define the callable class
 class SkiyliaCallable:
     arity=0
@@ -36,7 +41,12 @@ class SkiyliaFunction(SkiyliaCallable):
         for x in range(len(self.declaration.params)):
             #add them to our local environment
             self.environment.define(self.declaration.params[x].lexeme, arguments[x])
-        #ask the interpreter to execute the block
-        interpreter.executeBlock(self.declaration.body.statements, self.environment)
+        #as we're handling returns using exceptions, we need a try
+        try:
+            #ask the interpreter to execute the block
+            interpreter.executeBlock(self.declaration.body.statements, self.environment)
+        except Return as ret:
+            #if we had a return, return the contents
+            return ret.message
         #return None by default
         return None

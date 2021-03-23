@@ -4,7 +4,7 @@
 #import our code
 from AbstractSyntax import *
 from Environment import Environment
-from SkiyliaCallable import SkiyliaCallable, SkiyliaFunction
+from SkiyliaCallable import Return, SkiyliaCallable, SkiyliaFunction
 import Primitives
 
 #A class that will hold miscellaneous help code
@@ -299,6 +299,17 @@ class Interpreter(misc):
             self.evaluate(stmt.elseBranch)
         return None
 
+    #define the return grammar
+    def ReturnStmt(self, stmt):
+        #none by default
+        value = None
+        #if we have a value
+        if stmt.value != None:
+            #evaluate it
+            value = self.evaluate(stmt.value)
+        #create an exception so we can return all the way back to the call
+        raise Return(value)
+
     #define the ways of handling variables
     def VarStmt(self, stmt):
         #define the default value
@@ -334,6 +345,7 @@ class Interpreter(misc):
                      "If": self.IfStmt,
                      "Logical": self.LogicalExpr,
                      "Literal": self.LiteralExpr,
+                     "Return": self.ReturnStmt,
                      "Unary": self.UnaryExpr,
                      "Var":self.VarStmt,
                      "Variable": self.VarExpr,

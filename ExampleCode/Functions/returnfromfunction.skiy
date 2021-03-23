@@ -1,0 +1,6 @@
+//return the calculation from a function
+
+def thisfunc(a, b):
+  return a+b
+
+print(thisfunc(1, 2))

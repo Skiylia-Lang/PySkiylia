@@ -8,7 +8,7 @@ tokens = [#single character tokens
             #Literal tokens
             "String", "Number", "Identifier",
             #keyword tokens
-            "Class", "Def", "Do", "Elif", "Else", "False", "For", "If", "Null", "Return", "Self", "Super", "True", "Var","When", "While",
+            "Class", "Def", "Do", "Elif", "Else", "False", "For", "If", "Null", "Return", "Self", "Super", "True", "Var", "Where", "While",
             #miscellaneous
             "EOF", "End"]
 
@@ -16,7 +16,7 @@ tokens = [#single character tokens
 keywords = {"class":"Class", "def":"Def", "do":"Do", "elif":"Elif", "else":"Else",
             "false":"False", "for":"For", "if":"If", "null":"Null",
             "return":"Return", "self":"Self", "super":"Super", "true":"True", "var":"Var",
-            "when":"When", "while":"While",}
+            "when":"Where", "where":"Where", "while":"While",}
 
 class Token:
     def __init__(self, type, lexeme, literal, line, char, indent):

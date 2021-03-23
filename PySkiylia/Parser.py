@@ -212,10 +212,14 @@ class Parser:
         keyword = self.previous()
         #return none by default
         value = None
-        #check the return has not been terminated
+        #check the return has not been terminated empty
         if not self.check("End"):
             value = self.expression()
-        print(self.checkindent(keyword.indent))
+        #make sure there is an ending attatched to the return
+        self.consume("Unbounded return statement.", "End")
+        #check that the code is then deindented
+        if not self.checkindent(keyword.indent)<0:
+            raise SyntaxError([self.peek(), "Incorect indentation for return statement", "Indentation"])
         #return the return... interesting
         return Return(keyword, value)
 

@@ -1,0 +1,61 @@
+name-template: 'version $RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+#the template to display
+template: |
+  # What's Changed
+  
+  $CHANGES
+  
+  ## Who helped
+  
+  $CONTRIBUTORS
+categories:
+  - title: 'Major'
+    labels:
+      - 'major'
+  - title: 'Features'
+    labels:
+      - 'feature'
+      - 'enhancement'
+  - title: 'Bug Fixes'
+    labels:
+      - 'bug'
+      - 'bugfix'
+      - 'fix'
+  - title: 'Maintenance'
+    labels:
+      - 'maintenance'
+      - 'hotfix'
+  - title: 'Documentation'
+    labels:
+      - 'docs'
+  - title: 'Dependency Updates'
+    labels:
+      - 'dependencies'
+      - 'security'
+
+# update the version number given the previous version
+version-resolver:
+  major:
+    labels:
+      - 'major'
+      #major version if tagged "major"
+  minor:
+    labels:
+      - 'feature'
+      - 'enhancement'
+      - 'minor'
+      #major version if tagged "feature" or "minor"
+  patch:
+    labels:
+      - 'bug'
+      - 'maintenance'
+      - 'docs'
+      - 'dependencies'
+      - 'security'
+      - 'hotfix'
+      - 'patch'
+  default: patch
+
+exclude-labels:
+  - 'skip-changelog'

@@ -175,6 +175,8 @@ class Parser:
     def functiondeclaration(self, functype):
         #fetch the name of the function
         name = self.consume("Expect {} name.".format(functype), "Identifier")
+        #check for the parentheses grammar
+        self.consume("Expect '(' after {} declaration.".format(functype), "LeftParenthesis")
         #empty parameter list
         params = []
         #check for zero parameters given

@@ -9,7 +9,9 @@ from AbstractSyntax import *
 from ASTPrinter import Evaluator
 
 #define the Resolver class
-class Resolver(misc, Evaluator):
+class Resolver(Evaluator):
+    #hold some thingies my dude
+    FunctionType = {"None":0, "Function":1}
     ##initialise
     def __init__(self, skiylia, interpreter, arglimit):
         #return a method for accessing the skiylia class
@@ -18,8 +20,19 @@ class Resolver(misc, Evaluator):
         self.interpreter = interpreter
         #define the maximum number of allowed arguments in a function call
         self.arglimit = arglimit
+        #define the current function as null
+        self.currentFunction = self.FunctionType["None"]
         #define the scope stack
         self.scopes = deque()
+
+    #run the resolver
+    def Resolve(self, stmts):
+        #create a 'global' scope
+        self.beginScope()
+        #resolve all statements
+        self.resolve(stmts)
+        #remove the 'global' scope
+        self.endScope()
 
     #resolve assignments
     def AssignExpr(self, expr):
@@ -37,11 +50,11 @@ class Resolver(misc, Evaluator):
     #check through the contents of a block
     def BlockStmt(self, stmt):
         #create a new scope
-        self.beginScope()
+        #self.beginScope()
         #resolve the contents of the block
         self.resolve(stmt.statements)
         #finalise the scope
-        self.endScope()
+        #self.endScope()
         #return none
         return None
 
@@ -61,8 +74,10 @@ class Resolver(misc, Evaluator):
         self.declare(stmt.name)
         #and define it
         self.define(stmt.name)
+        #tell the resolver we are now in a function
+        self.currentFunction = self.FunctionType["Function"]
         #and resolve the body of the function
-        self.resolveFunction(stmt)
+        self.resolveFunction(stmt, self.currentFunction)
         return None
 
     def IfStmt(self, stmt):
@@ -88,6 +103,8 @@ class Resolver(misc, Evaluator):
         return None
 
     def ReturnStmt(self, stmt):
+        if self.currentFunction == self.FunctionType["None"]:
+            self.skiyla.error(stmt.keyword, "Can't return from top-level code")
         if stmt.value:
             self.resolve(stmt.value)
         return None
@@ -99,7 +116,7 @@ class Resolver(misc, Evaluator):
     #calling variables
     def VarExpr(self, expr):
         #check that the scope exists, and that the variable has been initialised
-        if self.scopes and (self.scopes[-1][expr.name.lexeme]==False):
+        if bool(self.scopes) and (expr.name.lexeme in self.scopes[-1]) and (self.scopes[-1][expr.name.lexeme]==False):
             #if it hasn't, and the scope exists, throw an error
             self.skiylia.error(expr.name, "Can't read local variable in its own initialiser")
         #otherwise resolve the local variables
@@ -129,29 +146,37 @@ class Resolver(misc, Evaluator):
         self.scopes.append(dict())
 
     #remove a local scope
-    def beginScope(self):
+    def endScope(self):
         #remove from the top of the stack
         self.scopes.pop()
 
     #declare names into the scope
     def declare(self, name):
         #if we don't have a stack,
-        if self.scopes:
+        if not bool(self.scopes):
             #return empty
             return
+        #if the variable has already been declared
+        if name.lexeme in self.scopes[-1]:
+            #chuck an error
+            self.skiylia.error(name, "Variable with this name already in scope.")
         #otherwise add the name to the stack and declare it unusable (each stack position is on top (last index) and is a dict)
         self.scopes[-1][name.lexeme] = False
 
     #make sure the variable can be used
     def define(self, name):
         #if the scope exists, we can continue
-        if self.scopes:
+        if not bool(self.scopes):
             return
         #mark the variable as initialised
         self.scopes[-1][name.lexeme] = True
 
     #resolve the body of a function
-    def resolveFunction(self, function):
+    def resolveFunction(self, function, funcType):
+        #get the function type of the parent
+        enclosingFunction = self.currentFunction
+        #and set the internal representation to our function type
+        self.currentFunction = funcType
         #create a scope for the function
         self.beginScope()
         #loop through the parameters
@@ -163,6 +188,8 @@ class Resolver(misc, Evaluator):
         self.resolve(function.body)
         #finally end the local scope
         self.endScope()
+        #and reset the function type of the parent to current
+        self.currentFunction = enclosingFunction
 
     #resolve is something is local, or furthe rup the scope
     def resolveLocal(self, expr, name):
@@ -171,7 +198,7 @@ class Resolver(misc, Evaluator):
             #if the local is found here
             if name.lexeme in self.scopes[x]:
                 #return None in the distance from the current scope to the one where the variable was found
-                self.interpreter.resolve(expr, len(self.scopes) - 1 - i)
+                self.interpreter.resolve(expr, len(self.scopes) - 1 - x)
                 return
 
     #loop through provided statements

@@ -1,21 +1,56 @@
-pull_request_rules:
-  - name: merge on CI success
+queue_rules:
+  - name: default
     conditions:
       - base=main
-      - label!=work-in-progress
-      - "#approved-reviews-by>=1"
-    actions:
-      merge:
-        method: merge
+    speculative_checks: 5
 
-  - name: delete head branch after merge
+pull_request_rules:
+  - name: automatic merge when GitHub branch protection passes
     conditions:
-      - merged
-      - base!=main
-      - head!=develop
-      #don't delete if we're merging into main from develop
+      - label!=work-in-progress
+      - -closed
+      - -merged
     actions:
-      delete_head_branch: {}
+      assign:
+        users: [SK1Y101]
+      queue:
+        name: default
+
+  - name: apply patches to developmental and stable branches
+    conditions:
+      - base=main
+      - -closed
+      - -merged
+    actions:
+      backport:
+        regexes: [^stable/, develop]
+
+  - name: automatic merge for Snyk pull requests
+    conditions:
+      - base=main
+      - title~=^\[Snyk\]
+      - head~=^snyk-fix
+      - check-success~=^security/snyk
+      - -closed
+      - -merged
+    actions:
+      review:
+        type: APPROVE
+      queue:
+        name: default
+
+  - name: automatic merge for Dependabot pull requests
+    conditions:
+      - base=main
+      - author~=^dependabot(|-preview)\[bot\]$
+      - check-success~=^security/snyk
+      - -closed
+      - -merged
+    actions:
+      review:
+        type: APPROVE
+      queue:
+        name: default
 
   - name: remove outdated reviews
     conditions:
@@ -23,19 +58,11 @@ pull_request_rules:
     actions:
       dismiss_reviews: {}
 
-  - name: automatic merge for Snyk pull requests
+  - name: delete head branch after merge
     conditions:
-      - title~=^\[Snyk\]
-      - head~=^snyk-fix
-      - check-success~=^security/snyk
+      - merged
+      - head!=main
+      - head!=develop
+      #don't delete if we're merging from develop or main
     actions:
-      merge:
-        method: merge
-
-  - name: automatic merge for Dependabot pull requests
-    conditions:
-      - author~=^dependabot(|-preview)\[bot\]$
-      - check-success=Travis CI - Pull Request
-    actions:
-      merge:
-        method: merge
+      delete_head_branch: {}

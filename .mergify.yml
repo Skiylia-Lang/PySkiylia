@@ -49,6 +49,20 @@ pull_request_rules:
         method: merge
         strict: smart+fasttrack
 
+  - name: automatic merge for Allcontributors bot pull requests
+    conditions:
+      - base=main
+      - author~=^allcontributors\[bot\]$
+      - check-success~=^security/snyk
+      - -closed
+      - -merged
+    actions:
+      review:
+        type: APPROVE
+      merge:
+        method: merge
+        strict: smart+fasttrack
+
   - name: remove outdated reviews
     conditions:
       - base=master

@@ -56,7 +56,7 @@ class Parser:
             message = e.args[0][1]
             #and location if given
             where = "RuntimeError"
-            if len(e.args[0]) > 1:
+            if len(e.args[0]) > 2:
                 where = e.args[0][2]
             #and raise an error
             self.skiylia.error(token.line, token.char, message, where)
@@ -88,6 +88,10 @@ class Parser:
         #if the next token is a function declaration
         elif self.match("Def"):
             return self.functiondeclaration("function")
+        #if we are returning from a function
+        elif self.match("Return"):
+            #fetch the return
+            return self.returnstatement()
         #check if the token matches a primitive, and shortcut to the call logic
         elif self.peek().lexeme in self.primitives:
             #fetch the primitive code
@@ -126,7 +130,7 @@ class Parser:
         #fetch the increment variable
         if self.match("Var"):
             #if we see an explicit variable declaration, do that
-            initialiser = self.varDeclaration("When", "Do", "Colon")
+            initialiser = self.varDeclaration("Where", "Do", "Colon")
             #as we consumed the last token, back up one
             self.current -=1
         else:
@@ -136,7 +140,7 @@ class Parser:
         #condition
         condition = None
         #check it has not been ommited
-        if self.match("When"):
+        if self.match("Where"):
             #fetch the conditional
             condition = self.expression()
 
@@ -202,6 +206,23 @@ class Parser:
         #and return the function
         return Function(name, params, body)
 
+    #define the return grammar
+    def returnstatement(self):
+        #fetch the "Return" token for error reporting
+        keyword = self.previous()
+        #return none by default
+        value = None
+        #check the return has not been terminated empty
+        if not self.check("End"):
+            value = self.expression()
+        #make sure there is an ending attatched to the return
+        self.consume("Unbounded return statement.", "End")
+        #check that the code is then deindented
+        if not self.checkindent(keyword.indent)<0:
+            raise SyntaxError([self.peek(), "Incorect indentation for return statement", "Indentation"])
+        #return the return... interesting
+        return Return(keyword, value)
+
     #define the variable declaration grammar
     def varDeclaration(self, *Endings):
         #if the variable terminator is not defined, pass an end token
@@ -253,7 +274,9 @@ class Parser:
         while (not self.atEnd()) and (self.checkindent(myIndent) != -1):
             #keep adding statements while the block is open
             statements.append(self.declaration())
-        #self.consume("End", "Unexpected indentation error")
+            #check if we have cascading end tokens
+            if self.check("End") and (self.checkindent(myIndent) != -1):
+                self.advance()
         #return the statement array
         return statements
 
@@ -418,6 +441,10 @@ class Parser:
                 arguments.append(self.expression())
         #fetch the final parenthesis
         paren = self.consume("Expect ')' after arguments.", "RightParenthesis")
+        #can't have a colon after a call
+        if self.check("Colon"):
+            self.advance()
+            raise SyntaxError(self.error(self.previous(), "':' cannot follow function calls."))
         #return the function call
         return Call(callee, paren, arguments)
 
@@ -459,8 +486,7 @@ class Parser:
             self.consume("Expect ')' after an expression.", "RightParenthesis")
             return Grouping(expr)
         elif self.match("End"):
-            print("End")
-            return
+            raise SyntaxError([self.previous(), "Unbounded object."])
             #if we found nothing, throw an error
         return self.error(self.peek(), "Expected an expression.")
 
@@ -522,9 +548,10 @@ class Parser:
         return self.tokens[self.current + 1]
 
     #define a way of checking if the next token has a higher or lower indentation than the current one does
-    def checkindent(self, thatIndent=""):
+    def checkindent(self, thatIndent="", thisIndent=""):
         #fetch the current tokens indentation
-        thisIndent = self.peek().indent
+        if not thisIndent:
+            thisIndent = self.peek().indent
         #if the code has not supplied an indent value
         if not thatIndent:
             #fetch the previous token indentation

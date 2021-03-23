@@ -35,6 +35,11 @@ class Literal(Expr):
 	def __init__(self, value):
 		self.value = value
 
+class Return(Expr):
+	def __init__(self, keyword,value):
+		self.keyword = keyword
+		self.value = value
+
 class Unary(Expr):
 	def __init__(self, operator,right):
 		self.operator = operator

@@ -52,9 +52,18 @@ class Lexer:
             token = self.tokenFromChar()
             #append the token to our list of tokens, provided we recieved one
             if token:
+                #if the last token was an ending
+                if self.checkPreviousToken("End"):
+                    #fetch it
+                    lt = self.previousToken()
+                    #and check we haven't skipped an indentation
+                    if token.indent<lt.indent-1:
+                        #create a new ending token at the same position, but with one lower indentation
+                        self.tokens.append(Tokens.Token("End", "", None, lt.line, lt.char, lt.indent - 1))
+                #add the token
                 self.tokens.append(token)
         #add an end token if none exists
-        if not self.previousToken("End"):
+        if not self.checkPreviousToken("End"):
             self.tokens.append(Tokens.Token("End", "", None, self.line, self.char+1, self.indent))
         #add an EOF token
         self.tokens.append(Tokens.Token("EOF", "", None, self.line, self.char+1, 0))
@@ -135,7 +144,7 @@ class Lexer:
             tempindent = self.indent
             self.indent = 0
             #check we don't have a string of ending tokens
-            if not self.previousToken("End"):
+            if not self.checkPreviousToken("End"):
                 #return the ending token (This will be useful for the parser, as it can identify if a line, and thus statement, has finished)
                 return self.addToken("End", indent=tempindent)
         else:
@@ -256,13 +265,18 @@ class Lexer:
         #otherwise return the character
         return self.source[self.current+1]
 
+    #return the previous token
+    def previousToken(self):
+        #get the last token and test
+        return self.tokens[-1]
+
     #return if the previous token was of an appropriate type
-    def previousToken(self, type):
+    def checkPreviousToken(self, type):
         #if we don't have any tokens, this is false
         if len(self.tokens)==0:
             return False
-        #otherwise, get the last token and test
-        return self.tokens[-1].type == type
+        #if we don't have any tokens, this is false
+        return self.previousToken().type == type
 
     #advance through the source code and return the character
     def advance(self):

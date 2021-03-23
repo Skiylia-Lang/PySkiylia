@@ -27,7 +27,7 @@ class ASTPrinter:
         return self.toparenthesis("",stmt.expression)
 
     def FunctionStmt(self, stmt):
-        return self.toparenthesis("define {}".format(stmt.name.lexeme), stmt.params)
+        return self.toparenthesis("define {}".format(stmt.name.lexeme), stmt.params, stmt.body)
 
     def GroupingExpr(self, expr):
         return self.toparenthesis("group", expr.expression)
@@ -44,6 +44,9 @@ class ASTPrinter:
 
     def LogicalExpr(self, expr):
         return self.toparenthesis(expr.operator.lexeme, expr.left, expr.right)
+
+    def ReturnStmt(self, stmt):
+        return self.toparenthesis("return", stmt.value)
 
     def UnaryExpr(self, expr):
         return self.toparenthesis(expr.operator.lexeme, expr.right)
@@ -88,6 +91,7 @@ class ASTPrinter:
                 "If": self.IfStmt,
                 "Literal": self.LiteralExpr,
                 "Logical": self.LogicalExpr,
+                "Return": self.ReturnStmt,
                 "Unary": self.UnaryExpr,
                 "Var":self.VarStmt,
                 "Variable": self.VarExpr,

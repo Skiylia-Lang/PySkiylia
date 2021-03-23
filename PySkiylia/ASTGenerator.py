@@ -10,6 +10,7 @@ ExprDict = {"Assign":"name,value",
             "Grouping":"expression",
             "Logical":"left,operator,right",
             "Literal":"value",
+            "Return":"keyword,value",
             "Unary":"operator,right",
             "Variable":"name"}
 

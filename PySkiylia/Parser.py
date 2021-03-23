@@ -56,7 +56,7 @@ class Parser:
             message = e.args[0][1]
             #and location if given
             where = "RuntimeError"
-            if len(e.args[0]) > 1:
+            if len(e.args[0]) > 2:
                 where = e.args[0][2]
             #and raise an error
             self.skiylia.error(token.line, token.char, message, where)
@@ -274,7 +274,9 @@ class Parser:
         while (not self.atEnd()) and (self.checkindent(myIndent) != -1):
             #keep adding statements while the block is open
             statements.append(self.declaration())
-        #self.consume("End", "Unexpected indentation error")
+            #check if we have cascading end tokens
+            if self.check("End") and (self.checkindent(myIndent) != -1):
+                self.advance()
         #return the statement array
         return statements
 
@@ -480,8 +482,7 @@ class Parser:
             self.consume("Expect ')' after an expression.", "RightParenthesis")
             return Grouping(expr)
         elif self.match("End"):
-            print("End")
-            return
+            raise SyntaxError([self.previous(), "Unbounded object."])
             #if we found nothing, throw an error
         return self.error(self.peek(), "Expected an expression.")
 
@@ -543,9 +544,10 @@ class Parser:
         return self.tokens[self.current + 1]
 
     #define a way of checking if the next token has a higher or lower indentation than the current one does
-    def checkindent(self, thatIndent=""):
+    def checkindent(self, thatIndent="", thisIndent=""):
         #fetch the current tokens indentation
-        thisIndent = self.peek().indent
+        if not thisIndent:
+            thisIndent = self.peek().indent
         #if the code has not supplied an indent value
         if not thatIndent:
             #fetch the previous token indentation

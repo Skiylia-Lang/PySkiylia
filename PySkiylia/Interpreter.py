@@ -5,6 +5,7 @@
 from AbstractSyntax import *
 from Environment import Environment
 from SkiyliaCallable import Return, SkiyliaCallable, SkiyliaFunction
+from ASTPrinter import Evaluator
 import Primitives
 
 #A class that will hold miscellaneous help code
@@ -72,7 +73,7 @@ class misc:
         return a==b
 
 #define the Interpreter class
-class Interpreter(misc):
+class Interpreter(misc, Evaluator):
     ##initialise
     def __init__(self, skiylia, arglimit):
         #return a method for accessing the skiylia class
@@ -126,53 +127,6 @@ class Interpreter(misc):
         self.environment.assign(expr.name, value)
         #and return the value
         return value
-
-    #define a way of converting from the literal AST to a runtime value
-    def LiteralExpr(self, expr):
-        return expr.value
-
-    #define a way of unpacking abstracted Logicals
-    def LogicalExpr(self, expr):
-        #fetch the left
-        left = self.evaluate(expr.left)
-        #as 'or' will be true if left is true, and 'and' will be false is left is false, we can short circuit the logical
-        if expr.operator.type == "Or":
-            #if left is true, 'or' will be true
-            if self.isTruthy(left):
-                return left
-        elif expr.operator.type == "And":
-            #if left is false, 'and' will be false
-            if not self.isTruthy(left):
-                return left
-        elif expr.operator.type == "Xor":
-            #if left is true, 'xor' will be the opposite of right
-            if self.isTruthy(left):
-                return not self.evaluate(expr.right)
-
-        return self.evaluate(expr.right)
-
-    #define a way of unpacking a grouped expression at runtime
-    def GroupingExpr(self, expr):
-        return self.evaluate(expr.expression)
-
-    #define a way of unpacking a Unary
-    def UnaryExpr(self, expr):
-        #fetch the right
-        right = self.evaluate(expr.right)
-        #fetch the operation type
-        optype = expr.operator.type
-        #check whether the optype is recognised
-        if optype == "Minus":
-            self.checkNumber(expr.operator, right)
-            #return the float value negated
-            return -float(right)
-        #check if a logical not
-        elif optype == "Not":
-            #return the not of the operand
-            return not self.isTruthy(right)
-
-        ##if we couldn't get the value
-        return None
 
     #define a way of unpacking a binary expression
     def BinaryExpr(self, expr):
@@ -234,6 +188,12 @@ class Interpreter(misc):
         #if we can't evaluate it at all, return None
         return None
 
+    #define the methods for dealing with block abstractions
+    def BlockStmt(self, stmt):
+        #execute the next block, passing in the statements and creating a new environment
+        self.executeBlock(stmt.statements, Environment(self.environment))
+        return None
+
     #define a way of performing a call
     def CallExpr(self, expr):
         #fetch the function name
@@ -259,17 +219,6 @@ class Interpreter(misc):
             raise RuntimeError([expr.parenthesis, "Expected {} argument{} but got {}.".format(arglim, "s"*(arglim!=1), len(args))])
         #return and call the callable
         return callee.call(self, args)
-
-    #define the method of fetching a variables value
-    def VarExpr(self, expr):
-        #fetch the name from the Environment holder
-        return self.environment.fetch(expr.name)
-
-    #define the methods for dealing with block abstractions
-    def BlockStmt(self, stmt):
-        #execute the next block, passing in the statements and creating a new environment
-        self.executeBlock(stmt.statements, Environment(self.environment))
-        return None
 
     #define the way of interpreting an expression statement
     def ExpressionStmt(self, stmt):
@@ -299,6 +248,34 @@ class Interpreter(misc):
             self.evaluate(stmt.elseBranch)
         return None
 
+    #define a way of converting from the literal AST to a runtime value
+    def LiteralExpr(self, expr):
+        return expr.value
+
+    #define a way of unpacking abstracted Logicals
+    def LogicalExpr(self, expr):
+        #fetch the left
+        left = self.evaluate(expr.left)
+        #as 'or' will be true if left is true, and 'and' will be false is left is false, we can short circuit the logical
+        if expr.operator.type == "Or":
+            #if left is true, 'or' will be true
+            if self.isTruthy(left):
+                return left
+        elif expr.operator.type == "And":
+            #if left is false, 'and' will be false
+            if not self.isTruthy(left):
+                return left
+        elif expr.operator.type == "Xor":
+            #if left is true, 'xor' will be the opposite of right
+            if self.isTruthy(left):
+                return not self.evaluate(expr.right)
+
+        return self.evaluate(expr.right)
+
+    #define a way of unpacking a grouped expression at runtime
+    def GroupingExpr(self, expr):
+        return self.evaluate(expr.expression)
+
     #define the return grammar
     def ReturnStmt(self, stmt):
         #none by default
@@ -309,6 +286,30 @@ class Interpreter(misc):
             value = self.evaluate(stmt.value)
         #create an exception so we can return all the way back to the call
         raise Return(value)
+
+    #define a way of unpacking a Unary
+    def UnaryExpr(self, expr):
+        #fetch the right
+        right = self.evaluate(expr.right)
+        #fetch the operation type
+        optype = expr.operator.type
+        #check whether the optype is recognised
+        if optype == "Minus":
+            self.checkNumber(expr.operator, right)
+            #return the float value negated
+            return -float(right)
+        #check if a logical not
+        elif optype == "Not":
+            #return the not of the operand
+            return not self.isTruthy(right)
+
+        ##if we couldn't get the value
+        return None
+
+    #define the method of fetching a variables value
+    def VarExpr(self, expr):
+        #fetch the name from the Environment holder
+        return self.environment.fetch(expr.name)
 
     #define the ways of handling variables
     def VarStmt(self, stmt):
@@ -331,29 +332,6 @@ class Interpreter(misc):
             self.evaluate(stmt.body)
         #and return none
         return None
-
-    #define a way of sending the interpreter to the correct method
-    def evaluate(self, abstract):
-        ##List of all supported expressions and statements
-        abstracts = {"Assign":self.AssignExpr,
-                     "Block": self.BlockStmt,
-                     "Binary": self.BinaryExpr,
-                     "Call": self.CallExpr,
-                     "Expression": self.ExpressionStmt,
-                     "Function": self.FunctionStmt,
-                     "Grouping": self.GroupingExpr,
-                     "If": self.IfStmt,
-                     "Logical": self.LogicalExpr,
-                     "Literal": self.LiteralExpr,
-                     "Return": self.ReturnStmt,
-                     "Unary": self.UnaryExpr,
-                     "Var":self.VarStmt,
-                     "Variable": self.VarExpr,
-                     "While":self.WhileStmt,}
-        #fetch the class name of the abstract provided
-        abstractName = abstract.__class__.__name__
-        #return the correct method and pass in own value
-        return abstracts[abstractName](abstract)
 
     #define a way of executing block code
     def executeBlock(self, statements, environment):

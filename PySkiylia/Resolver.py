@@ -18,6 +18,8 @@ class Resolver(misc, Evaluator):
         self.interpreter = interpreter
         #define the maximum number of allowed arguments in a function call
         self.arglimit = arglimit
+        #define the scope stack
+        self.scopes = deque()
 
     def AssignExpr(self, expr):
         pass
@@ -25,10 +27,16 @@ class Resolver(misc, Evaluator):
     def BinaryExpr(self, expr):
         pass
 
+    #check through the contents of a block
     def BlockStmt(self, stmt):
+        #create a new scope
         self.beginScope()
-        self.resolve()
-        pass
+        #resolve the contents of the block
+        self.resolve(stmt.statements)
+        #finalise the scope
+        self.endScope()
+        #return none
+        return None
 
     def CallExpr(self, expr):
         pass
@@ -60,8 +68,54 @@ class Resolver(misc, Evaluator):
     def VarExpr(self, expr):
         pass
 
+    #declare variables?
     def VarStmt(self, stmt):
-        pass
+        #declare the variable
+        self.declare(stmt.name)
+        #if it's not empty
+        if stmt.initial != 0.0:
+            #resolve it's value
+            self.resolve(stmt.initial)
+        #define the variable
+        self.define(stmt.name)
+        return None
 
     def WhileStmt(self, stmt):
         pass
+
+    #create a local scope
+    def beginScope(self):
+        #add to the top of the stack
+        self.scopes.append(dict())
+
+    #remove a local scope
+    def beginScope(self):
+        #remove from the top of the stack
+        self.scopes.pop()
+
+    #declare names into the scope
+    def declare(self, name):
+        #if we don't have a stack,
+        if self.scopes:
+            #return empty
+            return
+        #otherwise add the name to the stack and declare it unusable (each stack position is on top (last index) and is a dict)
+        self.scopes[-1][name.lexeme] = False
+
+    #make sure the variable can be used
+    def define(self, name):
+        if self.scopes:
+            return
+        self.scopes[-1][name.lexeme] = True
+
+    #loop through provided statements
+    def resolve(self, stmts):
+        #if we have an itterable
+        if isinstance(stmts, list):
+            #loop through all given
+            for stmt in stmts:
+                #and call the evaluation
+                self.evaluate(stmt)
+        else:
+            #otherwise use the singular
+            self.evaluate(stmts)

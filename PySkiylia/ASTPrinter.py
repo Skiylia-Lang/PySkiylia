@@ -27,7 +27,7 @@ class ASTPrinter:
         return self.toparenthesis("",stmt.expression)
 
     def FunctionStmt(self, stmt):
-        return self.toparenthesis("function: {}".format(stmt.name.lexeme))
+        return self.toparenthesis("define {}".format(stmt.name.lexeme), stmt.params)
 
     def GroupingExpr(self, expr):
         return self.toparenthesis("group", expr.expression)

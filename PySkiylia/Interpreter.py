@@ -325,18 +325,18 @@ class Interpreter(misc):
     def evaluate(self, abstract):
         ##List of all supported expressions and statements
         abstracts = {"Assign":self.AssignExpr,
+                     "Block": self.BlockStmt,
                      "Binary": self.BinaryExpr,
                      "Call": self.CallExpr,
+                     "Expression": self.ExpressionStmt,
                      "Function": self.FunctionStmt,
                      "Grouping": self.GroupingExpr,
+                     "If": self.IfStmt,
                      "Logical": self.LogicalExpr,
                      "Literal": self.LiteralExpr,
                      "Unary": self.UnaryExpr,
-                     "Variable": self.VarExpr,
-                     "Block": self.BlockStmt,
-                     "Expression": self.ExpressionStmt,
-                     "If": self.IfStmt,
                      "Var":self.VarStmt,
+                     "Variable": self.VarExpr,
                      "While":self.WhileStmt,}
         #fetch the class name of the abstract provided
         abstractName = abstract.__class__.__name__

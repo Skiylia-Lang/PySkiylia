@@ -22,10 +22,10 @@ class SkiyliaCallable:
 
 #internal handling of functions
 class SkiyliaFunction(SkiyliaCallable):
-    def __init__(self, name, declaration):
+    string = "Skiylia function"
+    def __init__(self, declaration):
         #define the internals at initialisation
-        self.callname = name
-        self.string=declaration.name.lexeme
+        self.callname = declaration.name.lexeme
         self.declaration = declaration
         self.arity = len(self.declaration.params)
 
@@ -37,6 +37,6 @@ class SkiyliaFunction(SkiyliaCallable):
             #add them to our local environment
             self.environment.define(self.declaration.params[x].lexeme, arguments[x])
         #ask the interpreter to execute the block
-        interpreter.executeBlock(self.declaration.body, self.environment)
+        interpreter.executeBlock(self.declaration.body.statements, self.environment)
         #return None by default
         return None

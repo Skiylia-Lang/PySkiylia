@@ -52,7 +52,7 @@ class skiyliaclock(SkiyliaCallable):
     def call(self, interpreter, arguments):
         return time.time()
 
-#pi
+#sqrt
 class skiyliasqrt(SkiyliaCallable):
     arity = 1
     string = "primitive function"

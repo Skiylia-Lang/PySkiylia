@@ -130,7 +130,7 @@ class Parser:
         #fetch the increment variable
         if self.match("Var"):
             #if we see an explicit variable declaration, do that
-            initialiser = self.varDeclaration("When", "Do", "Colon")
+            initialiser = self.varDeclaration("Where", "Do", "Colon")
             #as we consumed the last token, back up one
             self.current -=1
         else:
@@ -140,7 +140,7 @@ class Parser:
         #condition
         condition = None
         #check it has not been ommited
-        if self.match("When"):
+        if self.match("Where"):
             #fetch the conditional
             condition = self.expression()
 
@@ -441,6 +441,10 @@ class Parser:
                 arguments.append(self.expression())
         #fetch the final parenthesis
         paren = self.consume("Expect ')' after arguments.", "RightParenthesis")
+        #can't have a colon after a call
+        if self.check("Colon"):
+            self.advance()
+            raise SyntaxError(self.error(self.previous(), "':' cannot follow function calls."))
         #return the function call
         return Call(callee, paren, arguments)
 

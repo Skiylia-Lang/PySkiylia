@@ -20,7 +20,7 @@ class Environment:
             self.values[name.lexeme] = value
             return
         #if we couldn't assign the variable, and we are not the global scope
-        if self.enclosing != None:
+        elif self.enclosing != None:
             #try to assign to our parent scope
             self.enclosing.assign(name, value)
             return
@@ -34,7 +34,7 @@ class Environment:
             #return the value
             return self.values[name.lexeme]
         #if we didn't find the variable, and we are not the global scope
-        if self.enclosing != None:
+        elif self.enclosing != None:
             #see if the parent scope can find anything
             return self.enclosing.fetch(name)
         #otherwise throw an error

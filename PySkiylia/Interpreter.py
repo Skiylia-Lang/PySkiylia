@@ -281,11 +281,11 @@ class Interpreter(misc):
     #define the way of interpreting a function
     def FunctionStmt(self, stmt):
         #create the function object
-        function = SkiyliaFunction(stmt)
+        function = SkiyliaFunction(stmt, self.environment)
         #add it to the environment
         self.environment.define(stmt.name.lexeme, function)
         #and return None by default
-        return None
+        return function
 
     #define the way of interpreting an if statement
     def IfStmt(self, stmt):
@@ -358,7 +358,7 @@ class Interpreter(misc):
     #define a way of executing block code
     def executeBlock(self, statements, environment):
         #store the parent environment
-        previous = environment
+        previous = self.environment
         try:
             #make sure the current scope is the one to compute with
             self.environment = environment

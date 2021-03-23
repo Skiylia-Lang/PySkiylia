@@ -28,15 +28,15 @@ class SkiyliaCallable:
 #internal handling of functions
 class SkiyliaFunction(SkiyliaCallable):
     string = "Skiylia function"
-    def __init__(self, declaration):
+    def __init__(self, declaration, closure):
         #define the internals at initialisation
-        self.callname = declaration.name.lexeme
+        self.closure = closure
         self.declaration = declaration
         self.arity = len(self.declaration.params)
 
     def call(self, interpreter, arguments):
-        #create a new local scope based on the global one
-        self.environment = Environment(interpreter.globals)
+        #create a new local scope based on the enclosing one
+        self.environment = Environment(self.closure)
         #loop through all of our defined parameters
         for x in range(len(self.declaration.params)):
             #add them to our local environment

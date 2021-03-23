@@ -23,7 +23,9 @@ class SkiyliaCallable:
 #internal handling of functions
 class SkiyliaFunction(SkiyliaCallable):
     def __init__(self, name, declaration):
+        #define the internals at initialisation
         self.callname = name
+        self.string=declaration.name.lexeme
         self.declaration = declaration
         self.arity = len(self.declaration.params)
 

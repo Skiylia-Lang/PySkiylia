@@ -4,7 +4,7 @@
 #import our code
 from AbstractSyntax import *
 from Environment import Environment
-from SkiyliaCallable import SkiyliaCallable
+from SkiyliaCallable import SkiyliaCallable, SkiyliaFunction
 import Primitives
 
 #A class that will hold miscellaneous help code
@@ -278,6 +278,15 @@ class Interpreter(misc):
         #and return none
         return None
 
+    #define the way of interpreting a function
+    def FunctionStmt(self, stmt):
+        #create the function object
+        function = SkiyliaFunction(stmt)
+        #add it to the environment
+        self.environment.define(stmt.name.lexeme, function)
+        #and return None by default
+        return None
+
     #define the way of interpreting an if statement
     def IfStmt(self, stmt):
         #evaluate the truthiness of the if condition
@@ -318,6 +327,7 @@ class Interpreter(misc):
         abstracts = {"Assign":self.AssignExpr,
                      "Binary": self.BinaryExpr,
                      "Call": self.CallExpr,
+                     "Function": self.FunctionStmt,
                      "Grouping": self.GroupingExpr,
                      "Logical": self.LogicalExpr,
                      "Literal": self.LiteralExpr,

@@ -26,6 +26,9 @@ class ASTPrinter:
     def ExpressionStmt(self, stmt):
         return self.toparenthesis("",stmt.expression)
 
+    def FunctionStmt(self, stmt):
+        return self.toparenthesis("function: {}".format(stmt.name.lexeme))
+
     def GroupingExpr(self, expr):
         return self.toparenthesis("group", expr.expression)
 
@@ -80,6 +83,7 @@ class ASTPrinter:
                 "Block": self.BlockStmt,
                 "Call": self.CallExpr,
                 "Expression": self.ExpressionStmt,
+                "Function": self.FunctionStmt,
                 "Grouping": self.GroupingExpr,
                 "If": self.IfStmt,
                 "Literal": self.LiteralExpr,

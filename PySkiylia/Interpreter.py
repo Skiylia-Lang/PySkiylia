@@ -4,7 +4,7 @@
 #import our code
 from AbstractSyntax import *
 from Environment import Environment
-from SkiyliaCallable import SkiyliaCallable
+from SkiyliaCallable import Return, SkiyliaCallable, SkiyliaFunction
 import Primitives
 
 #A class that will hold miscellaneous help code
@@ -278,6 +278,15 @@ class Interpreter(misc):
         #and return none
         return None
 
+    #define the way of interpreting a function
+    def FunctionStmt(self, stmt):
+        #create the function object
+        function = SkiyliaFunction(stmt, self.environment)
+        #add it to the environment
+        self.environment.define(stmt.name.lexeme, function)
+        #and return None by default
+        return function
+
     #define the way of interpreting an if statement
     def IfStmt(self, stmt):
         #evaluate the truthiness of the if condition
@@ -289,6 +298,17 @@ class Interpreter(misc):
             #execute it
             self.evaluate(stmt.elseBranch)
         return None
+
+    #define the return grammar
+    def ReturnStmt(self, stmt):
+        #none by default
+        value = None
+        #if we have a value
+        if stmt.value != None:
+            #evaluate it
+            value = self.evaluate(stmt.value)
+        #create an exception so we can return all the way back to the call
+        raise Return(value)
 
     #define the ways of handling variables
     def VarStmt(self, stmt):
@@ -316,17 +336,19 @@ class Interpreter(misc):
     def evaluate(self, abstract):
         ##List of all supported expressions and statements
         abstracts = {"Assign":self.AssignExpr,
+                     "Block": self.BlockStmt,
                      "Binary": self.BinaryExpr,
                      "Call": self.CallExpr,
+                     "Expression": self.ExpressionStmt,
+                     "Function": self.FunctionStmt,
                      "Grouping": self.GroupingExpr,
+                     "If": self.IfStmt,
                      "Logical": self.LogicalExpr,
                      "Literal": self.LiteralExpr,
+                     "Return": self.ReturnStmt,
                      "Unary": self.UnaryExpr,
-                     "Variable": self.VarExpr,
-                     "Block": self.BlockStmt,
-                     "Expression": self.ExpressionStmt,
-                     "If": self.IfStmt,
                      "Var":self.VarStmt,
+                     "Variable": self.VarExpr,
                      "While":self.WhileStmt,}
         #fetch the class name of the abstract provided
         abstractName = abstract.__class__.__name__
@@ -336,7 +358,7 @@ class Interpreter(misc):
     #define a way of executing block code
     def executeBlock(self, statements, environment):
         #store the parent environment
-        previous = environment
+        previous = self.environment
         try:
             #make sure the current scope is the one to compute with
             self.environment = environment

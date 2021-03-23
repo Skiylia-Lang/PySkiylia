@@ -22,7 +22,8 @@ categories:
     labels:
       - 'dependencies'
       - 'security'
-
+#change the default directio to sort contributions
+sort-direction: ascending
 # update the version number given the previous version
 version-resolver:
   major:
@@ -51,9 +52,9 @@ exclude-labels:
 
 template: |
   # What's Changed
-  
+
   $CHANGES
-  
+
   ## Who helped
-  
+
   $CONTRIBUTORS

@@ -21,11 +21,18 @@ class Resolver(misc, Evaluator):
         #define the scope stack
         self.scopes = deque()
 
+    #resolve assignments
     def AssignExpr(self, expr):
-        pass
+        #check if the value contains any variables
+        self.resolve(expr.value)
+        #and then resolve our name
+        self.resolveLocal(expr, expr.name)
+        return None
 
     def BinaryExpr(self, expr):
-        pass
+        self.resolve(expr.left)
+        self.resolve(expr.right)
+        return None
 
     #check through the contents of a block
     def BlockStmt(self, stmt):
@@ -39,34 +46,65 @@ class Resolver(misc, Evaluator):
         return None
 
     def CallExpr(self, expr):
-        pass
+        self.resolve(expr.callee)
+        for arg in expr.arguments:
+            self.resolve(arg)
+        return None
 
     def ExpressionStmt(self, stmt):
-        pass
+        #resolve the expression
+        self.resolve(stmt.expression)
+        return None
 
     def FunctionStmt(self, stmt):
-        pass
+        #declare the function name
+        self.declare(stmt.name)
+        #and define it
+        self.define(stmt.name)
+        #and resolve the body of the function
+        self.resolveFunction(stmt)
+        return None
 
     def IfStmt(self, stmt):
-        pass
+        #resolve the condition
+        self.resolve(stmt.condition)
+        #the then branch
+        self.resolve(stmt.thenBranch)
+        #and if it has an if
+        if stmt.elseBranch:
+            self.resolve(stmt.elseBranch)
+        return None
 
     def LiteralExpr(self, expr):
-        pass
+        return None
 
     def LogicalExpr(self, expr):
-        pass
+        self.resolve(expr.left)
+        self.resolve(expr.right)
+        return None
 
     def GroupingExpr(self, expr):
-        pass
+        self.resolve(expr.expression)
+        return None
 
     def ReturnStmt(self, stmt):
-        pass
+        if stmt.value:
+            self.resolve(stmt.value)
+        return None
 
     def UnaryExpr(self, expr):
-        pass
+        self.resolve(expr.right)
+        return None
 
+    #calling variables
     def VarExpr(self, expr):
-        pass
+        #check that the scope exists, and that the variable has been initialised
+        if self.scopes and (self.scopes[-1][expr.name.lexeme]==False):
+            #if it hasn't, and the scope exists, throw an error
+            self.skiylia.error(expr.name, "Can't read local variable in its own initialiser")
+        #otherwise resolve the local variables
+        self.resolveLocal(expr, expr.name)
+        return None
 
     #declare variables?
     def VarStmt(self, stmt):
@@ -81,7 +119,9 @@ class Resolver(misc, Evaluator):
         return None
 
     def WhileStmt(self, stmt):
-        pass
+        self.resolve(stmt.condition)
+        self.resolve(stmt.body)
+        return None
 
     #create a local scope
     def beginScope(self):
@@ -104,9 +144,35 @@ class Resolver(misc, Evaluator):
 
     #make sure the variable can be used
     def define(self, name):
+        #if the scope exists, we can continue
         if self.scopes:
             return
+        #mark the variable as initialised
         self.scopes[-1][name.lexeme] = True
+
+    #resolve the body of a function
+    def resolveFunction(self, function):
+        #create a scope for the function
+        self.beginScope()
+        #loop through the parameters
+        for param in function.params:
+            #declare and define
+            self.declare(param)
+            self.define(param)
+        #and then resolve the body
+        self.resolve(function.body)
+        #finally end the local scope
+        self.endScope()
+
+    #resolve is something is local, or furthe rup the scope
+    def resolveLocal(self, expr, name):
+        #itterate through the scopes, starting from the top of the stack (the final index)
+        for x in range(len(self.scopes)-1)[::-1]:
+            #if the local is found here
+            if name.lexeme in self.scopes[x]:
+                #return None in the distance from the current scope to the one where the variable was found
+                self.interpreter.resolve(expr, len(self.scopes) - 1 - i)
+                return
 
     #loop through provided statements
     def resolve(self, stmts):

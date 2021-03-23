@@ -158,12 +158,12 @@ class Parser:
 
         #desugar / deconstruct into a while
         #check if we have been given an increment operation
-        if increment != None:
+        if increment:
             #add the incremental to the end of the body, so it will be executed then
             body = Block([body, Expression(increment)])
 
         #check if we didn't have a conditional
-        if condition == None:
+        if not condition:
             #if none supplied, assume true
             condition = Literal(True)
         #construct the while loop from the conditional and body

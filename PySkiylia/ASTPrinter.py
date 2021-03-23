@@ -58,7 +58,7 @@ class ASTPrinter(Evaluator):
         return self.toparenthesis("group", expr.expression)
 
     def IfStmt(self, stmt):
-        if stmt.elseBranch == None:
+        if not stmt.elseBranch:
             return self.toparenthesis("if", stmt.condition, stmt.thenBranch)
         return self.toparenthesis("if-else", stmt.condition, stmt.thenBranch, stmt.elseBranch)
 

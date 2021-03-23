@@ -67,7 +67,7 @@ class misc:
         if (a==None) and (b==None):
             return True
         #if only one is null, return false
-        if a==None:
+        if not a:
             return False
         #else return the python equality
         return a==b
@@ -82,6 +82,8 @@ class Interpreter(misc, Evaluator):
         self.globals = Environment()
         #and a our current variable scope
         self.environment = self.globals
+        #define the locals dictionary
+        self.locals = dict()
         #define the maximum number of allowed arguments in a function call
         self.arglimit = arglimit
         #and add our primitives to the global scope
@@ -123,9 +125,15 @@ class Interpreter(misc, Evaluator):
     def AssignExpr(self, expr):
         #evaluate what should be assignd
         value = self.evaluate(expr.value)
-        #add that to the environment storage
-        self.environment.assign(expr.name, value)
-        #and return the value
+        #fetch the distance to the variable
+        dist = self.locals[expr]
+        #if there was one,
+        if dist:
+            #assign it in that environment
+            self.environment.assignAt(dist, expr.name, value)
+        else:
+            #otherwise, add to globals
+            self.globals[expr.name, value]
         return value
 
     #define a way of unpacking a binary expression
@@ -243,7 +251,7 @@ class Interpreter(misc, Evaluator):
             #if true, execute
             self.evaluate(stmt.thenBranch)
         #if false, and we have an else branch
-        elif stmt.elseBranch != None:
+        elif stmt.elseBranch:
             #execute it
             self.evaluate(stmt.elseBranch)
         return None
@@ -281,7 +289,7 @@ class Interpreter(misc, Evaluator):
         #none by default
         value = None
         #if we have a value
-        if stmt.value != None:
+        if stmt.value:
             #evaluate it
             value = self.evaluate(stmt.value)
         #create an exception so we can return all the way back to the call
@@ -309,14 +317,14 @@ class Interpreter(misc, Evaluator):
     #define the method of fetching a variables value
     def VarExpr(self, expr):
         #fetch the name from the Environment holder
-        return self.environment.fetch(expr.name)
+        return self.lookupvariable(expr.name, expr)
 
     #define the ways of handling variables
     def VarStmt(self, stmt):
         #define the default value
         value = None
         #if the variable has an initial value assigned
-        if stmt.initial != None:
+        if stmt.initial:
             #evaluate and return the initial value
             value = self.evaluate(stmt.initial)
         #store the variable in our environment
@@ -347,3 +355,15 @@ class Interpreter(misc, Evaluator):
         finally:
             #restore the parent scope now we have finished
             self.environment = previous
+
+    #define a way of reoslving local names
+    def resolve(self, expr, depth):
+        #store the expression and depth
+        self.locals[expr] = depth
+
+    def lookupvariable(self, name, expr):
+        dist = self.locals[expr]
+        if dist:
+            self.environment.getAt(dist, name.lexeme)
+        else:
+            return self.globals[name]

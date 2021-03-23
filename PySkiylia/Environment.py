@@ -20,7 +20,7 @@ class Environment:
             self.values[name.lexeme] = value
             return
         #if we couldn't assign the variable, and we are not the global scope
-        elif self.enclosing != None:
+        elif self.enclosing:
             #try to assign to our parent scope
             self.enclosing.assign(name, value)
             return
@@ -34,7 +34,7 @@ class Environment:
             #return the value
             return self.values[name.lexeme]
         #if we didn't find the variable, and we are not the global scope
-        elif self.enclosing != None:
+        elif self.enclosing:
             #see if the parent scope can find anything
             return self.enclosing.fetch(name)
         #otherwise throw an error
@@ -44,3 +44,24 @@ class Environment:
     def define(self, name, value):
         #either create or overwrite the dictionary value
         self.values[name] = value
+
+    #return the value of a token in a known parent scope
+    def getAt(self, dist, name):
+        #get the ancestor scope that contains the variable, and return its value
+        return self.ancestor(dist).values[name]
+
+    #assign the value of a variable in a known location
+    def assignAt(self, dist, name, value):
+        #get the ancestor scope that contains the variable, and assign its value
+        self.ancestor(dist).values[name] = value
+
+    #fetch the ancestor of the environment
+    def ancestor(self, dist):
+        #start with us
+        env = self
+        #walk up to the dist
+        for x in dist:
+            #fetch each parent scope
+            env = env.enclosing
+        #return the ancestor that matches
+        return env

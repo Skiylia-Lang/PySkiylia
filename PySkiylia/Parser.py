@@ -88,6 +88,10 @@ class Parser:
         #if the next token is a function declaration
         elif self.match("Def"):
             return self.functiondeclaration("function")
+        #if we are returning from a function
+        elif self.match("Return"):
+            #fetch the return
+            return self.returnstatement()
         #check if the token matches a primitive, and shortcut to the call logic
         elif self.peek().lexeme in self.primitives:
             #fetch the primitive code
@@ -201,6 +205,19 @@ class Parser:
         body = self.statement()
         #and return the function
         return Function(name, params, body)
+
+    #define the return grammar
+    def returnstatement(self):
+        #fetch the "Return" token for error reporting
+        keyword = self.previous()
+        #return none by default
+        value = None
+        #check the return has not been terminated
+        if not self.check("End"):
+            value = self.expression()
+        print(self.checkindent(keyword.indent))
+        #return the return... interesting
+        return Return(keyword, value)
 
     #define the variable declaration grammar
     def varDeclaration(self, *Endings):

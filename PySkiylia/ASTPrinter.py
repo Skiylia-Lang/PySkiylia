@@ -45,7 +45,7 @@ class ASTPrinter:
     def LogicalExpr(self, expr):
         return self.toparenthesis(expr.operator.lexeme, expr.left, expr.right)
 
-    def ReturnExpr(self, expr):
+    def ReturnStmt(self, stmt):
         return self.toparenthesis("return", stmt.expression)
 
     def UnaryExpr(self, expr):
@@ -91,7 +91,7 @@ class ASTPrinter:
                 "If": self.IfStmt,
                 "Literal": self.LiteralExpr,
                 "Logical": self.LogicalExpr,
-                "Return": self.ReturnExpr,
+                "Return": self.ReturnStmt,
                 "Unary": self.UnaryExpr,
                 "Var":self.VarStmt,
                 "Variable": self.VarExpr,

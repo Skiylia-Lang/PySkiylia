@@ -1,7 +1,8 @@
  #!/usr/bin/env python
-"""Generates a callable object"""
+"""Generates callable objects"""
+from Environment import Environment
 
-#define the class
+#define the callable class
 class SkiyliaCallable:
     arity=0
     string=""
@@ -18,3 +19,22 @@ class SkiyliaCallable:
     def call(self, interpreter, arguments):
         #we're given the interpreter state in case we need it's memory
         pass
+
+#internal handling of functions
+class SkiyliaFunction(SkiyliaCallable):
+    def __init__(self, name, declaration):
+        self.callname = name
+        self.declaration = declaration
+        self.arity = len(self.declaration.params)
+
+    def call(self, interpreter, arguments):
+        #create a new local scope based on the global one
+        self.environment = Environment(interpreter.globals)
+        #loop through all of our defined parameters
+        for x in range(len(self.declaration.params)):
+            #add them to our local environment
+            self.environment.define(self.declaration.params[x].lexeme, arguments[x])
+        #ask the interpreter to execute the block
+        interpreter.executeBlock(self.declaration.body, self.environment)
+        #return None by default
+        return None

@@ -85,6 +85,9 @@ class Parser:
         elif self.match("While"):
             #compute the while statement
             return self.whilestatement()
+        #if the next token is a function declaration
+        elif self.match("Def"):
+            return self.functiondeclaration("function")
         #check if the token matches a primitive, and shortcut to the call logic
         elif self.peek().lexeme in self.primitives:
             #fetch the primitive code
@@ -167,6 +170,35 @@ class Parser:
 
         #return the for loop in its' fully deconstructed form
         return body
+
+    #define the function declaration grammar
+    def functiondeclaration(self, functype):
+        #fetch the name of the function
+        name = self.consume("Expect {} name.".format(functype), "Identifier")
+        #empty parameter list
+        params = []
+        #check for zero parameters given
+        if not self.check("RightParenthesis"):
+            #fetch the first param
+            params.append(self.consume("Expect parameter name.", "Identifier"))
+            #while there is another, parameter
+            while self.match("Comma"):
+                #if we overshot the argumet limit
+                if len(params) >= self.arglimit:
+                    #show an error
+                    self.error(self.peek(), "Can't have more than {} parameters.".format(self.arglimit))
+                #otherwise, add the parameter
+                params.append(self.consume("Expect parameter name.", "Identifier"))
+        #make sure parentheses are closed
+        self.consume("Expect ')' after {}".format(functype), "RightParenthesis")
+        #check the indentation
+        if not self.check(*self.blockStart):
+            #show an error
+            raise RuntimeError(self.error(self.peek(), "Expect ':' after {} declaration".format(functype)))
+        #fetch the body of the function
+        body = self.statement()
+        #and return the function
+        return Function(name, params, body)
 
     #define the variable declaration grammar
     def varDeclaration(self, *Endings):

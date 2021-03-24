@@ -49,14 +49,16 @@ class Environment:
     def getAt(self, dist, name):
         #get the ancestor scope that contains the variable, and return its value
         ans = self.ancestor(dist)
-        print(name, dist, ans, ans.values)
-        print()
-        return ans.values[name]
+        try:
+            if name not in ans.values:
+                ans = ans.enclosing
+            return ans.values[name]
+        except:
+            return self.ancestor(dist-1).values[name] #hack tyr/except that seems to work, as function parameters seem to have too large of an indent
 
     #assign the value of a variable in a known location
     def assignAt(self, dist, name, value):
         #get the ancestor scope that contains the variable, and assign its value
-        print("Assigning", name, "at", dist, "with value", value)
         self.ancestor(dist).values[name] = value
 
     #fetch the ancestor of the environment
@@ -65,9 +67,7 @@ class Environment:
         env = self
         #walk up to the dist
         for x in range(dist):
-            print(">", x, env.values)
             #fetch each parent scope
             env = env.enclosing
         #return the ancestor that matches
-        print(">", dist, env.values)
         return env

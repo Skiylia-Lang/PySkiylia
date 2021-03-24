@@ -146,15 +146,12 @@ class Parser:
 
         #increment operator
         increment = None
-        print([x.type for x in self.tokens])
         #check it has not been ommited
         if self.match("Do"):
             increment = self.expression()
         else:
             self.constructincremental(initialiser.name)
             increment = self.expression()
-
-        print([x.type for x in self.tokens])
 
         #check for the colon grammar
         if not self.check(*self.blockStart):

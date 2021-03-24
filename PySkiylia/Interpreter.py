@@ -368,7 +368,6 @@ class Interpreter(misc, Evaluator):
             dist = self.locals[expr]
         except:
             dist = None
-        print("found", expr.name.lexeme, "at", dist)
         #if we have a dist
         if dist != None:
             #then fetch from there

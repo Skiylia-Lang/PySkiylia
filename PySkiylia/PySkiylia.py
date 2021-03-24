@@ -123,9 +123,6 @@ class Skiylia:
         #double check the resolver did not find any errors
         if self.haderror:
             return
-        print()
-        print([(x.name.lexeme, interpreter.locals[x]) for x in interpreter.locals])
-        print()
         #and finally run the parsed code
         interpreter.interpret(statements)
 

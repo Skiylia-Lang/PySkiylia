@@ -1,9 +1,12 @@
 //test different for loop examples
-//1) no conditional or incremental for x:
+//1) no conditional or incremental for x, (incremental is implicit):
 
 
-//2) only conditional for x when x<=10:
+//2) only conditional (incremental is implicit):
+for var x when x < 10:
+  print(x)
 
+//0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 
 //3) conditional and incremental
 

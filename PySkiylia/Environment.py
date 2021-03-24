@@ -48,11 +48,15 @@ class Environment:
     #return the value of a token in a known parent scope
     def getAt(self, dist, name):
         #get the ancestor scope that contains the variable, and return its value
-        return self.ancestor(dist).values[name]
+        ans = self.ancestor(dist)
+        print(name, dist, ans, ans.values)
+        print()
+        return ans.values[name]
 
     #assign the value of a variable in a known location
     def assignAt(self, dist, name, value):
         #get the ancestor scope that contains the variable, and assign its value
+        print("Assigning", name, "at", dist, "with value", value)
         self.ancestor(dist).values[name] = value
 
     #fetch the ancestor of the environment
@@ -60,8 +64,10 @@ class Environment:
         #start with us
         env = self
         #walk up to the dist
-        for x in dist:
+        for x in range(dist):
+            print(">", x, env.values)
             #fetch each parent scope
             env = env.enclosing
         #return the ancestor that matches
+        print(">", dist, env.values)
         return env

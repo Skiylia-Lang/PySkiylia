@@ -29,7 +29,7 @@ class misc:
                 except:
                     pass
             #if we get to here, throw an error
-            raise RuntimeError([operator,"'"+operator.lexeme+"' operator requires a number."])
+            raise RuntimeError([operator,"'{}' not valid for '{}' operator, requires a number.".format(operand, operator.lexeme)])
 
     #define a way of testing if one, but not both, of two objects can be represented as an integer
     def xorNumber(self, a, b):
@@ -130,7 +130,7 @@ class Interpreter(misc, Evaluator):
         #if there was one,
         if dist:
             #assign it in that environment
-            self.environment.assignAt(dist, expr.name, value)
+            self.environment.assignAt(dist, expr.name.lexeme, value)
         else:
             #otherwise, add to globals
             self.globals[expr.name, value]
@@ -361,9 +361,17 @@ class Interpreter(misc, Evaluator):
         #store the expression and depth
         self.locals[expr] = depth
 
+    #define a way of searching for a variable given environment depth
     def lookupvariable(self, name, expr):
-        dist = self.locals[expr]
-        if dist:
-            self.environment.getAt(dist, name.lexeme)
-        else:
-            return self.globals[name]
+        try:
+            #fetch the distance up the scope
+            dist = self.locals[expr]
+        except:
+            dist = None
+        print("found", expr.name.lexeme, "at", dist)
+        #if we have a dist
+        if dist != None:
+            #then fetch from there
+            return self.environment.getAt(dist, name.lexeme)
+        #otherwise we have a global
+        return self.globals.fetch(name)

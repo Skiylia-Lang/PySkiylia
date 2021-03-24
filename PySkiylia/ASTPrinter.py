@@ -9,6 +9,7 @@ from Tokens import Token
 class Evaluator:
     #define a way of sending the interpreter to the correct method
     def evaluate(self, abstract):
+        #print(abstract)
         ##List of all supported expressions and statements
         abstracts = {"Assign":self.AssignExpr,
                      "Block": self.BlockStmt,

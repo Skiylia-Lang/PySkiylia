@@ -50,11 +50,11 @@ class Resolver(Evaluator):
     #check through the contents of a block
     def BlockStmt(self, stmt):
         #create a new scope
-        #self.beginScope()
+        self.beginScope()
         #resolve the contents of the block
         self.resolve(stmt.statements)
         #finalise the scope
-        #self.endScope()
+        self.endScope()
         #return none
         return None
 
@@ -103,6 +103,7 @@ class Resolver(Evaluator):
         return None
 
     def ReturnStmt(self, stmt):
+        print("return", stmt, stmt.value)
         if self.currentFunction == self.FunctionType["None"]:
             self.skiyla.error(stmt.keyword, "Can't return from top-level code")
         if stmt.value:
@@ -127,8 +128,9 @@ class Resolver(Evaluator):
     def VarStmt(self, stmt):
         #declare the variable
         self.declare(stmt.name)
+        print("Defining variable", stmt.name.lexeme)
         #if it's not empty
-        if stmt.initial != 0.0:
+        if stmt.initial:
             #resolve it's value
             self.resolve(stmt.initial)
         #define the variable
@@ -179,6 +181,7 @@ class Resolver(Evaluator):
         self.currentFunction = funcType
         #create a scope for the function
         self.beginScope()
+        print("function parameters", function.params, [x.lexeme for x in function.params])
         #loop through the parameters
         for param in function.params:
             #declare and define
@@ -194,11 +197,11 @@ class Resolver(Evaluator):
     #resolve is something is local, or furthe rup the scope
     def resolveLocal(self, expr, name):
         #itterate through the scopes, starting from the top of the stack (the final index)
-        for x in range(len(self.scopes)-1)[::-1]:
+        for x in range(len(self.scopes))[::-1]:
             #if the local is found here
             if name.lexeme in self.scopes[x]:
                 #return None in the distance from the current scope to the one where the variable was found
-                self.interpreter.resolve(expr, len(self.scopes) - 1 - x)
+                self.interpreter.resolve(expr, len(self.scopes) - x - 1)
                 return
 
     #loop through provided statements

@@ -146,9 +146,15 @@ class Parser:
 
         #increment operator
         increment = None
+        print([x.type for x in self.tokens])
         #check it has not been ommited
         if self.match("Do"):
             increment = self.expression()
+        else:
+            self.constructincremental(initialiser.name)
+            increment = self.expression()
+
+        print([x.type for x in self.tokens])
 
         #check for the colon grammar
         if not self.check(*self.blockStart):
@@ -292,7 +298,7 @@ class Parser:
         #if there is an equals after the identifier
         if self.match("Equal"):
             #fetch the variable name
-            equals = self.previous
+            equals = self.previous()
             #fetch it's value
             value = self.assignment()
             #if it is a Variable type
@@ -489,6 +495,13 @@ class Parser:
             raise SyntaxError([self.previous(), "Unbounded object."])
             #if we found nothing, throw an error
         return self.error(self.peek(), "Expected an expression.")
+
+    def constructincremental(self, var):
+        self.tokens.insert(self.current, Tokens.Token("Number", "1", 1.0, var.line, var.char, var.indent))
+        self.tokens.insert(self.current, Tokens.Token("Plus", "+", None, var.line, var.char, var.indent))
+        self.tokens.insert(self.current, var)
+        self.tokens.insert(self.current, Tokens.Token("Equal", "=", None, var.line, var.char, var.indent))
+        self.tokens.insert(self.current, var)
 
     #define a way of checking if a token is found, and consuming it
     def consume(self, errorMessage, *type):

@@ -123,6 +123,9 @@ class Skiylia:
         #double check the resolver did not find any errors
         if self.haderror:
             return
+        print()
+        print([(x.name.lexeme, interpreter.locals[x]) for x in interpreter.locals])
+        print()
         #and finally run the parsed code
         interpreter.interpret(statements)
 
@@ -131,7 +134,7 @@ class Skiylia:
         #check if we don't have a position to give to the user
         if noloc:
             #print the error in a lovely form
-            print("{2} Error: {3}".format(line, char, where, message))
+            print("{} Error: {}".format(where, message))
         else:
             #print the error in a lovely form
             print("[Line {0}, Char {1}] {2} Error: {3}".format(line, char, where, message))

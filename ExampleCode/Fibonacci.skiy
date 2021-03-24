@@ -4,5 +4,5 @@ def fib(n):
     return fib(n-1) + fib(n-2)
   return n
 
-for var i when i<5:
+for var i when i<20:
   print(fib(i))

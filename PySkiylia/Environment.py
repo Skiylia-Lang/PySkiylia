@@ -50,8 +50,8 @@ class Environment:
         #get the ancestor scope that contains the variable, and return its value
         ans = self.ancestor(dist)
         try:
-            if name not in ans.values:
-                ans = ans.enclosing
+            #if name not in ans.values:
+            #    ans = ans.enclosing
             return ans.values[name]
         except:
             return self.ancestor(dist-1).values[name] #hack tyr/except that seems to work, as function parameters seem to have too large of an indent

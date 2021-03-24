@@ -5,8 +5,34 @@
 from AbstractSyntax import *
 from Tokens import Token
 
+#class that converts AST nodes to their corresponding functions
+class Evaluator:
+    #define a way of sending the interpreter to the correct method
+    def evaluate(self, abstract):
+        #print(abstract)
+        ##List of all supported expressions and statements
+        abstracts = {"Assign":self.AssignExpr,
+                     "Block": self.BlockStmt,
+                     "Binary": self.BinaryExpr,
+                     "Call": self.CallExpr,
+                     "Expression": self.ExpressionStmt,
+                     "Function": self.FunctionStmt,
+                     "Grouping": self.GroupingExpr,
+                     "If": self.IfStmt,
+                     "Logical": self.LogicalExpr,
+                     "Literal": self.LiteralExpr,
+                     "Return": self.ReturnStmt,
+                     "Unary": self.UnaryExpr,
+                     "Var":self.VarStmt,
+                     "Variable": self.VarExpr,
+                     "While":self.WhileStmt,}
+        #fetch the class name of the abstract provided
+        abstractName = abstract.__class__.__name__
+        #return the correct method and pass in own value
+        return abstracts[abstractName](abstract)
+
 #define the ASTprint class
-class ASTPrinter:
+class ASTPrinter(Evaluator):
     def display(self, Abstractions):
         for x in Abstractions:
             print(self.evaluate(x))
@@ -33,7 +59,7 @@ class ASTPrinter:
         return self.toparenthesis("group", expr.expression)
 
     def IfStmt(self, stmt):
-        if stmt.elseBranch == None:
+        if not stmt.elseBranch:
             return self.toparenthesis("if", stmt.condition, stmt.thenBranch)
         return self.toparenthesis("if-else", stmt.condition, stmt.thenBranch, stmt.elseBranch)
 
@@ -79,22 +105,3 @@ class ASTPrinter:
             else:
                 out.append(part)
         return " ".join([str(x) for x in out])
-
-    def evaluate(self, Abstraction):
-        absts = {"Assign":self.AssignExpr,
-                "Binary": self.BinaryExpr,
-                "Block": self.BlockStmt,
-                "Call": self.CallExpr,
-                "Expression": self.ExpressionStmt,
-                "Function": self.FunctionStmt,
-                "Grouping": self.GroupingExpr,
-                "If": self.IfStmt,
-                "Literal": self.LiteralExpr,
-                "Logical": self.LogicalExpr,
-                "Return": self.ReturnStmt,
-                "Unary": self.UnaryExpr,
-                "Var":self.VarStmt,
-                "Variable": self.VarExpr,
-                "While":self.WhileStmt,}
-        abstName = Abstraction.__class__.__name__
-        return absts[abstName](Abstraction)

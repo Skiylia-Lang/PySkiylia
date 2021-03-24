@@ -149,6 +149,9 @@ class Parser:
         #check it has not been ommited
         if self.match("Do"):
             increment = self.expression()
+        else:
+            self.constructincremental(initialiser.name)
+            increment = self.expression()
 
         #check for the colon grammar
         if not self.check(*self.blockStart):
@@ -158,12 +161,12 @@ class Parser:
 
         #desugar / deconstruct into a while
         #check if we have been given an increment operation
-        if increment != None:
+        if increment:
             #add the incremental to the end of the body, so it will be executed then
             body = Block([body, Expression(increment)])
 
         #check if we didn't have a conditional
-        if condition == None:
+        if not condition:
             #if none supplied, assume true
             condition = Literal(True)
         #construct the while loop from the conditional and body
@@ -292,7 +295,7 @@ class Parser:
         #if there is an equals after the identifier
         if self.match("Equal"):
             #fetch the variable name
-            equals = self.previous
+            equals = self.previous()
             #fetch it's value
             value = self.assignment()
             #if it is a Variable type
@@ -489,6 +492,13 @@ class Parser:
             raise SyntaxError([self.previous(), "Unbounded object."])
             #if we found nothing, throw an error
         return self.error(self.peek(), "Expected an expression.")
+
+    def constructincremental(self, var):
+        self.tokens.insert(self.current, Tokens.Token("Number", "1", 1.0, var.line, var.char, var.indent))
+        self.tokens.insert(self.current, Tokens.Token("Plus", "+", None, var.line, var.char, var.indent))
+        self.tokens.insert(self.current, var)
+        self.tokens.insert(self.current, Tokens.Token("Equal", "=", None, var.line, var.char, var.indent))
+        self.tokens.insert(self.current, var)
 
     #define a way of checking if a token is found, and consuming it
     def consume(self, errorMessage, *type):

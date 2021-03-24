@@ -5,6 +5,7 @@
 from AbstractSyntax import *
 from Environment import Environment
 from SkiyliaCallable import Return, SkiyliaCallable, SkiyliaFunction
+from ASTPrinter import Evaluator
 import Primitives
 
 #A class that will hold miscellaneous help code
@@ -28,7 +29,7 @@ class misc:
                 except:
                     pass
             #if we get to here, throw an error
-            raise RuntimeError([operator,"'"+operator.lexeme+"' operator requires a number."])
+            raise RuntimeError([operator,"'{}' not valid for '{}' operator, requires a number.".format(operand, operator.lexeme)])
 
     #define a way of testing if one, but not both, of two objects can be represented as an integer
     def xorNumber(self, a, b):
@@ -66,13 +67,13 @@ class misc:
         if (a==None) and (b==None):
             return True
         #if only one is null, return false
-        if a==None:
+        if not a:
             return False
         #else return the python equality
         return a==b
 
 #define the Interpreter class
-class Interpreter(misc):
+class Interpreter(misc, Evaluator):
     ##initialise
     def __init__(self, skiylia, arglimit):
         #return a method for accessing the skiylia class
@@ -81,6 +82,8 @@ class Interpreter(misc):
         self.globals = Environment()
         #and a our current variable scope
         self.environment = self.globals
+        #define the locals dictionary
+        self.locals = dict()
         #define the maximum number of allowed arguments in a function call
         self.arglimit = arglimit
         #and add our primitives to the global scope
@@ -122,57 +125,16 @@ class Interpreter(misc):
     def AssignExpr(self, expr):
         #evaluate what should be assignd
         value = self.evaluate(expr.value)
-        #add that to the environment storage
-        self.environment.assign(expr.name, value)
-        #and return the value
+        #fetch the distance to the variable
+        dist = self.locals[expr]
+        #if there was one,
+        if dist:
+            #assign it in that environment
+            self.environment.assignAt(dist, expr.name.lexeme, value)
+        else:
+            #otherwise, add to globals
+            self.globals[expr.name, value]
         return value
-
-    #define a way of converting from the literal AST to a runtime value
-    def LiteralExpr(self, expr):
-        return expr.value
-
-    #define a way of unpacking abstracted Logicals
-    def LogicalExpr(self, expr):
-        #fetch the left
-        left = self.evaluate(expr.left)
-        #as 'or' will be true if left is true, and 'and' will be false is left is false, we can short circuit the logical
-        if expr.operator.type == "Or":
-            #if left is true, 'or' will be true
-            if self.isTruthy(left):
-                return left
-        elif expr.operator.type == "And":
-            #if left is false, 'and' will be false
-            if not self.isTruthy(left):
-                return left
-        elif expr.operator.type == "Xor":
-            #if left is true, 'xor' will be the opposite of right
-            if self.isTruthy(left):
-                return not self.evaluate(expr.right)
-
-        return self.evaluate(expr.right)
-
-    #define a way of unpacking a grouped expression at runtime
-    def GroupingExpr(self, expr):
-        return self.evaluate(expr.expression)
-
-    #define a way of unpacking a Unary
-    def UnaryExpr(self, expr):
-        #fetch the right
-        right = self.evaluate(expr.right)
-        #fetch the operation type
-        optype = expr.operator.type
-        #check whether the optype is recognised
-        if optype == "Minus":
-            self.checkNumber(expr.operator, right)
-            #return the float value negated
-            return -float(right)
-        #check if a logical not
-        elif optype == "Not":
-            #return the not of the operand
-            return not self.isTruthy(right)
-
-        ##if we couldn't get the value
-        return None
 
     #define a way of unpacking a binary expression
     def BinaryExpr(self, expr):
@@ -234,6 +196,12 @@ class Interpreter(misc):
         #if we can't evaluate it at all, return None
         return None
 
+    #define the methods for dealing with block abstractions
+    def BlockStmt(self, stmt):
+        #execute the next block, passing in the statements and creating a new environment
+        self.executeBlock(stmt.statements, Environment(self.environment))
+        return None
+
     #define a way of performing a call
     def CallExpr(self, expr):
         #fetch the function name
@@ -260,17 +228,6 @@ class Interpreter(misc):
         #return and call the callable
         return callee.call(self, args)
 
-    #define the method of fetching a variables value
-    def VarExpr(self, expr):
-        #fetch the name from the Environment holder
-        return self.environment.fetch(expr.name)
-
-    #define the methods for dealing with block abstractions
-    def BlockStmt(self, stmt):
-        #execute the next block, passing in the statements and creating a new environment
-        self.executeBlock(stmt.statements, Environment(self.environment))
-        return None
-
     #define the way of interpreting an expression statement
     def ExpressionStmt(self, stmt):
         #evaluate the expression
@@ -294,28 +251,80 @@ class Interpreter(misc):
             #if true, execute
             self.evaluate(stmt.thenBranch)
         #if false, and we have an else branch
-        elif stmt.elseBranch != None:
+        elif stmt.elseBranch:
             #execute it
             self.evaluate(stmt.elseBranch)
         return None
+
+    #define a way of converting from the literal AST to a runtime value
+    def LiteralExpr(self, expr):
+        return expr.value
+
+    #define a way of unpacking abstracted Logicals
+    def LogicalExpr(self, expr):
+        #fetch the left
+        left = self.evaluate(expr.left)
+        #as 'or' will be true if left is true, and 'and' will be false is left is false, we can short circuit the logical
+        if expr.operator.type == "Or":
+            #if left is true, 'or' will be true
+            if self.isTruthy(left):
+                return left
+        elif expr.operator.type == "And":
+            #if left is false, 'and' will be false
+            if not self.isTruthy(left):
+                return left
+        elif expr.operator.type == "Xor":
+            #if left is true, 'xor' will be the opposite of right
+            if self.isTruthy(left):
+                return not self.evaluate(expr.right)
+
+        return self.evaluate(expr.right)
+
+    #define a way of unpacking a grouped expression at runtime
+    def GroupingExpr(self, expr):
+        return self.evaluate(expr.expression)
 
     #define the return grammar
     def ReturnStmt(self, stmt):
         #none by default
         value = None
         #if we have a value
-        if stmt.value != None:
+        if stmt.value:
             #evaluate it
             value = self.evaluate(stmt.value)
         #create an exception so we can return all the way back to the call
         raise Return(value)
+
+    #define a way of unpacking a Unary
+    def UnaryExpr(self, expr):
+        #fetch the right
+        right = self.evaluate(expr.right)
+        #fetch the operation type
+        optype = expr.operator.type
+        #check whether the optype is recognised
+        if optype == "Minus":
+            self.checkNumber(expr.operator, right)
+            #return the float value negated
+            return -float(right)
+        #check if a logical not
+        elif optype == "Not":
+            #return the not of the operand
+            return not self.isTruthy(right)
+
+        ##if we couldn't get the value
+        return None
+
+    #define the method of fetching a variables value
+    def VarExpr(self, expr):
+        #fetch the name from the Environment holder
+        return self.lookupvariable(expr.name, expr)
 
     #define the ways of handling variables
     def VarStmt(self, stmt):
         #define the default value
         value = None
         #if the variable has an initial value assigned
-        if stmt.initial != None:
+        if stmt.initial:
             #evaluate and return the initial value
             value = self.evaluate(stmt.initial)
         #store the variable in our environment
@@ -332,29 +341,6 @@ class Interpreter(misc):
         #and return none
         return None
 
-    #define a way of sending the interpreter to the correct method
-    def evaluate(self, abstract):
-        ##List of all supported expressions and statements
-        abstracts = {"Assign":self.AssignExpr,
-                     "Block": self.BlockStmt,
-                     "Binary": self.BinaryExpr,
-                     "Call": self.CallExpr,
-                     "Expression": self.ExpressionStmt,
-                     "Function": self.FunctionStmt,
-                     "Grouping": self.GroupingExpr,
-                     "If": self.IfStmt,
-                     "Logical": self.LogicalExpr,
-                     "Literal": self.LiteralExpr,
-                     "Return": self.ReturnStmt,
-                     "Unary": self.UnaryExpr,
-                     "Var":self.VarStmt,
-                     "Variable": self.VarExpr,
-                     "While":self.WhileStmt,}
-        #fetch the class name of the abstract provided
-        abstractName = abstract.__class__.__name__
-        #return the correct method and pass in own value
-        return abstracts[abstractName](abstract)
-
     #define a way of executing block code
     def executeBlock(self, statements, environment):
         #store the parent environment
@@ -369,3 +355,22 @@ class Interpreter(misc):
         finally:
             #restore the parent scope now we have finished
             self.environment = previous
+
+    #define a way of reoslving local names
+    def resolve(self, expr, depth):
+        #store the expression and depth
+        self.locals[expr] = depth
+
+    #define a way of searching for a variable given environment depth
+    def lookupvariable(self, name, expr):
+        try:
+            #fetch the distance up the scope
+            dist = self.locals[expr]
+        except:
+            dist = None
+        #if we have a dist
+        if dist != None:
+            #then fetch from there
+            return self.environment.getAt(dist, name.lexeme)
+        #otherwise we have a global
+        return self.globals.fetch(name)

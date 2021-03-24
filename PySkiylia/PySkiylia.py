@@ -7,6 +7,7 @@ import sys, os
 from Lexer import Lexer
 from Parser import Parser
 from Interpreter import Interpreter
+from Resolver import Resolver
 from ASTPrinter import ASTPrinter
 
 #Main function to be called when executed
@@ -115,7 +116,14 @@ class Skiylia:
 
         #initialise the interpreter
         interpreter = Interpreter(self, parser.arglimit)
-        #and run it with the parsed code
+        #initialise the resolver
+        resolver = Resolver(self, interpreter, parser.arglimit)
+        #run the resolver on the parsed code
+        resolver.Resolve(statements)
+        #double check the resolver did not find any errors
+        if self.haderror:
+            return
+        #and finally run the parsed code
         interpreter.interpret(statements)
 
     #define a way of showing an error to the user
@@ -123,7 +131,7 @@ class Skiylia:
         #check if we don't have a position to give to the user
         if noloc:
             #print the error in a lovely form
-            print("{2} Error: {3}".format(line, char, where, message))
+            print("{} Error: {}".format(where, message))
         else:
             #print the error in a lovely form
             print("[Line {0}, Char {1}] {2} Error: {3}".format(line, char, where, message))

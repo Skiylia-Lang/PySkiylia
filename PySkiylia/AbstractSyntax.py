@@ -56,6 +56,11 @@ class Block(Stmt):
 	def __init__(self, statements):
 		self.statements = statements
 
+class Class(Stmt):
+	def __init__(self, name,methods):
+		self.name = name
+		self.methods = methods
+
 class Expression(Stmt):
 	def __init__(self, expression):
 		self.expression = expression

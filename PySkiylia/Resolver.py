@@ -12,7 +12,7 @@ from ASTPrinter import Evaluator
 class Resolver(Evaluator):
     #hold some thingies my dude
     FunctionType = {"None":0, "Function":1, "Method":2}
-    ClassType = {"None":0, "Class":1}
+    ClassType = {"None":0, "Class":1, "Subclass": 2}
     ##initialise
     def __init__(self, skiylia, interpreter, arglimit):
         #return a method for accessing the skiylia class
@@ -76,6 +76,8 @@ class Resolver(Evaluator):
         self.define(stmt.name)
         #check if we have been given a superclass
         if stmt.superclass:
+            #set our classtype to subclass
+            self.currentClass = self.ClassType["Subclass"]
             if stmt.superclass.name.lexeme == stmt.name.lexeme:
                 self.error(stmt.superclass.name, "A class cannot be it's own superclass.")
             #then resolve it
@@ -171,6 +173,10 @@ class Resolver(Evaluator):
         return None
 
     def SuperExpr(self, expr):
+        if self.currentClass == self.ClassType["None"]:
+            self.error(expr.keyword, "Can't use 'super' outside of a class.")
+        elif self.currentClass == self.ClassType["Class"]:
+            self.error(expr.keyword, "Can't use 'super' within a class with no superclass.")
         self.resolveLocal(expr, expr.keyword)
         return None
 

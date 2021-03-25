@@ -84,4 +84,4 @@ call              > literal ( "(" arguments? ")" | "." Identifier)*
 
 arguments         > expression ( "," expression )*
 
-literal           > Number | String | "true" | "false" | "null" | "(" expression ")" | Identifier
+literal           > Number | String | "self" | "super" "." Identifier | "true" | "false" | "null" | "(" expression ")" | Identifier

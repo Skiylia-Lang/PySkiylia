@@ -55,6 +55,11 @@ class Set(Expr):
 		self.name = name
 		self.value = value
 
+class Super(Expr):
+	def __init__(self, keyword,method):
+		self.keyword = keyword
+		self.method = method
+
 class Unary(Expr):
 	def __init__(self, operator,right):
 		self.operator = operator

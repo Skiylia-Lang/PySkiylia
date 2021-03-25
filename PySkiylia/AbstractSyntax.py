@@ -45,6 +45,12 @@ class Return(Expr):
 		self.keyword = keyword
 		self.value = value
 
+class Set(Expr):
+	def __init__(self, object,name,value):
+		self.object = object
+		self.name = name
+		self.value = value
+
 class Unary(Expr):
 	def __init__(self, operator,right):
 		self.operator = operator

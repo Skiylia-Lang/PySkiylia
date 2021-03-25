@@ -85,6 +85,9 @@ class Parser:
         elif self.match("While"):
             #compute the while statement
             return self.whilestatement()
+        #if we see a class identifier
+        elif self.match("Class"):
+            return self.classdeclaration()
         #if the next token is a function declaration
         elif self.match("Def"):
             return self.functiondeclaration("function")
@@ -208,6 +211,26 @@ class Parser:
         body = self.statement()
         #and return the function
         return Function(name, params, body)
+
+    #define the class grammar
+    def classdeclaration(self):
+        #fetch the name of the class
+        name = self.consume("Expected a class name.", "Identifier")
+        #double check grammar
+        if not self.check(*self.blockStart):
+            #show an error
+            raise RuntimeError(self.error(self.peek(), "Expect ':' after class declaration"))
+        #empty methods initialiser
+        methods=[]
+        #keep checking for new methods until the indentation decreases
+        while (not self.atEnd()) and (self.checkindent(myIndent) != -1):
+            #keep adding statements while the block is open
+            methods.append(self.function("method"))
+            #check if we have cascading end tokens
+            if self.check("End") and (self.checkindent(myIndent) != -1):
+                self.advance()
+        #return the class
+        return Class(name, methods)
 
     #define the return grammar
     def returnstatement(self):

@@ -15,6 +15,7 @@ class Evaluator:
                      "Block": self.BlockStmt,
                      "Binary": self.BinaryExpr,
                      "Call": self.CallExpr,
+                     "Class": self.ClassStmt,
                      "Expression": self.ExpressionStmt,
                      "Function": self.FunctionStmt,
                      "Grouping": self.GroupingExpr,
@@ -48,6 +49,9 @@ class ASTPrinter(Evaluator):
 
     def CallExpr(self, expr):
         return self.toparenthesis("call", expr.callee, expr.arguments)
+
+    def ClassStmt(self, stmt):
+        return self.toparenthesis("class {}".format(stmt.name.lexeme), [x for x in stmt.methods])
 
     def ExpressionStmt(self, stmt):
         return self.toparenthesis("",stmt.expression)

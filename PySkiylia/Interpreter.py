@@ -228,6 +228,17 @@ class Interpreter(misc, Evaluator):
         #return and call the callable
         return callee.call(self, args)
 
+    #define how our interpreter handles classes
+    def ClassStmt(self, stmt):
+        #ensure the class is defined in our environment
+        self.environment.define(stmt.name.lexeme, None)
+        #create a new class object
+        thisclass = SkiyliaClass(stmt.name.lexeme)
+        #and assign it the pointer created above
+        self.environment.assign(stmt.name.lexeme, thisclass)
+        #and return none by default
+        return None
+
     #define the way of interpreting an expression statement
     def ExpressionStmt(self, stmt):
         #evaluate the expression

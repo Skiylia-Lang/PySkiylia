@@ -50,3 +50,26 @@ class SkiyliaFunction(SkiyliaCallable):
             return ret.message
         #return None by default
         return None
+
+#internal handling of classes
+def SkiyliaClass(SkiyliaCallable):
+    #what to print
+    string = "skiylia class"
+    #initialiser
+    def __init__(self, name):
+        #assign our name
+        self.name = name
+        self.string = "_skiyliaClass.{}".format(name)
+    #what to do when we call the class
+    def call(self, interpreter, arguments):
+        #create a new instance of the class
+        instance = SkiyliaInstance(self)
+        #and return it
+        return instance
+
+#internal instance handling
+def SkiyliaInstance(SkiyliaCallable):
+    def __init__(self, thisclass):
+        #store the class that this instance is attatched to
+        self.thisclass = thisclass
+        self.string = "_skiyliaClass.{}_instance".format(thisclass.name)

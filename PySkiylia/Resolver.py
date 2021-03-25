@@ -64,6 +64,11 @@ class Resolver(Evaluator):
             self.resolve(arg)
         return None
 
+    def ClassStmt(self, stmt):
+        self.declare(stmt.name)
+        self.define(stmt.name)
+        return None
+
     def ExpressionStmt(self, stmt):
         #resolve the expression
         self.resolve(stmt.expression)

@@ -56,7 +56,7 @@ class ASTPrinter(Evaluator):
 
     def ClassStmt(self, stmt):
         if stmt.superclass:
-            return self.toparenthesis("class {}".format(stmt.name.lexeme), [x for x in stmt.superclass], [x for x in stmt.methods])
+            return self.toparenthesis("class {}".format(stmt.name.lexeme), "superclass {}".format(stmt.superclass.name.lexeme), [x for x in stmt.methods])
         return self.toparenthesis("class {}".format(stmt.name.lexeme), [x for x in stmt.methods])
 
     def ExpressionStmt(self, stmt):

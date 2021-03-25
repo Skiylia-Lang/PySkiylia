@@ -76,7 +76,7 @@ class Resolver(Evaluator):
         self.define(stmt.name)
         #check if we have been given a superclass
         if stmt.superclass:
-            if stmt.superclass.name.lexeme == stnt.name.lexeme:
+            if stmt.superclass.name.lexeme == stmt.name.lexeme:
                 self.error(stmt.superclass.name, "A class cannot be it's own superclass.")
             #then resolve it
             self.resolve(stmt.superclass)

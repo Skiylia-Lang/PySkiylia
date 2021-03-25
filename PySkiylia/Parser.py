@@ -225,7 +225,7 @@ class Parser:
             #fetch the class reference
             superclass = Variable(self.previous())
             #and ensure we have closed the parenthesis correctly
-            self.consume("Expect ')' to after superclass.")
+            self.consume("Expect ')' to follow superclass.", "RightParenthesis")
         #double check grammar
         if not self.check(*self.blockStart):
             #show an error

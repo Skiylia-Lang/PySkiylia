@@ -74,6 +74,12 @@ class Resolver(Evaluator):
         #do the class name definition stuff
         self.declare(stmt.name)
         self.define(stmt.name)
+        #check if we have been given a superclass
+        if stmt.superclass:
+            if stmt.superclass.name.lexeme == stnt.name.lexeme:
+                self.error(stmt.superclass.name, "A class cannot be it's own superclass.")
+            #then resolve it
+            self.resolve(stmt.superclass)
         #create a scope for the class
         self.beginScope()
         #amd stick "self" into it

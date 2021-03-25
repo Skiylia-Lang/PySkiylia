@@ -233,6 +233,12 @@ class Interpreter(misc, Evaluator):
 
     #define how our interpreter handles classes
     def ClassStmt(self, stmt):
+        #check for the superclass
+        superclass = None
+        if stmt.superclass:
+            superclass = self.evaluate(stmt.superclass)
+            if not isinstance(superclass, SkiyliaClass):
+                raise RuntimeError([stmt.superclass.name, "Superclass must be a class."])
         #ensure the class is defined in our environment
         self.environment.define(stmt.name.lexeme, None)
         #deal with the methods of the class
@@ -243,8 +249,8 @@ class Interpreter(misc, Evaluator):
             function = SkiyliaFunction(method, self.environment, method.name.lexeme=="init")
             #and set it within our methods dictionary
             methods[method.name.lexeme] = function
-        #create a new class object
-        thisclass = SkiyliaClass(stmt.name.lexeme, methods)
+        #create a new class object with superclass
+        thisclass = SkiyliaClass(stmt.name.lexeme, superclass, methods)
         #and assign it the pointer created above
         self.environment.assign(stmt.name, thisclass)
         #and return none by default

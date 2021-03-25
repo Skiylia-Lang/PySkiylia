@@ -87,6 +87,7 @@ class Interpreter(misc, Evaluator):
         #define the maximum number of allowed arguments in a function call
         self.arglimit = arglimit
         #and add our primitives to the global scope
+        self.primitives = []
         self.fetchprimitives()
 
     #define the primitives
@@ -103,6 +104,7 @@ class Interpreter(misc, Evaluator):
                 if primitive.callname:
                     callname=primitive.callname
                 #add them to the global scope
+                self.primitives.append(callname)
                 self.globals.define(callname, primitive())
 
     #define the interpreter function
@@ -229,6 +231,8 @@ class Interpreter(misc, Evaluator):
             #raise an error if it was different
             raise RuntimeError([expr.parenthesis, "Expected {} argument{} but got {}.".format(arglim, "s"*(arglim!=1), len(args))])
         #return and call the callable
+        if expr.callee.name.lexeme in self.primitives:
+            return callee.call(self, args, expr.callee.name)
         return callee.call(self, args)
 
     #define how our interpreter handles classes

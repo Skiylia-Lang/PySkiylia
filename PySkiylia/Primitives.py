@@ -30,67 +30,72 @@ def stringify(obj):
     #return the string of the object
     return str(obj)
 
-class primitivefunc(SkiyliaCallable):
-    string = "primitive function"
-
 #print function
-class skiyliaprint(primitivefunc):
+class skiyliaprint(SkiyliaCallable):
+    string = "primitive function"
     #define the functional input
     #print can take any number of arguments, but needs at least zero
     arity = "0,*"
     callname = "print"
     #overwrite the call
-    def call(self, interpreter, arguments):
+    def call(self, interpreter, arguments, token):
         print(*map(stringify, arguments))
         return None
 
 #clock
-class skiyliaclock(primitivefunc):
+class skiyliaclock(SkiyliaCallable):
+    string = "primitive function"
     #define the function stuff
     callname = "clock"
     #and overwite the call
-    def call(self, interpreter, arguments):
+    def call(self, interpreter, arguments, token):
         return time.time()
 
 #sqrt
-class skiyliasqrt(primitivefunc):
+class skiyliasqrt(SkiyliaCallable):
+    string = "primitive function"
     callname = "sqrt"
-    def call(self, interpreter, arguments):
+    def call(self, interpreter, arguments, token):
         return math.sqrt(arguments[0])
 
 #string conversion
-class skiyliastring(primitivefunc):
+class skiyliastring(SkiyliaCallable):
+    string = "primitive function"
     arity = "0,*"
     callname = "string"
-    def call(self, interpreter, arguments):
-        return " ".join(str(x) for x in a)
+    def call(self, interpreter, arguments, token):
+        return " ".join([stringify(x) for x in arguments])
 
 #string shorthand
-class skiyliastr(skiyliastring):
+class skiyliastr(skiyliastring, SkiyliaCallable):
+    string = "primitive function"
     callname = "str"
 
 #integer conversion
-class skiyliainteger(primitivefunc):
+class skiyliainteger(SkiyliaCallable):
+    string = "primitive function"
     arity = 1
     callname = "integer"
-    def call(self, interpreter, arguments):
+    def call(self, interpreter, arguments, token):
         num = arguments[0]
         try:
             return float(int(float(num)))         #skiylia represents all numbers as floats
-        except:
-            raise RuntimeError("Cannot convert '{}' to integer.".format(num))
+        except Exception as e:
+            raise RuntimeError([token, "Cannot convert '{}' to integer.".format(num)])
 
 #shorthand for integer
-class skiyliaint(skiyliainteger):
+class skiyliaint(skiyliainteger, SkiyliaCallable):
+    string = "primitive function"
     callname = "int"
 
 #float conversion
-class skiyliafloat(primitivefunc):
+class skiyliafloat(SkiyliaCallable):
+    string = "primitive function"
     arity = 1
     callname = "float"
-    def call(self, interpreter, arguments):
+    def call(self, interpreter, arguments, token):
         num = arguments[0]
         try:
             return float(num)
-        except:
-            raise RuntimeError("Cannot convert '{}' to integer.".format(num))
+        except Exception as e:
+            raise RuntimeError([token, "Cannot convert '{}' to integer.".format(num)])

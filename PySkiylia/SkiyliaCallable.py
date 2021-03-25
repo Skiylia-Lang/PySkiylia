@@ -21,7 +21,7 @@ class SkiyliaCallable:
         return "<{}>".format(self.string)
 
     #define the way of calling the function
-    def call(self, interpreter, arguments):
+    def call(self, interpreter, arguments, token):
         #we're given the interpreter state in case we need it's memory
         pass
 

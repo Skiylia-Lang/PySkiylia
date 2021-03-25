@@ -97,10 +97,12 @@ class Parser:
             return self.returnstatement()
         #check if the token matches a primitive, and shortcut to the call logic
         elif self.peek().lexeme in self.primitives:
+            ptoken = self.peek()
             #fetch the primitive code
             callfunc = self.call()
             #make sure the primitive closes
             self.consume("Unbounded function.", "End")
+            callfunc.token = ptoken
             #and return it
             return callfunc
         #else return an expression statement

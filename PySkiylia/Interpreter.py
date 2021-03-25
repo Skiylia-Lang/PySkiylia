@@ -239,8 +239,8 @@ class Interpreter(misc, Evaluator):
         methods = dict()
         #iterate through all the methods
         for method in stmt.methods:
-            #create a new function instance
-            function = SkiyliaFunction(method, self.environment)
+            #create a new function instance, making sure that we set "isinit" to true if this method is the init one
+            function = SkiyliaFunction(method, self.environment, method.name.lexeme=="init")
             #and set it within our methods dictionary
             methods[method.name.lexeme] = function
         #create a new class object

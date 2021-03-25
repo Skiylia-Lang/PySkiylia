@@ -28,10 +28,11 @@ class SkiyliaCallable:
 #internal handling of functions
 class SkiyliaFunction(SkiyliaCallable):
     string = "Skiylia function"
-    def __init__(self, declaration, closure):
+    def __init__(self, declaration, closure, isinit=False):
         #define the internals at initialisation
         self.closure = closure
         self.declaration = declaration
+        self.isinit = isinit
         self.arity = len(self.declaration.params)
 
     def call(self, interpreter, arguments):
@@ -46,6 +47,10 @@ class SkiyliaFunction(SkiyliaCallable):
             #ask the interpreter to execute the block
             interpreter.executeBlock(self.declaration.body.statements, self.environment)
         except Return as ret:
+            #check if we are an init function, with a blank return
+            if self.isinit and (ret.message == None):
+                #return a reference to the class
+                return self.closure.getAt(0, "self")
             #if we had a return, return the contents
             return ret.message
         #return None by default
@@ -55,7 +60,7 @@ class SkiyliaFunction(SkiyliaCallable):
         #create a new environment for the method
         environment = Environment(self.closure)
         #add a reference to "self" inside it
-        environment.define("self", instance)
+        environment.define("self", instance, self.isinit)
         #and return the new function with that environment
         return SkiyliaFunction(self.declaration, environment)
 

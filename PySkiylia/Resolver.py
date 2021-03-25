@@ -133,9 +133,13 @@ class Resolver(Evaluator):
         return None
 
     def ReturnStmt(self, stmt):
+        #if we aren't in a function
         if self.currentFunction == self.FunctionType["None"]:
+            #throw an error
             self.error(stmt.keyword, "Can't return from top-level code")
+        #if the return statement has a value
         if stmt.value:
+            #return that
             self.resolve(stmt.value)
         return None
 

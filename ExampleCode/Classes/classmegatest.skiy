@@ -5,6 +5,7 @@
 class testClass:
   init():
     print("This was called at class initialisation")
+    return
 
   test():
     print("This worked by the way")
@@ -24,6 +25,7 @@ print(testClass)
 var a = testClass()
 
 print(a)
+print(a.init())
 
 //expected output: "This was called at class initialisation", <class testclass instance>
 

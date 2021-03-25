@@ -18,6 +18,7 @@ class Evaluator:
                      "Class": self.ClassStmt,
                      "Expression": self.ExpressionStmt,
                      "Function": self.FunctionStmt,
+                     "Get": self.GetExpr,
                      "Grouping": self.GroupingExpr,
                      "If": self.IfStmt,
                      "Logical": self.LogicalExpr,
@@ -58,6 +59,9 @@ class ASTPrinter(Evaluator):
 
     def FunctionStmt(self, stmt):
         return self.toparenthesis("define {}".format(stmt.name.lexeme), stmt.params, stmt.body)
+
+    def GetExpr(self, expr):
+        return self.toparenthesis(".", expr.object, expr.name.lexeme)
 
     def GroupingExpr(self, expr):
         return self.toparenthesis("group", expr.expression)

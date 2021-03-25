@@ -291,6 +291,16 @@ class Interpreter(misc, Evaluator):
 
         return self.evaluate(expr.right)
 
+    def GetExpr(self, expr):
+        #fetch the object being refered to
+        object = self.evaluate(expr.object)
+        #if the object is an instance
+        if isinstance(object, SkiyliaInstance):
+            #return the properties of the ibject
+            return object.get(expr.name)
+        #throw an error if not
+        raise RuntimeError([expr.name, "Only instances have properties."])
+
     #define a way of unpacking a grouped expression at runtime
     def GroupingExpr(self, expr):
         return self.evaluate(expr.expression)

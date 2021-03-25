@@ -484,6 +484,11 @@ class Parser:
             if self.match("LeftParenthesis"):
                 #fetch the rest of the call
                 expr = self.finishCall(expr)
+            #if we have class properties to interact with
+            elif self.match("Dot"):
+                #fetch the name of the property
+                name = self.consume("Expected property name afte '.'.", "Identifier")
+                expr = Get(expr, name)
             else:
                 #otherwise stop here
                 break

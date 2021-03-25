@@ -85,6 +85,14 @@ class Resolver(Evaluator):
         self.resolveFunction(stmt, self.currentFunction)
         return None
 
+    def GetExpr(self, expr):
+        self.resolve(expr.object)
+        return None
+
+    def GroupingExpr(self, expr):
+        self.resolve(expr.expression)
+        return None
+
     def IfStmt(self, stmt):
         #resolve the condition
         self.resolve(stmt.condition)
@@ -101,10 +109,6 @@ class Resolver(Evaluator):
     def LogicalExpr(self, expr):
         self.resolve(expr.left)
         self.resolve(expr.right)
-        return None
-
-    def GroupingExpr(self, expr):
-        self.resolve(expr.expression)
         return None
 
     def ReturnStmt(self, stmt):

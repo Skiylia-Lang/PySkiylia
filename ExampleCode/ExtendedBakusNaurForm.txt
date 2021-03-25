@@ -27,7 +27,9 @@
 
 program           > declaration* EOF
 
-declaration       > functiondeclaration | vardeclaration | statement
+declaration       > classdeclaration | functiondeclaration | vardeclaration | statement
+
+classdeclaration  > "class" Identifier {Block token} function*
 
 funcdeclaration   > "def" function
 

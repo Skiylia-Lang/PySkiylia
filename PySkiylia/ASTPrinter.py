@@ -15,13 +15,17 @@ class Evaluator:
                      "Block": self.BlockStmt,
                      "Binary": self.BinaryExpr,
                      "Call": self.CallExpr,
+                     "Class": self.ClassStmt,
                      "Expression": self.ExpressionStmt,
                      "Function": self.FunctionStmt,
+                     "Get": self.GetExpr,
                      "Grouping": self.GroupingExpr,
                      "If": self.IfStmt,
                      "Logical": self.LogicalExpr,
                      "Literal": self.LiteralExpr,
                      "Return": self.ReturnStmt,
+                     "Self": self.SelfExpr,
+                     "Set": self.SetExpr,
                      "Unary": self.UnaryExpr,
                      "Var":self.VarStmt,
                      "Variable": self.VarExpr,
@@ -49,11 +53,17 @@ class ASTPrinter(Evaluator):
     def CallExpr(self, expr):
         return self.toparenthesis("call", expr.callee, expr.arguments)
 
+    def ClassStmt(self, stmt):
+        return self.toparenthesis("class {}".format(stmt.name.lexeme), [x for x in stmt.methods])
+
     def ExpressionStmt(self, stmt):
         return self.toparenthesis("",stmt.expression)
 
     def FunctionStmt(self, stmt):
         return self.toparenthesis("define {}".format(stmt.name.lexeme), stmt.params, stmt.body)
+
+    def GetExpr(self, expr):
+        return self.toparenthesis(".", expr.object, expr.name.lexeme)
 
     def GroupingExpr(self, expr):
         return self.toparenthesis("group", expr.expression)
@@ -73,6 +83,12 @@ class ASTPrinter(Evaluator):
 
     def ReturnStmt(self, stmt):
         return self.toparenthesis("return", stmt.value)
+
+    def SelfExpr(self, expr):
+        return "self"
+
+    def SetExpr(self, expr):
+        return self.toparenthesis("=", expr.object, expr.name.lexeme, expr.value)
 
     def UnaryExpr(self, expr):
         return self.toparenthesis(expr.operator.lexeme, expr.right)

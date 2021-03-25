@@ -7,14 +7,18 @@ import sys, os
 ExprDict = {"Assign":"name,value",
             "Binary":"left,operator,right",
             "Call":"callee,parenthesis,arguments",
+            "Get":"object,name",
             "Grouping":"expression",
             "Logical":"left,operator,right",
             "Literal":"value",
             "Return":"keyword,value",
+            "Self":"keyword",
+            "Set":"object,name,value",
             "Unary":"operator,right",
             "Variable":"name"}
 
 StmtDict = {"Block":"statements",
+            "Class":"name,methods",
             "Expression":"expression",
             "Function": "name,params,body",
             "If":"condition,thenBranch,elseBranch",

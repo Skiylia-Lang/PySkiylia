@@ -1,0 +1,55 @@
+//full testing suite for classes
+
+//single method
+
+class testClass:
+  init():
+    print("This was called at class initialisation")
+    return
+
+  test():
+    print("This worked by the way")
+
+  selfTest():
+    print(self.hello)
+
+  def returnfromclass(newgreeting):
+    var oldgreeting = self.hello
+    self.hello = newgreeting
+    return oldgreeting
+
+print(testClass)
+
+//expected output: <class testclass>
+
+var a = testClass()
+
+print(a)
+print(a.init())
+
+//expected output: "This was called at class initialisation", <class testclass instance>
+
+print(a.test)
+
+//expected output: <skiylia function>
+
+a.test()
+
+//expected output: "This worked by the way""
+
+a.hello = "hi there"
+
+print(a.hello)
+
+//expected output "hi there"
+
+a.selfTest()
+
+//expected "hi there" again
+
+var old = a.returnfromclass("howdy my dude")
+
+print(old)
+a.selfTest()
+
+//expected output: "hi there", "howdy my dude"

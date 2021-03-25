@@ -4,7 +4,7 @@
 #import our code
 from AbstractSyntax import *
 from Environment import Environment
-from SkiyliaCallable import Return, SkiyliaCallable, SkiyliaFunction
+from SkiyliaCallable import Return, SkiyliaCallable, SkiyliaFunction, SkiyliaClass, SkiyliaInstance
 from ASTPrinter import Evaluator
 import Primitives
 
@@ -126,14 +126,17 @@ class Interpreter(misc, Evaluator):
         #evaluate what should be assignd
         value = self.evaluate(expr.value)
         #fetch the distance to the variable
-        dist = self.locals[expr]
+        try:
+            dist = self.locals[expr]
+        except:
+            dist = None
         #if there was one,
         if dist:
             #assign it in that environment
             self.environment.assignAt(dist, expr.name.lexeme, value)
         else:
             #otherwise, add to globals
-            self.globals[expr.name, value]
+            self.globals.define(expr.name, value)
         return value
 
     #define a way of unpacking a binary expression
@@ -228,6 +231,25 @@ class Interpreter(misc, Evaluator):
         #return and call the callable
         return callee.call(self, args)
 
+    #define how our interpreter handles classes
+    def ClassStmt(self, stmt):
+        #ensure the class is defined in our environment
+        self.environment.define(stmt.name.lexeme, None)
+        #deal with the methods of the class
+        methods = dict()
+        #iterate through all the methods
+        for method in stmt.methods:
+            #create a new function instance, making sure that we set "isinit" to true if this method is the init one
+            function = SkiyliaFunction(method, self.environment, method.name.lexeme=="init")
+            #and set it within our methods dictionary
+            methods[method.name.lexeme] = function
+        #create a new class object
+        thisclass = SkiyliaClass(stmt.name.lexeme, methods)
+        #and assign it the pointer created above
+        self.environment.assign(stmt.name, thisclass)
+        #and return none by default
+        return None
+
     #define the way of interpreting an expression statement
     def ExpressionStmt(self, stmt):
         #evaluate the expression
@@ -280,6 +302,16 @@ class Interpreter(misc, Evaluator):
 
         return self.evaluate(expr.right)
 
+    def GetExpr(self, expr):
+        #fetch the object being refered to
+        object = self.evaluate(expr.object)
+        #if the object is an instance
+        if isinstance(object, SkiyliaInstance):
+            #return the properties of the ibject
+            return object.get(expr.name)
+        #throw an error if not
+        raise RuntimeError([expr.name, "Only instances have properties."])
+
     #define a way of unpacking a grouped expression at runtime
     def GroupingExpr(self, expr):
         return self.evaluate(expr.expression)
@@ -294,6 +326,24 @@ class Interpreter(misc, Evaluator):
             value = self.evaluate(stmt.value)
         #create an exception so we can return all the way back to the call
         raise Return(value)
+
+    #self grammar
+    def SelfExpr(self, expr):
+        #return the keyword from variable
+        return self.lookupvariable(expr.keyword, expr)
+
+    def SetExpr(self, expr):
+        #get the object this is refering to
+        object = self.evaluate(expr.object)
+        #if the object is not a skiylia instance
+        if not isinstance(object, SkiyliaInstance):
+            raise RuntimeError([expr.name, "Only instances have fields."])
+        #fetch the value that is to be set
+        value = self.evaluate(expr.value)
+        #and set the instance property
+        object.set(expr.name, value)
+        #and return the value that was set
+        return value
 
     #define a way of unpacking a Unary
     def UnaryExpr(self, expr):

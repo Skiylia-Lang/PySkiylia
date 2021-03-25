@@ -11,7 +11,8 @@ from ASTPrinter import Evaluator
 #define the Resolver class
 class Resolver(Evaluator):
     #hold some thingies my dude
-    FunctionType = {"None":0, "Function":1}
+    FunctionType = {"None":0, "Function":1, "Method":2}
+    ClassType = {"None":0, "Class":1}
     ##initialise
     def __init__(self, skiylia, interpreter, arglimit):
         #return a method for accessing the skiylia class
@@ -22,6 +23,8 @@ class Resolver(Evaluator):
         self.arglimit = arglimit
         #define the current function as null
         self.currentFunction = self.FunctionType["None"]
+        #define the current class as null
+        self.currentClass = self.ClassType["None"]
         #define the scope stack
         self.scopes = deque()
 
@@ -64,6 +67,29 @@ class Resolver(Evaluator):
             self.resolve(arg)
         return None
 
+    def ClassStmt(self, stmt):
+        #store a reference to the enclosing class
+        enclosingClass = self.currentClass
+        self.currentClass = self.ClassType["Class"]
+        #do the class name definition stuff
+        self.declare(stmt.name)
+        self.define(stmt.name)
+        #create a scope for the class
+        self.beginScope()
+        #amd stick "self" into it
+        self.scopes[-1]["self"] = True
+        #all the class method stuffs
+        for method in stmt.methods:
+            #set the type to method
+            declaration = self.FunctionType["Method"]
+            #and resolve it
+            self.resolveFunction(method, declaration)
+        #end the class scope
+        self.endScope()
+        #return the class enclosure to what it was
+        self.currentClass = enclosingClass
+        return None
+
     def ExpressionStmt(self, stmt):
         #resolve the expression
         self.resolve(stmt.expression)
@@ -78,6 +104,14 @@ class Resolver(Evaluator):
         self.currentFunction = self.FunctionType["Function"]
         #and resolve the body of the function
         self.resolveFunction(stmt, self.currentFunction)
+        return None
+
+    def GetExpr(self, expr):
+        self.resolve(expr.object)
+        return None
+
+    def GroupingExpr(self, expr):
+        self.resolve(expr.expression)
         return None
 
     def IfStmt(self, stmt):
@@ -98,15 +132,30 @@ class Resolver(Evaluator):
         self.resolve(expr.right)
         return None
 
-    def GroupingExpr(self, expr):
-        self.resolve(expr.expression)
+    def ReturnStmt(self, stmt):
+        #if we aren't in a function
+        if self.currentFunction == self.FunctionType["None"]:
+            #throw an error
+            self.error(stmt.keyword, "Can't return from top-level code")
+        #if the return statement has a value
+        if stmt.value:
+            #return that
+            self.resolve(stmt.value)
         return None
 
-    def ReturnStmt(self, stmt):
-        if self.currentFunction == self.FunctionType["None"]:
-            self.skiyla.error(stmt.keyword, "Can't return from top-level code")
-        if stmt.value:
-            self.resolve(stmt.value)
+    def SelfExpr(self, expr):
+        #ensure we are in a class first
+        if self.currentClass == self.ClassType["None"]:
+            self.error(expr.keyword, "Can't use 'self' outside of a class")
+        #return the value
+        self.resolveLocal(expr, expr.keyword)
+        return None
+
+    def SetExpr(self, expr):
+        #resolve the value for the set
+        self.resolve(expr.value)
+        #and resolve the property it is refering to
+        self.resolve(expr.object)
         return None
 
     def UnaryExpr(self, expr):
@@ -118,7 +167,7 @@ class Resolver(Evaluator):
         #check that the scope exists, and that the variable has been initialised
         if bool(self.scopes) and (expr.name.lexeme in self.scopes[-1]) and (self.scopes[-1][expr.name.lexeme]==False):
             #if it hasn't, and the scope exists, throw an error
-            self.skiylia.error(expr.name, "Can't read local variable in its own initialiser")
+            self.error(expr.name, "Can't read local variable in its own initialiser")
         #otherwise resolve the local variables
         self.resolveLocal(expr, expr.name)
         return None
@@ -159,7 +208,7 @@ class Resolver(Evaluator):
         #if the variable has already been declared
         if name.lexeme in self.scopes[-1]:
             #chuck an error
-            self.skiylia.error(name, "Variable with this name already in scope.")
+            self.error(name, "Variable with this name already in scope.")
         #otherwise add the name to the stack and declare it unusable (each stack position is on top (last index) and is a dict)
         self.scopes[-1][name.lexeme] = False
 
@@ -212,3 +261,14 @@ class Resolver(Evaluator):
         else:
             #otherwise use the singular
             self.evaluate(stmts)
+
+    #define a way of showing errors to the user
+    def error(self, token, message):
+        #if we reached the end of the file, show an EOF error
+        if token.type == "EOF":
+            self.skiylia.error(token.line, token.char, message, "at end of file, Syntax")
+        #otherwise show the user what the exact location and token was
+        else:
+            self.skiylia.error(token.line, token.char, message, "at '"+token.lexeme+"', Syntax")
+        #and return our base resolver error
+        return [token, message, "Resolve"]

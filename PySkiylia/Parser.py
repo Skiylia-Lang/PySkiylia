@@ -85,6 +85,9 @@ class Parser:
         elif self.match("While"):
             #compute the while statement
             return self.whilestatement()
+        #if we see a class identifier
+        elif self.match("Class"):
+            return self.classdeclaration()
         #if the next token is a function declaration
         elif self.match("Def"):
             return self.functiondeclaration("function")
@@ -209,6 +212,37 @@ class Parser:
         #and return the function
         return Function(name, params, body)
 
+    #define the class grammar
+    def classdeclaration(self):
+        #fetch the name of the class
+        name = self.consume("Expected a class name.", "Identifier")
+        #double check grammar
+        if not self.check(*self.blockStart):
+            #show an error
+            raise RuntimeError(self.error(self.peek(), "Expect ':' after class declaration"))
+        #and advance past the grammar marker
+        self.advance()
+        #fetch the indentation of the class
+        myIndent = self.peek().indent
+        #if we have an ending token
+        if self.check("End"):
+            #skip it
+            self.advance()
+        #empty methods initialiser
+        methods=[]
+        #keep checking for new methods until the indentation decreases
+        while (not self.atEnd()) and (self.checkindent(myIndent) != -1):
+            #if the user has a "def" token, skip past it.
+            if self.check("Def"):
+                self.advance()
+            #keep adding statements while the class has more methods
+            methods.append(self.functiondeclaration("method"))
+            #check if we have cascading end tokens
+            if self.check("End") and (self.checkindent(myIndent) != -1):
+                self.advance()
+        #return the class
+        return Class(name, methods)
+
     #define the return grammar
     def returnstatement(self):
         #fetch the "Return" token for error reporting
@@ -303,6 +337,8 @@ class Parser:
                 name = expr.name
                 #return the assignment
                 return Assign(name, value)
+            elif isinstance(expr, Get):
+                return Set(expr.object, expr.name, value)
             #throw an error if not
             self.skiylia.error([equals, "Invalid assignment target."])
         #return the variable
@@ -461,6 +497,11 @@ class Parser:
             if self.match("LeftParenthesis"):
                 #fetch the rest of the call
                 expr = self.finishCall(expr)
+            #if we have class properties to interact with
+            elif self.match("Dot"):
+                #fetch the name of the property
+                name = self.consume("Expected property name afte '.'.", "Identifier")
+                expr = Get(expr, name)
             else:
                 #otherwise stop here
                 break
@@ -480,6 +521,9 @@ class Parser:
         #check if a number or string
         elif self.match("Number", "String"):
             return Literal(self.previous().literal)
+        #check if we have a "self"
+        elif self.match("Self"):
+            return Self(self.previous())
         #check if a variable is there
         elif self.match("Identifier"):
             return Variable(self.previous())

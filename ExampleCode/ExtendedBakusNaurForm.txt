@@ -27,7 +27,9 @@
 
 program           > declaration* EOF
 
-declaration       > functiondeclaration | vardeclaration | statement
+declaration       > classdeclaration | functiondeclaration | vardeclaration | statement
+
+classdeclaration  > "class" Identifier {Block token} function*
 
 funcdeclaration   > "def" function
 
@@ -54,7 +56,7 @@ whilestmt         > "while" expression {Block token} statement
 
 expression        > assignment
 
-assignment        > Identifier "=" assignment | logicalOr
+assignment        > (call ".")? Identifier "=" assignment | logicalOr
 
 //Logical or has the highest precedence (and is computed last)
 logicalOr         > logicalXor ( "|" logicalXor )*
@@ -78,9 +80,7 @@ factor            > unary ( ( "*" | "/" ) unary )*
 unary             > ( "!" | "-" ) unary | call
 
 //And finally call has the lowest precedence (and is computed first)
-call              > literal ( "(" arguments? ")" )*
-printstmt         > "print" "(" expression ")" {End token}+
-//extends call instead of being a seperate function
+call              > literal ( "(" arguments? ")" | "." Identifier)*
 
 arguments         > expression ( "," expression )*
 

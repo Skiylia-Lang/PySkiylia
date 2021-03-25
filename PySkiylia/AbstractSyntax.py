@@ -21,6 +21,11 @@ class Call(Expr):
 		self.parenthesis = parenthesis
 		self.arguments = arguments
 
+class Get(Expr):
+	def __init__(self, object,name):
+		self.object = object
+		self.name = name
+
 class Grouping(Expr):
 	def __init__(self, expression):
 		self.expression = expression

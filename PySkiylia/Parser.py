@@ -534,6 +534,12 @@ class Parser:
         #check if we have a "self"
         elif self.match("Self"):
             return Self(self.previous())
+        #check if we have a 'super'
+        elif self.match("Super"):
+            keyword = self.previous()
+            self.consume("Expect '.' after 'super'.", "Dot")
+            method = self.consume("Expect superclass method.", "Identifier")
+            return Super(keyword, method)
         #check if a variable is there
         elif self.match("Identifier"):
             return Variable(self.previous())

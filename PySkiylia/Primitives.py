@@ -30,12 +30,14 @@ def stringify(obj):
     #return the string of the object
     return str(obj)
 
+class primitivefunc(SkiyliaCallable):
+    string = "primitive function"
+
 #print function
-class skiyliaprint(SkiyliaCallable):
+class skiyliaprint(primitivefunc):
     #define the functional input
     #print can take any number of arguments, but needs at least zero
     arity = "0,*"
-    string = "primitive function"
     callname = "print"
     #overwrite the call
     def call(self, interpreter, arguments):
@@ -43,19 +45,52 @@ class skiyliaprint(SkiyliaCallable):
         return None
 
 #clock
-class skiyliaclock(SkiyliaCallable):
+class skiyliaclock(primitivefunc):
     #define the function stuff
-    arity = 0
-    string = "primitive function"
     callname = "clock"
     #and overwite the call
     def call(self, interpreter, arguments):
         return time.time()
 
 #sqrt
-class skiyliasqrt(SkiyliaCallable):
-    arity = 1
-    string = "primitive function"
+class skiyliasqrt(primitivefunc):
     callname = "sqrt"
     def call(self, interpreter, arguments):
         return math.sqrt(arguments[0])
+
+#string conversion
+class skiyliastring(primitivefunc):
+    arity = "0,*"
+    callname = "string"
+    def call(self, interpreter, arguments):
+        return " ".join(str(x) for x in a)
+
+#string shorthand
+class skiyliastr(skiyliastring):
+    callname = "str"
+
+#integer conversion
+class skiyliainteger(primitivefunc):
+    arity = 1
+    callname = "integer"
+    def call(self, interpreter, arguments):
+        num = arguments[0]
+        try:
+            return float(int(float(num)))         #skiylia represents all numbers as floats
+        except:
+            raise RuntimeError("Cannot convert '{}' to integer.".format(num))
+
+#shorthand for integer
+class skiyliaint(skiyliainteger):
+    callname = "int"
+
+#float conversion
+class skiyliafloat(primitivefunc):
+    arity = 1
+    callname = "float"
+    def call(self, interpreter, arguments):
+        num = arguments[0]
+        try:
+            return float(num)
+        except:
+            raise RuntimeError("Cannot convert '{}' to integer.".format(num))

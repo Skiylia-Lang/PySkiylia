@@ -60,9 +60,9 @@ class SkiyliaFunction(SkiyliaCallable):
         #create a new environment for the method
         environment = Environment(self.closure)
         #add a reference to "self" inside it
-        environment.define("self", instance, self.isinit)
+        environment.define("self", instance)
         #and return the new function with that environment
-        return SkiyliaFunction(self.declaration, environment)
+        return SkiyliaFunction(self.declaration, environment, self.isinit)
 
 #internal handling of classes
 class SkiyliaClass(SkiyliaCallable):

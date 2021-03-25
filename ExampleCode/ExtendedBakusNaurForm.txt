@@ -80,9 +80,7 @@ factor            > unary ( ( "*" | "/" ) unary )*
 unary             > ( "!" | "-" ) unary | call
 
 //And finally call has the lowest precedence (and is computed first)
-call              > literal ( "(" arguments? ")" )*
-printstmt         > "print" "(" expression ")" {End token}+
-//extends call instead of being a seperate function
+call              > literal ( "(" arguments? ")" | "." Identifier)*
 
 arguments         > expression ( "," expression )*
 

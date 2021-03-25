@@ -241,6 +241,11 @@ class Interpreter(misc, Evaluator):
                 raise RuntimeError([stmt.superclass.name, "Superclass must be a class."])
         #ensure the class is defined in our environment
         self.environment.define(stmt.name.lexeme, None)
+        #and add the definition of "super" in our scope
+        if stmt.superclass:
+            #create a new scope for the super
+            self.environment = Environment(self.environment)
+            self.environment.define("super", superclass)
         #deal with the methods of the class
         methods = dict()
         #iterate through all the methods
@@ -251,6 +256,10 @@ class Interpreter(misc, Evaluator):
             methods[method.name.lexeme] = function
         #create a new class object with superclass
         thisclass = SkiyliaClass(stmt.name.lexeme, superclass, methods)
+        #escape out of the superclass scope if we made one
+        if stmt.superclass:
+            #create a new scope for the super
+            self.environment = self.environment.enclosing
         #and assign it the pointer created above
         self.environment.assign(stmt.name, thisclass)
         #and return none by default
@@ -350,6 +359,23 @@ class Interpreter(misc, Evaluator):
         object.set(expr.name, value)
         #and return the value that was set
         return value
+
+    #define the superclass stuff!
+    def SuperExpr(self, expr):
+        #fetch the distance to the superclass
+        dist = self.locals[expr]
+        #and retrun the actual reference to it
+        superclass = self.environment.getAt(dist, "super")
+        #return the reference to the class calling it's super
+        object = self.environment.getAt(dist - 1, "self")
+        #and get the method being called
+        method = superclass.findMethod(expr.method.lexeme)
+        #if the method doesn't exist
+        if not method:
+            #throw an error
+            raise RuntimeError([expr.method, "Undefined property '{}'.".format(expr.method.lexeme)])
+        #return the method, bound to the child class
+        return method.bind(object)
 
     #define a way of unpacking a Unary
     def UnaryExpr(self, expr):

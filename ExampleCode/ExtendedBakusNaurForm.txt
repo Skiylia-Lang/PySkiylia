@@ -29,7 +29,7 @@ program           > declaration* EOF
 
 declaration       > classdeclaration | functiondeclaration | vardeclaration | statement
 
-classdeclaration  > "class" Identifier {Block token} function*
+classdeclaration  > "class" Identifier ( "(" Idenitifer ")" )? {Block token} function*
 
 funcdeclaration   > "def" function
 
@@ -84,4 +84,4 @@ call              > literal ( "(" arguments? ")" | "." Identifier)*
 
 arguments         > expression ( "," expression )*
 
-literal           > Number | String | "true" | "false" | "null" | "(" expression ")" | Identifier
+literal           > Number | String | "self" | "super" "." Identifier | "true" | "false" | "null" | "(" expression ")" | Identifier

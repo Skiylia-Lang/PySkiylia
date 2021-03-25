@@ -14,11 +14,12 @@ ExprDict = {"Assign":"name,value",
             "Return":"keyword,value",
             "Self":"keyword",
             "Set":"object,name,value",
+            "Super":"keyword,method",
             "Unary":"operator,right",
             "Variable":"name"}
 
 StmtDict = {"Block":"statements",
-            "Class":"name,methods",
+            "Class":"name,superclass,methods",
             "Expression":"expression",
             "Function": "name,params,body",
             "If":"condition,thenBranch,elseBranch",

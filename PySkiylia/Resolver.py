@@ -12,7 +12,7 @@ from ASTPrinter import Evaluator
 class Resolver(Evaluator):
     #hold some thingies my dude
     FunctionType = {"None":0, "Function":1, "Method":2}
-    ClassType = {"None":0, "Class":1}
+    ClassType = {"None":0, "Class":1, "Subclass": 2}
     ##initialise
     def __init__(self, skiylia, interpreter, arglimit):
         #return a method for accessing the skiylia class
@@ -74,6 +74,17 @@ class Resolver(Evaluator):
         #do the class name definition stuff
         self.declare(stmt.name)
         self.define(stmt.name)
+        #check if we have been given a superclass
+        if stmt.superclass:
+            #set our classtype to subclass
+            self.currentClass = self.ClassType["Subclass"]
+            if stmt.superclass.name.lexeme == stmt.name.lexeme:
+                self.error(stmt.superclass.name, "A class cannot be it's own superclass.")
+            #then resolve it
+            self.resolve(stmt.superclass)
+            #ensure we have a reference to our superclass when calling "super"
+            self.beginScope()
+            self.scopes[-1]["super"] = True
         #create a scope for the class
         self.beginScope()
         #amd stick "self" into it
@@ -86,6 +97,9 @@ class Resolver(Evaluator):
             self.resolveFunction(method, declaration)
         #end the class scope
         self.endScope()
+        #and end the superclass scope if we had one
+        if stmt.superclass:
+            self.endScope()
         #return the class enclosure to what it was
         self.currentClass = enclosingClass
         return None
@@ -156,6 +170,14 @@ class Resolver(Evaluator):
         self.resolve(expr.value)
         #and resolve the property it is refering to
         self.resolve(expr.object)
+        return None
+
+    def SuperExpr(self, expr):
+        if self.currentClass == self.ClassType["None"]:
+            self.error(expr.keyword, "Can't use 'super' outside of a class.")
+        elif self.currentClass == self.ClassType["Class"]:
+            self.error(expr.keyword, "Can't use 'super' within a class with no superclass.")
+        self.resolveLocal(expr, expr.keyword)
         return None
 
     def UnaryExpr(self, expr):

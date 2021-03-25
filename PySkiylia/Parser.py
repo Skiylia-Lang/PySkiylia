@@ -216,6 +216,16 @@ class Parser:
     def classdeclaration(self):
         #fetch the name of the class
         name = self.consume("Expected a class name.", "Identifier")
+        #check for a superclass
+        superclass = None
+        #if we have a parenthesis, we have a super class
+        if self.match("LeftParenthesis"):
+            #make sure we are given a superclass
+            self.consume("Expect superclass name.", "Identifier")
+            #fetch the class reference
+            superclass = Variable(self.previous())
+            #and ensure we have closed the parenthesis correctly
+            self.consume("Expect ')' to follow superclass.", "RightParenthesis")
         #double check grammar
         if not self.check(*self.blockStart):
             #show an error
@@ -241,7 +251,7 @@ class Parser:
             if self.check("End") and (self.checkindent(myIndent) != -1):
                 self.advance()
         #return the class
-        return Class(name, methods)
+        return Class(name, superclass, methods)
 
     #define the return grammar
     def returnstatement(self):
@@ -524,6 +534,12 @@ class Parser:
         #check if we have a "self"
         elif self.match("Self"):
             return Self(self.previous())
+        #check if we have a 'super'
+        elif self.match("Super"):
+            keyword = self.previous()
+            self.consume("Expect '.' after 'super'.", "Dot")
+            method = self.consume("Expect superclass method.", "Identifier")
+            return Super(keyword, method)
         #check if a variable is there
         elif self.match("Identifier"):
             return Variable(self.previous())

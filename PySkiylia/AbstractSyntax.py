@@ -55,6 +55,11 @@ class Set(Expr):
 		self.name = name
 		self.value = value
 
+class Super(Expr):
+	def __init__(self, keyword,method):
+		self.keyword = keyword
+		self.method = method
+
 class Unary(Expr):
 	def __init__(self, operator,right):
 		self.operator = operator
@@ -72,8 +77,11 @@ class Block(Stmt):
 		self.statements = statements
 
 class Class(Stmt):
-	def __init__(self, name,methods):
+
+	def __init__(self, name,superclass,methods):
 		self.name = name
+
+		self.superclass = superclass
 		self.methods = methods
 
 class Expression(Stmt):

@@ -69,9 +69,10 @@ class SkiyliaClass(SkiyliaCallable):
     #what to print
     string = "skiylia class"
     #initialiser
-    def __init__(self, name, methods):
+    def __init__(self, name, superclass, methods):
         #assign our name
         self.name = name
+        self.superclass = superclass
         self.methods = methods
         self.string = "_skiyliaClass.{}".format(name)
         #check for an init method to determine arity
@@ -96,6 +97,9 @@ class SkiyliaClass(SkiyliaCallable):
         if name in self.methods:
             #if it is, return that
             return self.methods[name]
+        #otherwise check in our superclass if we have one
+        elif self.superclass:
+            return self.superclass.findMethod(name)
         #otherwise return none
         return None
 

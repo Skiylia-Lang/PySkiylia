@@ -26,6 +26,7 @@ class Evaluator:
                      "Return": self.ReturnStmt,
                      "Self": self.SelfExpr,
                      "Set": self.SetExpr,
+                     "Super": self.SuperExpr,
                      "Unary": self.UnaryExpr,
                      "Var":self.VarStmt,
                      "Variable": self.VarExpr,
@@ -54,6 +55,8 @@ class ASTPrinter(Evaluator):
         return self.toparenthesis("call", expr.callee, expr.arguments)
 
     def ClassStmt(self, stmt):
+        if stmt.superclass:
+            return self.toparenthesis("class {}".format(stmt.name.lexeme), "superclass {}".format(stmt.superclass.name.lexeme), [x for x in stmt.methods])
         return self.toparenthesis("class {}".format(stmt.name.lexeme), [x for x in stmt.methods])
 
     def ExpressionStmt(self, stmt):
@@ -89,6 +92,9 @@ class ASTPrinter(Evaluator):
 
     def SetExpr(self, expr):
         return self.toparenthesis("=", expr.object, expr.name.lexeme, expr.value)
+
+    def SuperExpr(self, expr):
+        return self.toparenthesis("super", expr.method)
 
     def UnaryExpr(self, expr):
         return self.toparenthesis(expr.operator.lexeme, expr.right)

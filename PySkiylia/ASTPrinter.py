@@ -5,8 +5,39 @@
 from AbstractSyntax import *
 from Tokens import Token
 
+#class that converts AST nodes to their corresponding functions
+class Evaluator:
+    #define a way of sending the interpreter to the correct method
+    def evaluate(self, abstract):
+        #print(abstract)
+        ##List of all supported expressions and statements
+        abstracts = {"Assign":self.AssignExpr,
+                     "Block": self.BlockStmt,
+                     "Binary": self.BinaryExpr,
+                     "Call": self.CallExpr,
+                     "Class": self.ClassStmt,
+                     "Expression": self.ExpressionStmt,
+                     "Function": self.FunctionStmt,
+                     "Get": self.GetExpr,
+                     "Grouping": self.GroupingExpr,
+                     "If": self.IfStmt,
+                     "Logical": self.LogicalExpr,
+                     "Literal": self.LiteralExpr,
+                     "Return": self.ReturnStmt,
+                     "Self": self.SelfExpr,
+                     "Set": self.SetExpr,
+                     "Super": self.SuperExpr,
+                     "Unary": self.UnaryExpr,
+                     "Var":self.VarStmt,
+                     "Variable": self.VarExpr,
+                     "While":self.WhileStmt,}
+        #fetch the class name of the abstract provided
+        abstractName = abstract.__class__.__name__
+        #return the correct method and pass in own value
+        return abstracts[abstractName](abstract)
+
 #define the ASTprint class
-class ASTPrinter:
+class ASTPrinter(Evaluator):
     def display(self, Abstractions):
         for x in Abstractions:
             print(self.evaluate(x))
@@ -23,17 +54,25 @@ class ASTPrinter:
     def CallExpr(self, expr):
         return self.toparenthesis("call", expr.callee, expr.arguments)
 
+    def ClassStmt(self, stmt):
+        if stmt.superclass:
+            return self.toparenthesis("class {}".format(stmt.name.lexeme), "superclass {}".format(stmt.superclass.name.lexeme), [x for x in stmt.methods])
+        return self.toparenthesis("class {}".format(stmt.name.lexeme), [x for x in stmt.methods])
+
     def ExpressionStmt(self, stmt):
         return self.toparenthesis("",stmt.expression)
 
     def FunctionStmt(self, stmt):
         return self.toparenthesis("define {}".format(stmt.name.lexeme), stmt.params, stmt.body)
 
+    def GetExpr(self, expr):
+        return self.toparenthesis(".", expr.object, expr.name.lexeme)
+
     def GroupingExpr(self, expr):
         return self.toparenthesis("group", expr.expression)
 
     def IfStmt(self, stmt):
-        if stmt.elseBranch == None:
+        if not stmt.elseBranch:
             return self.toparenthesis("if", stmt.condition, stmt.thenBranch)
         return self.toparenthesis("if-else", stmt.condition, stmt.thenBranch, stmt.elseBranch)
 
@@ -47,6 +86,15 @@ class ASTPrinter:
 
     def ReturnStmt(self, stmt):
         return self.toparenthesis("return", stmt.value)
+
+    def SelfExpr(self, expr):
+        return "self"
+
+    def SetExpr(self, expr):
+        return self.toparenthesis("=", expr.object, expr.name.lexeme, expr.value)
+
+    def SuperExpr(self, expr):
+        return self.toparenthesis("super", expr.method)
 
     def UnaryExpr(self, expr):
         return self.toparenthesis(expr.operator.lexeme, expr.right)
@@ -79,22 +127,3 @@ class ASTPrinter:
             else:
                 out.append(part)
         return " ".join([str(x) for x in out])
-
-    def evaluate(self, Abstraction):
-        absts = {"Assign":self.AssignExpr,
-                "Binary": self.BinaryExpr,
-                "Block": self.BlockStmt,
-                "Call": self.CallExpr,
-                "Expression": self.ExpressionStmt,
-                "Function": self.FunctionStmt,
-                "Grouping": self.GroupingExpr,
-                "If": self.IfStmt,
-                "Literal": self.LiteralExpr,
-                "Logical": self.LogicalExpr,
-                "Return": self.ReturnStmt,
-                "Unary": self.UnaryExpr,
-                "Var":self.VarStmt,
-                "Variable": self.VarExpr,
-                "While":self.WhileStmt,}
-        abstName = Abstraction.__class__.__name__
-        return absts[abstName](Abstraction)

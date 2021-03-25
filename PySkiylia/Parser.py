@@ -85,6 +85,9 @@ class Parser:
         elif self.match("While"):
             #compute the while statement
             return self.whilestatement()
+        #if we see a class identifier
+        elif self.match("Class"):
+            return self.classdeclaration()
         #if the next token is a function declaration
         elif self.match("Def"):
             return self.functiondeclaration("function")
@@ -149,6 +152,9 @@ class Parser:
         #check it has not been ommited
         if self.match("Do"):
             increment = self.expression()
+        else:
+            self.constructincremental(initialiser.name)
+            increment = self.expression()
 
         #check for the colon grammar
         if not self.check(*self.blockStart):
@@ -158,12 +164,12 @@ class Parser:
 
         #desugar / deconstruct into a while
         #check if we have been given an increment operation
-        if increment != None:
+        if increment:
             #add the incremental to the end of the body, so it will be executed then
             body = Block([body, Expression(increment)])
 
         #check if we didn't have a conditional
-        if condition == None:
+        if not condition:
             #if none supplied, assume true
             condition = Literal(True)
         #construct the while loop from the conditional and body
@@ -205,6 +211,47 @@ class Parser:
         body = self.statement()
         #and return the function
         return Function(name, params, body)
+
+    #define the class grammar
+    def classdeclaration(self):
+        #fetch the name of the class
+        name = self.consume("Expected a class name.", "Identifier")
+        #check for a superclass
+        superclass = None
+        #if we have a parenthesis, we have a super class
+        if self.match("LeftParenthesis"):
+            #make sure we are given a superclass
+            self.consume("Expect superclass name.", "Identifier")
+            #fetch the class reference
+            superclass = Variable(self.previous())
+            #and ensure we have closed the parenthesis correctly
+            self.consume("Expect ')' to follow superclass.", "RightParenthesis")
+        #double check grammar
+        if not self.check(*self.blockStart):
+            #show an error
+            raise RuntimeError(self.error(self.peek(), "Expect ':' after class declaration"))
+        #and advance past the grammar marker
+        self.advance()
+        #fetch the indentation of the class
+        myIndent = self.peek().indent
+        #if we have an ending token
+        if self.check("End"):
+            #skip it
+            self.advance()
+        #empty methods initialiser
+        methods=[]
+        #keep checking for new methods until the indentation decreases
+        while (not self.atEnd()) and (self.checkindent(myIndent) != -1):
+            #if the user has a "def" token, skip past it.
+            if self.check("Def"):
+                self.advance()
+            #keep adding statements while the class has more methods
+            methods.append(self.functiondeclaration("method"))
+            #check if we have cascading end tokens
+            if self.check("End") and (self.checkindent(myIndent) != -1):
+                self.advance()
+        #return the class
+        return Class(name, superclass, methods)
 
     #define the return grammar
     def returnstatement(self):
@@ -292,7 +339,7 @@ class Parser:
         #if there is an equals after the identifier
         if self.match("Equal"):
             #fetch the variable name
-            equals = self.previous
+            equals = self.previous()
             #fetch it's value
             value = self.assignment()
             #if it is a Variable type
@@ -300,6 +347,8 @@ class Parser:
                 name = expr.name
                 #return the assignment
                 return Assign(name, value)
+            elif isinstance(expr, Get):
+                return Set(expr.object, expr.name, value)
             #throw an error if not
             self.skiylia.error([equals, "Invalid assignment target."])
         #return the variable
@@ -458,6 +507,11 @@ class Parser:
             if self.match("LeftParenthesis"):
                 #fetch the rest of the call
                 expr = self.finishCall(expr)
+            #if we have class properties to interact with
+            elif self.match("Dot"):
+                #fetch the name of the property
+                name = self.consume("Expected property name afte '.'.", "Identifier")
+                expr = Get(expr, name)
             else:
                 #otherwise stop here
                 break
@@ -477,6 +531,15 @@ class Parser:
         #check if a number or string
         elif self.match("Number", "String"):
             return Literal(self.previous().literal)
+        #check if we have a "self"
+        elif self.match("Self"):
+            return Self(self.previous())
+        #check if we have a 'super'
+        elif self.match("Super"):
+            keyword = self.previous()
+            self.consume("Expect '.' after 'super'.", "Dot")
+            method = self.consume("Expect superclass method.", "Identifier")
+            return Super(keyword, method)
         #check if a variable is there
         elif self.match("Identifier"):
             return Variable(self.previous())
@@ -489,6 +552,13 @@ class Parser:
             raise SyntaxError([self.previous(), "Unbounded object."])
             #if we found nothing, throw an error
         return self.error(self.peek(), "Expected an expression.")
+
+    def constructincremental(self, var):
+        self.tokens.insert(self.current, Tokens.Token("Number", "1", 1.0, var.line, var.char, var.indent))
+        self.tokens.insert(self.current, Tokens.Token("Plus", "+", None, var.line, var.char, var.indent))
+        self.tokens.insert(self.current, var)
+        self.tokens.insert(self.current, Tokens.Token("Equal", "=", None, var.line, var.char, var.indent))
+        self.tokens.insert(self.current, var)
 
     #define a way of checking if a token is found, and consuming it
     def consume(self, errorMessage, *type):

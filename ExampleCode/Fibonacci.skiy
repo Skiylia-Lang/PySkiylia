@@ -1,8 +1,8 @@
 //calculate the fibonaci sequence using functional calls
-def fib (n):
+def fib(n):
   if n>1:
     return fib(n-1) + fib(n-2)
   return n
 
-for var i where i < 10 do i = i+1:
-  print(i, fib(i))
+for var i when i<20:
+  print(fib(i))

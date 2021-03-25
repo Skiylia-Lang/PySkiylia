@@ -21,6 +21,11 @@ class Call(Expr):
 		self.parenthesis = parenthesis
 		self.arguments = arguments
 
+class Get(Expr):
+	def __init__(self, object,name):
+		self.object = object
+		self.name = name
+
 class Grouping(Expr):
 	def __init__(self, expression):
 		self.expression = expression
@@ -40,6 +45,21 @@ class Return(Expr):
 		self.keyword = keyword
 		self.value = value
 
+class Self(Expr):
+	def __init__(self, keyword):
+		self.keyword = keyword
+
+class Set(Expr):
+	def __init__(self, object,name,value):
+		self.object = object
+		self.name = name
+		self.value = value
+
+class Super(Expr):
+	def __init__(self, keyword,method):
+		self.keyword = keyword
+		self.method = method
+
 class Unary(Expr):
 	def __init__(self, operator,right):
 		self.operator = operator
@@ -55,6 +75,14 @@ class Stmt:
 class Block(Stmt):
 	def __init__(self, statements):
 		self.statements = statements
+
+class Class(Stmt):
+
+	def __init__(self, name,superclass,methods):
+		self.name = name
+
+		self.superclass = superclass
+		self.methods = methods
 
 class Expression(Stmt):
 	def __init__(self, expression):

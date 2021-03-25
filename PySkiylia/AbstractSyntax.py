@@ -45,6 +45,10 @@ class Return(Expr):
 		self.keyword = keyword
 		self.value = value
 
+class Self(Expr):
+	def __init__(self, keyword):
+		self.keyword = keyword
+
 class Set(Expr):
 	def __init__(self, object,name,value):
 		self.object = object

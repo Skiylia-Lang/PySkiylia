@@ -51,8 +51,16 @@ class SkiyliaFunction(SkiyliaCallable):
         #return None by default
         return None
 
+    def bind(self, instance):
+        #create a new environment for the method
+        environment = Environment(self.closure)
+        #add a reference to "self" inside it
+        environment.define("self", instance)
+        #and return the new function with that environment
+        return SkiyliaFunction(self.declaration, environment)
+
 #internal handling of classes
-def SkiyliaClass(SkiyliaCallable):
+class SkiyliaClass(SkiyliaCallable):
     #what to print
     string = "skiylia class"
     #initialiser
@@ -77,7 +85,7 @@ def SkiyliaClass(SkiyliaCallable):
         return None
 
 #internal instance handling
-def SkiyliaInstance(SkiyliaCallable):
+class SkiyliaInstance(SkiyliaCallable):
     def __init__(self, thisclass):
         #store the class that this instance is attatched to
         self.thisclass = thisclass
@@ -97,7 +105,7 @@ def SkiyliaInstance(SkiyliaCallable):
         #if it is
         if method:
             #return that
-            return method
+            return method.bind(self)
         #else throw an error
         raise RuntimeError([name, "Undefined property '{}'.".format(name.lexeme)])
 

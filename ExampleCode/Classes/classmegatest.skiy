@@ -1,0 +1,30 @@
+//full testing suite for classes
+
+//single method
+
+class a:
+  test():
+    print("This worked by the way")
+
+print(a)
+
+//expected output: <class a>
+
+var b = a()
+print(b)
+
+//expected output: <class a>
+
+print(b.test)
+
+//expected output: <class a, instance test>
+
+b.test()
+
+//expected output: "This worked by the way""
+
+b.hello = "hi there"
+
+print(b.hello)
+
+//expected output "hi there"

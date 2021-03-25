@@ -67,12 +67,18 @@ class Resolver(Evaluator):
     def ClassStmt(self, stmt):
         self.declare(stmt.name)
         self.define(stmt.name)
+        #create a scope for the class
+        self.beginScope()
+        #amd stick "self" into it
+        self.scopes[-1]["self"] = True
         #all the class method stuffs
         for method in stmt.methods:
             #set the type to method
             declaration = self.FunctionType["Method"]
             #and resolve it
             self.resolveFunction(method, declaration)
+        #end the class scope
+        self.endScope()
         return None
 
     def ExpressionStmt(self, stmt):
@@ -122,6 +128,10 @@ class Resolver(Evaluator):
             self.skiyla.error(stmt.keyword, "Can't return from top-level code")
         if stmt.value:
             self.resolve(stmt.value)
+        return None
+
+    def SelfExpr(self, expr):
+        self.resolveLocal(expr, expr.keyword)
         return None
 
     def SetExpr(self, expr):

@@ -4,7 +4,7 @@
 #import our code
 from AbstractSyntax import *
 from Environment import Environment
-from SkiyliaCallable import Return, SkiyliaCallable, SkiyliaFunction
+from SkiyliaCallable import Return, SkiyliaCallable, SkiyliaFunction, SkiyliaClass, SkiyliaInstance
 from ASTPrinter import Evaluator
 import Primitives
 
@@ -126,14 +126,17 @@ class Interpreter(misc, Evaluator):
         #evaluate what should be assignd
         value = self.evaluate(expr.value)
         #fetch the distance to the variable
-        dist = self.locals[expr]
+        try:
+            dist = self.locals[expr]
+        except:
+            dist = None
         #if there was one,
         if dist:
             #assign it in that environment
             self.environment.assignAt(dist, expr.name.lexeme, value)
         else:
             #otherwise, add to globals
-            self.globals[expr.name, value]
+            self.globals.define(expr.name, value)
         return value
 
     #define a way of unpacking a binary expression
@@ -243,7 +246,7 @@ class Interpreter(misc, Evaluator):
         #create a new class object
         thisclass = SkiyliaClass(stmt.name.lexeme, methods)
         #and assign it the pointer created above
-        self.environment.assign(stmt.name.lexeme, thisclass)
+        self.environment.assign(stmt.name, thisclass)
         #and return none by default
         return None
 
@@ -324,6 +327,11 @@ class Interpreter(misc, Evaluator):
         #create an exception so we can return all the way back to the call
         raise Return(value)
 
+    #self grammar
+    def SelfExpr(self, expr):
+        #return the keyword from variable
+        return self.lookupvariable(expr.keyword, expr)
+
     def SetExpr(self, expr):
         #get the object this is refering to
         object = self.evaluate(expr.object)
@@ -333,7 +341,7 @@ class Interpreter(misc, Evaluator):
         #fetch the value that is to be set
         value = self.evaluate(expr.value)
         #and set the instance property
-        object.set(expr.name, valie)
+        object.set(expr.name, value)
         #and return the value that was set
         return value
 

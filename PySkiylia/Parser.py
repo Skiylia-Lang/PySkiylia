@@ -220,12 +220,20 @@ class Parser:
         if not self.check(*self.blockStart):
             #show an error
             raise RuntimeError(self.error(self.peek(), "Expect ':' after class declaration"))
+        #and advance past the grammar marker
+        self.advance()
+        #fetch the indentation of the class
+        myIndent = self.peek().indent
+        #if we have an ending token
+        if self.check("End"):
+            #skip it
+            self.advance()
         #empty methods initialiser
         methods=[]
         #keep checking for new methods until the indentation decreases
         while (not self.atEnd()) and (self.checkindent(myIndent) != -1):
             #keep adding statements while the block is open
-            methods.append(self.function("method"))
+            methods.append(self.functiondeclaration("method"))
             #check if we have cascading end tokens
             if self.check("End") and (self.checkindent(myIndent) != -1):
                 self.advance()
@@ -327,7 +335,7 @@ class Parser:
                 #return the assignment
                 return Assign(name, value)
             elif isinstance(expr, Get):
-                return Set(get.object, get.name, value)
+                return Set(expr.object, expr.name, value)
             #throw an error if not
             self.skiylia.error([equals, "Invalid assignment target."])
         #return the variable
@@ -510,6 +518,9 @@ class Parser:
         #check if a number or string
         elif self.match("Number", "String"):
             return Literal(self.previous().literal)
+        #check if we have a "self"
+        elif self.match("Self"):
+            return Self(self.previous())
         #check if a variable is there
         elif self.match("Identifier"):
             return Variable(self.previous())

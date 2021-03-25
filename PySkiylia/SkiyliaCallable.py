@@ -72,4 +72,16 @@ def SkiyliaInstance(SkiyliaCallable):
     def __init__(self, thisclass):
         #store the class that this instance is attatched to
         self.thisclass = thisclass
+        #the string that will be printed
         self.string = "_skiyliaClass.{}_instance".format(thisclass.name)
+        #and the internal fields dictionary
+        self.fields = dict()
+
+    #fetch properties given name
+    def get(self, name):
+        #if the name is in our fields
+        if name.lexeme in self.fields:
+            #return it
+            return self.fields[name.lexeme]
+        #else throw an error
+        raise RuntimeError([name, "Undefined property '{}'.".format(name.lexeme)])

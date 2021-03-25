@@ -56,7 +56,7 @@ whilestmt         > "while" expression {Block token} statement
 
 expression        > assignment
 
-assignment        > Identifier "=" assignment | logicalOr
+assignment        > (call ".")? Identifier "=" assignment | logicalOr
 
 //Logical or has the highest precedence (and is computed last)
 logicalOr         > logicalXor ( "|" logicalXor )*

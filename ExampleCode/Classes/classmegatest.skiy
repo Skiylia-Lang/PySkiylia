@@ -2,29 +2,49 @@
 
 //single method
 
-class a:
+class testClass:
   test():
     print("This worked by the way")
 
+  selfTest():
+    print(self.hello)
+
+  def returnfromclass(newgreeting):
+    var oldgreeting = self.hello
+    self.hello = newgreeting
+    return oldgreeting
+
+print(testClass)
+
+//expected output: <class a>
+
+var a = testClass()
+
 print(a)
 
-//expected output: <class a>
+//expected output: <class a instance>
 
-var b = a()
-print(b)
+print(a.test)
 
-//expected output: <class a>
+//expected output: <skiylia function>
 
-print(b.test)
-
-//expected output: <class a, instance test>
-
-b.test()
+a.test()
 
 //expected output: "This worked by the way""
 
-b.hello = "hi there"
+a.hello = "hi there"
 
-print(b.hello)
+print(a.hello)
 
 //expected output "hi there"
+
+a.selfTest()
+
+//expected "hi there" again
+
+var old = a.returnfromclass("howdy my dude")
+
+print(old)
+a.selfTest()
+
+//expected output: "hi there", "howdy my dude"

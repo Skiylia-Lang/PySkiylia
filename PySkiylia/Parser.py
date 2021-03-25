@@ -232,7 +232,10 @@ class Parser:
         methods=[]
         #keep checking for new methods until the indentation decreases
         while (not self.atEnd()) and (self.checkindent(myIndent) != -1):
-            #keep adding statements while the block is open
+            #if the user has a "def" token, skip past it.
+            if self.check("Def"):
+                self.advance()
+            #keep adding statements while the class has more methods
             methods.append(self.functiondeclaration("method"))
             #check if we have cascading end tokens
             if self.check("End") and (self.checkindent(myIndent) != -1):

@@ -125,7 +125,7 @@ class Resolver(Evaluator):
 
     def ReturnStmt(self, stmt):
         if self.currentFunction == self.FunctionType["None"]:
-            self.skiyla.error(stmt.keyword, "Can't return from top-level code")
+            self.error(stmt.keyword, "Can't return from top-level code")
         if stmt.value:
             self.resolve(stmt.value)
         return None
@@ -150,7 +150,7 @@ class Resolver(Evaluator):
         #check that the scope exists, and that the variable has been initialised
         if bool(self.scopes) and (expr.name.lexeme in self.scopes[-1]) and (self.scopes[-1][expr.name.lexeme]==False):
             #if it hasn't, and the scope exists, throw an error
-            self.skiylia.error(expr.name, "Can't read local variable in its own initialiser")
+            self.error(expr.name, "Can't read local variable in its own initialiser")
         #otherwise resolve the local variables
         self.resolveLocal(expr, expr.name)
         return None
@@ -191,7 +191,7 @@ class Resolver(Evaluator):
         #if the variable has already been declared
         if name.lexeme in self.scopes[-1]:
             #chuck an error
-            self.skiylia.error(name, "Variable with this name already in scope.")
+            self.error(name, "Variable with this name already in scope.")
         #otherwise add the name to the stack and declare it unusable (each stack position is on top (last index) and is a dict)
         self.scopes[-1][name.lexeme] = False
 
@@ -244,3 +244,14 @@ class Resolver(Evaluator):
         else:
             #otherwise use the singular
             self.evaluate(stmts)
+
+    #define a way of showing errors to the user
+    def error(self, token, message):
+        #if we reached the end of the file, show an EOF error
+        if token.type == "EOF":
+            self.skiylia.error(token.line, token.char, message, "at end of file, Syntax")
+        #otherwise show the user what the exact location and token was
+        else:
+            self.skiylia.error(token.line, token.char, message, "at '"+token.lexeme+"', Syntax")
+        #and return our base resolver error
+        return [token, message, "Resolve"]

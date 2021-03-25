@@ -85,3 +85,8 @@ def SkiyliaInstance(SkiyliaCallable):
             return self.fields[name.lexeme]
         #else throw an error
         raise RuntimeError([name, "Undefined property '{}'.".format(name.lexeme)])
+
+    #set the value of a property with a given name
+    def set(self, name, value):
+        #set the internal field to the correct value for the property name
+        self.fields[name.lexeme] = value

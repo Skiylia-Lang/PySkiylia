@@ -316,6 +316,19 @@ class Interpreter(misc, Evaluator):
         #create an exception so we can return all the way back to the call
         raise Return(value)
 
+    def SetExpr(self, expr):
+        #get the object this is refering to
+        object = self.evaluate(expr.object)
+        #if the object is not a skiylia instance
+        if not isinstance(object, SkiyliaInstance):
+            raise RuntimeError([expr.name, "Only instances have fields."])
+        #fetch the value that is to be set
+        value = self.evaluate(expr.value)
+        #and set the instance property
+        object.set(expr.name, valie)
+        #and return the value that was set
+        return value
+
     #define a way of unpacking a Unary
     def UnaryExpr(self, expr):
         #fetch the right

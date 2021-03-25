@@ -326,6 +326,8 @@ class Parser:
                 name = expr.name
                 #return the assignment
                 return Assign(name, value)
+            elif isinstance(expr, Get):
+                return Set(get.object, get.name, value)
             #throw an error if not
             self.skiylia.error([equals, "Invalid assignment target."])
         #return the variable

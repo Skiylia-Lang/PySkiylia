@@ -24,6 +24,7 @@ class Evaluator:
                      "Logical": self.LogicalExpr,
                      "Literal": self.LiteralExpr,
                      "Return": self.ReturnStmt,
+                     "Set": self.SetExpr,
                      "Unary": self.UnaryExpr,
                      "Var":self.VarStmt,
                      "Variable": self.VarExpr,
@@ -81,6 +82,9 @@ class ASTPrinter(Evaluator):
 
     def ReturnStmt(self, stmt):
         return self.toparenthesis("return", stmt.value)
+
+    def SetExpr(self, expr):
+        return self.toparenthesis("=", expr.object, expr.name.lexeme, expr.value)
 
     def UnaryExpr(self, expr):
         return self.toparenthesis(expr.operator.lexeme, expr.right)

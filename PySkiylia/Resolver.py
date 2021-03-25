@@ -118,6 +118,13 @@ class Resolver(Evaluator):
             self.resolve(stmt.value)
         return None
 
+    def SetExpr(self, expr):
+        #resolve the value for the set
+        self.resolve(expr.value)
+        #and resolve the property it is refering to
+        self.resolve(expr.object)
+        return None
+
     def UnaryExpr(self, expr):
         self.resolve(expr.right)
         return None

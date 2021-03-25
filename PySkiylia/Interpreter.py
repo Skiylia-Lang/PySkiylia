@@ -232,8 +232,16 @@ class Interpreter(misc, Evaluator):
     def ClassStmt(self, stmt):
         #ensure the class is defined in our environment
         self.environment.define(stmt.name.lexeme, None)
+        #deal with the methods of the class
+        methods = dict()
+        #iterate through all the methods
+        for method in stmt.methods:
+            #create a new function instance
+            function = SkiyliaFunction(method, self.environment)
+            #and set it within our methods dictionary
+            methods[method.name.lexeme] = function
         #create a new class object
-        thisclass = SkiyliaClass(stmt.name.lexeme)
+        thisclass = SkiyliaClass(stmt.name.lexeme, methods)
         #and assign it the pointer created above
         self.environment.assign(stmt.name.lexeme, thisclass)
         #and return none by default

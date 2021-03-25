@@ -56,9 +56,10 @@ def SkiyliaClass(SkiyliaCallable):
     #what to print
     string = "skiylia class"
     #initialiser
-    def __init__(self, name):
+    def __init__(self, name, methods):
         #assign our name
         self.name = name
+        self.methods = methods
         self.string = "_skiyliaClass.{}".format(name)
     #what to do when we call the class
     def call(self, interpreter, arguments):
@@ -66,6 +67,14 @@ def SkiyliaClass(SkiyliaCallable):
         instance = SkiyliaInstance(self)
         #and return it
         return instance
+    #lookig for internal methods yo
+    def findMethod(self, name):
+        #check if the name is one of our methods
+        if name in self.methods:
+            #if it is, return that
+            return self.methods[name]
+        #otherwise return none
+        return None
 
 #internal instance handling
 def SkiyliaInstance(SkiyliaCallable):
@@ -83,6 +92,12 @@ def SkiyliaInstance(SkiyliaCallable):
         if name.lexeme in self.fields:
             #return it
             return self.fields[name.lexeme]
+        #if the name is not, it may be a class method
+        method = self.thisclass.findMethod(name.lexeme)
+        #if it is
+        if method:
+            #return that
+            return method
         #else throw an error
         raise RuntimeError([name, "Undefined property '{}'.".format(name.lexeme)])
 

@@ -11,7 +11,7 @@ from ASTPrinter import Evaluator
 #define the Resolver class
 class Resolver(Evaluator):
     #hold some thingies my dude
-    FunctionType = {"None":0, "Function":1}
+    FunctionType = {"None":0, "Function":1, "Method":2}
     ##initialise
     def __init__(self, skiylia, interpreter, arglimit):
         #return a method for accessing the skiylia class
@@ -67,6 +67,12 @@ class Resolver(Evaluator):
     def ClassStmt(self, stmt):
         self.declare(stmt.name)
         self.define(stmt.name)
+        #all the class method stuffs
+        for method in stmt.methods:
+            #set the type to method
+            declaration = self.FunctionType["Method"]
+            #and resolve it
+            self.resolveFunction(method, declaration)
         return None
 
     def ExpressionStmt(self, stmt):

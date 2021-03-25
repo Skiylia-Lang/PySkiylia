@@ -97,6 +97,9 @@ class SkiyliaClass(SkiyliaCallable):
         if name in self.methods:
             #if it is, return that
             return self.methods[name]
+        #otherwise check in our superclass if we have one
+        elif self.superclass:
+            return self.superclass.findMethod(name)
         #otherwise return none
         return None
 

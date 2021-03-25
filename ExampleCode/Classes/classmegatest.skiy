@@ -22,33 +22,40 @@ print(testClass)
 
 //expected output: <class testclass>
 
+print()
+
 var a = testClass()
 
 print(a)
 print(a.init())
 
-//expected output: "This was called at class initialisation", <class testclass instance>
+//expected output: "This was called at class initialisation", <class testclass instance>, "This was called at class initialisation", <class testclass instance>
 
+print()
 print(a.test)
 
 //expected output: <skiylia function>
 
+print()
 a.test()
 
 //expected output: "This worked by the way""
 
 a.hello = "hi there"
 
+print()
 print(a.hello)
 
 //expected output "hi there"
 
+print()
 a.selfTest()
 
 //expected "hi there" again
 
 var old = a.returnfromclass("howdy my dude")
 
+print()
 print(old)
 a.selfTest()
 

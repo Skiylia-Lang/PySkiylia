@@ -3,6 +3,9 @@
 //single method
 
 class testClass:
+  init():
+    print("This was called at class initialisation")
+
   test():
     print("This worked by the way")
 
@@ -16,13 +19,13 @@ class testClass:
 
 print(testClass)
 
-//expected output: <class a>
+//expected output: <class testclass>
 
 var a = testClass()
 
 print(a)
 
-//expected output: <class a instance>
+//expected output: "This was called at class initialisation", <class testclass instance>
 
 print(a.test)
 

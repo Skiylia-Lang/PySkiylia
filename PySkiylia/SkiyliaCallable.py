@@ -69,10 +69,20 @@ class SkiyliaClass(SkiyliaCallable):
         self.name = name
         self.methods = methods
         self.string = "_skiyliaClass.{}".format(name)
+        #check for an init method to determine arity
+        self.initialiser = self.findMethod("init")
+        #if we have one
+        if self.initialiser:
+            #define our arity
+            self.arity = self.initialiser.arity
     #what to do when we call the class
     def call(self, interpreter, arguments):
         #create a new instance of the class
         instance = SkiyliaInstance(self)
+        #if we have an initialiser
+        if self.initialiser:
+            #then bind it to the class, and call it immediately
+            self.initialiser.bind(instance).call(interpreter, arguments)
         #and return it
         return instance
     #lookig for internal methods yo

@@ -12,6 +12,7 @@ from ASTPrinter import Evaluator
 class Resolver(Evaluator):
     #hold some thingies my dude
     FunctionType = {"None":0, "Function":1, "Method":2}
+    ClassType = {"None":0, "Class":1}
     ##initialise
     def __init__(self, skiylia, interpreter, arglimit):
         #return a method for accessing the skiylia class
@@ -22,6 +23,8 @@ class Resolver(Evaluator):
         self.arglimit = arglimit
         #define the current function as null
         self.currentFunction = self.FunctionType["None"]
+        #define the current class as null
+        self.currentClass = self.ClassType["None"]
         #define the scope stack
         self.scopes = deque()
 
@@ -65,6 +68,10 @@ class Resolver(Evaluator):
         return None
 
     def ClassStmt(self, stmt):
+        #store a reference to the enclosing class
+        enclosingClass = self.currentClass
+        self.currentClass = self.ClassType["Class"]
+        #do the class name definition stuff
         self.declare(stmt.name)
         self.define(stmt.name)
         #create a scope for the class
@@ -79,6 +86,8 @@ class Resolver(Evaluator):
             self.resolveFunction(method, declaration)
         #end the class scope
         self.endScope()
+        #return the class enclosure to what it was
+        self.currentClass = enclosingClass
         return None
 
     def ExpressionStmt(self, stmt):
@@ -131,6 +140,10 @@ class Resolver(Evaluator):
         return None
 
     def SelfExpr(self, expr):
+        #ensure we are in a class first
+        if self.currentClass == self.ClassType["None"]:
+            self.error(expr.keyword, "Can't use 'self' outside of a class")
+        #return the value
         self.resolveLocal(expr, expr.keyword)
         return None
 

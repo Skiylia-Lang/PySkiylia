@@ -98,4 +98,4 @@ class skiyliafloat(SkiyliaCallable):
         try:
             return float(num)
         except Exception as e:
-            raise RuntimeError([token, "Cannot convert '{}' to integer.".format(num)])
+            raise RuntimeError([token, "Cannot convert '{}' to float.".format(num)])

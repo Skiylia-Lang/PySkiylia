@@ -15,7 +15,7 @@ ExprDict = {"Assign":"name,value",
             "Self":"keyword",
             "Set":"object,name,value",
             "Super":"keyword,method",
-            "Unary":"operator,right",
+            "Unary":"operator,right,postfix=False",
             "Variable":"name"}
 
 StmtDict = {"Block":"statements",
@@ -72,6 +72,8 @@ class ASTGen:
             toWrite.append("\tdef __init__(self, "+args+"):")
             #apply __init__ arguments
             for y in (baseDict[x]).split(","):
+                if "=" in y:
+                    y=y.split("=")[0] #remove the default setter
                 toWrite.append("\t\tself."+y+" = "+y)
 
         #open the file

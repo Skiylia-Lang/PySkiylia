@@ -1,0 +1,17 @@
+///this should allow more complex assignment
+    things like ++a instead of a = a+1///
+
+//post- and pre- fixed '++'
+var a = 0
+
+print(++a)    //increment before returning value, should show 1
+
+print(a++)    //increment after returning value, should show 1
+
+print(a)      //2
+
+print(--a)    //decrement before returning value, should show 1
+
+print(a--)    //decrement after returning value, should show 1
+
+print(a)      //0

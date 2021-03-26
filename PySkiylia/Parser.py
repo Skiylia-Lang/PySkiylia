@@ -471,6 +471,29 @@ class Parser:
             right = self.unary()
             #return the unary combination
             return Unary(operator, right)
+        #check for prefix '++' and '--'.
+        elif self.match("PlusPlus", "MinusMinus"):
+            #fetch the operator
+            operator = self.previous()
+            #fetch the call that may follow
+            right = self.call()
+            #return the unary combination
+            return Unary(operator, right)
+        #otherwise return the literal
+        return self.postfix()
+
+    #define the postfix grammar
+    def postfix(self):
+        #this is right associative, so check first
+        if self.checkNext("PlusPlus", "MinusMinus"):
+            #fetch the call that comes before
+            left = self.call()
+            #fetch the operator
+            operator = self.peek()
+            #and move past the incremental operators
+            self.advance()
+            #return the unary combination
+            return Unary(operator, left, True)
         #otherwise return the literal
         return self.call()
 
@@ -584,10 +607,7 @@ class Parser:
         return True
 
     def constructincremental(self, var):
-        self.tokens.insert(self.current, Tokens.Token("Number", "1", 1.0, var.line, var.char, var.indent))
-        self.tokens.insert(self.current, Tokens.Token("Plus", "+", None, var.line, var.char, var.indent))
-        self.tokens.insert(self.current, var)
-        self.tokens.insert(self.current, Tokens.Token("Equal", "=", None, var.line, var.char, var.indent))
+        self.tokens.insert(self.current, Tokens.Token("PlusPlus", "++", None, var.line, var.char, var.indent))
         self.tokens.insert(self.current, var)
 
     #define a way of checking if a token is found, and consuming it
@@ -619,6 +639,15 @@ class Parser:
             return False
         #else return if the token is one of the expected ones
         return self.peek().type in expected
+
+    #basically match, but only on a single token type
+    def checkNext(self, *expected):
+        #if we've run off the end of the tokens
+        if self.atEnd():
+            #return false
+            return False
+        #else return if the token is one of the expected ones
+        return self.peekNext().type in expected
 
     #define a way of fetching the next tokens
     def advance(self):

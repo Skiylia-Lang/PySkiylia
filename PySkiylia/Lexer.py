@@ -91,8 +91,12 @@ class Lexer:
         elif c == ".":
             return self.addToken("Dot")
         elif c == "-":
+            if self.match("-"):
+                return self.addToken("MinusMinus")
             return self.addToken("Minus")
         elif c == "+":
+            if self.match("+"):
+                return self.addToken("PlusPlus")
             return self.addToken("Plus")
         elif c == "*":
             if self.match("*"):

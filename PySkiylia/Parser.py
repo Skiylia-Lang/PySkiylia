@@ -471,6 +471,14 @@ class Parser:
             right = self.unary()
             #return the unary combination
             return Unary(operator, right)
+        #check for prefix '++' and '--'.
+        elif self.match("PlusPlus", "MinusMinus"):
+            #fetch the operator
+            operator = self.previous()
+            #fetch the call that may follow
+            right = self.call()
+            #return the unary combination
+            return Unary(operator, right)
         #otherwise return the literal
         return self.call()
 

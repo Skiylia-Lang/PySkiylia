@@ -1,13 +1,16 @@
 //An example of the absolute minimum required for a Skiylia pre-release
 
 //reserved words:
-true, false, null, var, if, else, elif, while, for, do, Where , When, def, class, super, self, print, str, string, int, integer, float
+true, false, null, var, and, or, xor, if, else, elif, while, for, do, Where, When, def, class, super, self, {primitives}
 
 //required symbols:
-'(', ')', ':', ',', '.', '-', '+', '*', '/', '//', '>', '<', '=', '!', '"', '&', '|',
+'(', ')', ':', ',', '.', '-', '+', '*', '/', '>', '<', '=', '!', '"', '&', '|',
 
 //GRAMMAR IDEAS BELOW
 //single line comments
+
+///this is a multi-line comment.
+  it must be completed with another set of three slashes///
 
 //Bool
 true
@@ -16,7 +19,7 @@ false
 //numbers
 123         //int
 12.4        //float
-0           //evaluates as false, all else true
+0           //zero evaluates as false, all others as true
 
 //strings
 "56"        //string, not int
@@ -31,6 +34,7 @@ null        //None-type
 a + b       //addition
 a - b       //subtraction
 a * b       //multiplication
+a ** b      //exponentiation
 a / c       //division
 
 //Comparisons and equalities
@@ -42,12 +46,15 @@ a != b      //not equal to
 //Logical operators
 -a          //negates the value of a  -6 -> 6, "-6" causes an error (at the present)
 !a          //not a
-a & b      //a and b
-a | b      //a or b
-a ^ b      //a xor b
+a & b       //a and b
+a | b       //a or b
+a ^ b       //a xor b
+a and b     //a and b
+a or b      //a or b
+a xor b     //a xor b
 
 //Variables and assignment
-var a       //initialise as null
+var a       //initialise as 0
 a = 5       //reassign a as 5. a must already exist
 
 //control flow
@@ -149,8 +156,13 @@ class Test:
 print(thing-to-print)   //shows display to screen, can be any data-type or variable
 str(a) / string(a)      //explicitly converts a to a string
 int(a) / integer(a)     //explicitly converts a to an integer
-flt(a) / float(a)       //explicitly converts a to a float
+float(a)                //explicitly converts a to a float
 
 //primitives (Functions from the base language, rather than ones I wrote myself)
 clock                   //returns the current utc time
-runtime                 //returns the time since the script started executing code <- NOT SURE HOW TO DO THIS YET
+abs(a)                  //return the absolute value of a
+ceil(a)                 //returns a, rounded up
+floor(a)                //returns a, rounded down
+pow(a, b)               //returns a raised to the power b
+mod(a, b)               //returns a modulo b
+round(a, b)             //returns a, rounded to 'b' decimal places

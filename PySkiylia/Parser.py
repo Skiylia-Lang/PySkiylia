@@ -550,10 +550,38 @@ class Parser:
             expr = self.expression()
             self.consume("Expect ')' after an expression.", "RightParenthesis")
             return Grouping(expr)
+        #if we meet an end where we shouldn't
         elif self.match("End"):
             raise SyntaxError([self.previous(), "Unbounded object."])
-            #if we found nothing, throw an error
+        #and add some error detection for operations that require something before them'''
+        if self.checkError():
+            return None
+        #if we found nothing, throw an error
         return self.error(self.peek(), "Expected an expression.")
+
+    def checkError(self):
+        a = "" #function to execute if we find an error
+        #check if we have an equality
+        if self.match("NotEqual", "Equal"):
+            a = self.equality
+        #or a comparison
+        elif self.match("Greater", "Less"):
+            a = self.comparison
+        #or an addition (a blank '-' is a unary operator as well)
+        elif self.match("Plus"):
+            a = self.term
+        #and finally a factor
+        elif self.match("Slash", "Star"):
+            a = self.factor
+        #otherwise, return false, as we didn't encounter an erroneous left hand operation
+        else:
+            return False
+        #show the user our error
+        self.error(self.previous(), "Missing left-hand opperand before {}".format(self.previous().lexeme))
+        #execute the erroneous function to show a message to the user
+        a()
+        #and return true, as we found an error
+        return True
 
     def constructincremental(self, var):
         self.tokens.insert(self.current, Tokens.Token("Number", "1", 1.0, var.line, var.char, var.indent))

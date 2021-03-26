@@ -11,7 +11,6 @@ Dynamically typed Object Oriented Programming Language.
 ![GitHub top language](https://img.shields.io/github/languages/top/SK1Y101/PySkiylia)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/SK1Y101/PySkiylia)
 ![Lines of code](https://img.shields.io/tokei/lines/github.com/SK1Y101/PySkiylia)
-
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat)](#contributors)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
@@ -29,15 +28,13 @@ Dynamically typed Object Oriented Programming Language.
 
 **PySkiylia: [Latest release]**
 
-Support here: [issues]
+Open issues can be found here: [issues]
+
+To create an issue, be it a bug, question, feature request, or other, use this link here: [Open an issue]
 
 # Skiylia
 
 Skiylia is dynamically typed, object oriented, and most importantly *interpreted*. While it may share many similarities with C derivatives, its heritage is definitely Pythonic.
-
-To that end, Skiylia is most aptly described as a Python-C# hybrid.
-
-##
 
 ## Sample code
 
@@ -45,11 +42,11 @@ To that end, Skiylia is most aptly described as a Python-C# hybrid.
     code that calculates the factorial of a number///
 
     def factorial(n):
-        if int(n) != n:
-            return null   //can't compute factorial of a float this way
-        if x < 2:
-            return 1
-        return x * factorial(n - 1)   //recursion that makes this work
+      if int(n) != n:
+        return null   //can't compute factorial of a float this way
+      if n < 2:
+        return 1
+      return n * factorial(n - 1)   //recursion that makes this work
 
     var num = 6
     print("The factorial of", num, "is", factorial(num))
@@ -57,6 +54,12 @@ To that end, Skiylia is most aptly described as a Python-C# hybrid.
     //output: The factorial of 6 is 720
 
 Within this [folder] is a collection of code examples that have been used to test the project. While not exhaustive by any means, they should cover the basics. Feel free to play around and get a feel for the language!
+
+Who knows, at some point in the future there may even be a link to a Skiylia tutorial. It's certainly an idea in the works.
+
+## Running Skiylia
+
+Under the [Latest release] you'll find the most up to date version of PySkiylia, containing all the python sub-modules. Running PySkiylia.py from the command line will open the interpreter in REPL mode, while passing a .skiy file as a second argument will allow execution of said script.
 
 ## Contributing
 
@@ -72,8 +75,12 @@ I owe a huge debt to Bob Nystrom and his excellent book, [Crafting Interpreters]
 
 ## Tools
 
-Languages: [Python] (of course)
-
+ - The interpreter was written in [Python](https://www.python.org/) 3.8, and can be ran on any machine with it installed.
+ - [Mergify](https://mergify.io/) has been automatically managing all of the repository branches.
+ - [All-contributors](https://allcontributors.org/) has been managing the contributors section.
+ - [Snyk](https://snyk.io/) has been monitoring for security concerns.
+ - [Release-drafter](https://github.com/release-drafter/release-drafter) has been compiling all pull requests into changelogs on each draft release, massively expediating the process.
+ - And while we don't have an dependencies (yet?) [Dependabot](https://dependabot.com/) has been keeping in the shadows.
 
 ## Contributors
 
@@ -95,7 +102,10 @@ All the people who have contributed ([emoji key](https://allcontributors.org/doc
 
 This project follows the [all-contributors](https://allcontributors.org) specification.
 
+
+
 [Latest release]: https://github.com/SK1Y101/PySkiylia/releases
 [issues]: https://github.com/SK1Y101/PySkiylia/issues
 [folder]: https://github.com/SK1Y101/PySkiylia/tree/main/ExampleCode
 [Crafting Interpreters]: https://craftinginterpreters.com/
+[Open an issue]: https://github.com/SK1Y101/PySkiylia/issues/new/choose

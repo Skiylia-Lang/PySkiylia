@@ -14,7 +14,7 @@ from ASTPrinter import ASTPrinter
 class Skiylia:
     #set the default values here
     haderror = False
-    version = "v0.6.1"
+    version = "v0.6.3"
     debug = False
     #run this at initialisation
     def __init__(self, args=""):
@@ -112,7 +112,7 @@ class Skiylia:
         #Lexer output for debugging
         if self.debug:
             print("\nTokenised source code:")
-            print([token.type for token in tokens])
+            print(*["{} {},".format(token.type, token.indent) for token in tokens])
 
         #fetch the Parser class
         parser = Parser(self, tokens, lexer.primitives)

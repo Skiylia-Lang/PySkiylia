@@ -1,7 +1,6 @@
 {
   "files": [
-    "README.md",
-    "ExampleCode/README.md"
+    "README.md"
   ],
   "imageSize": 100,
   "commit": false,

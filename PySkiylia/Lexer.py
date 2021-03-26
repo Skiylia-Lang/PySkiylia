@@ -310,4 +310,8 @@ class Lexer:
         #if we have a previous token
         if self.tokens:
             #then set our indent to that
-            self.indent = self.previousToken().indent
+            lt = self.previousToken()
+            self.indent = lt.indent
+            #unless it was a colon, then we have to indent further
+            if lt.type == "Colon":
+                self.indent += 1

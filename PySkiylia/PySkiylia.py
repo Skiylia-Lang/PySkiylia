@@ -15,9 +15,20 @@ class Skiylia:
     #set the default values here
     haderror = False
     version = "v0.6.1"
-    debug = True
+    debug = False
     #run this at initialisation
     def __init__(self, args=""):
+        #check if the user has asked for help
+        if args and args[-1] in ["--help", "-h", "-?", "/?"]:
+            #show them the default usage
+            print("Usage:\tPySkiylia [scriptname]")
+            sys.exit(0)
+        #or if they want to enable debug mode
+        elif args and args[-1] in ["-debug", "-d"]:
+            #enable debugging
+            self.debug = True
+            #ad remove the flag from the arguments list
+            args = args[:-1]
         #we won't support more than one argument
         if len(args) > 1:
             #tell the user and exit
@@ -25,11 +36,6 @@ class Skiylia:
             sys.exit(1)
         #if we have been given a single argument
         elif len(args) == 1:
-            #check if te user has asked for help
-            if args[0] in ["--help", "-h", "-?", "/?"]:
-                #show them the default usage
-                print("Usage:\tPySkiylia [scriptname]")
-                sys.exit(0)
             #save the argument if it is valid
             self.args = self.checkValidFile(args[0])
         else:
@@ -61,7 +67,7 @@ class Skiylia:
     #startup the prompt if no arguments have been given
     def runPrompt(self):
         #print some base information
-        print("PySkiylia "+self.version)
+        print("PySkiylia",self.version,"- debugging mode"*self.debug)
         #keep looping the code
         while True:
             #fetch the user input
@@ -105,8 +111,8 @@ class Skiylia:
         tokens = lexer.scanTokens()
         #Lexer output for debugging
         if self.debug:
-            print("Tokenised source code:")
-            print([(token.type, token.indent) for token in tokens])
+            print("\nTokenised source code:")
+            print([token.type for token in tokens])
 
         #fetch the Parser class
         parser = Parser(self, tokens, lexer.primitives)
@@ -120,6 +126,7 @@ class Skiylia:
             print("\nAbstracted source code:")
             astprinter = ASTPrinter()
             astprinter.display(statements)
+            print()
 
         #initialise the interpreter
         interpreter = Interpreter(self, parser.arglimit)

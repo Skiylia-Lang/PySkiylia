@@ -2,9 +2,9 @@
 """Stores token definitions, may end up moving this elsewhere"""
 
 tokens = [#single character tokens
-            "LeftParenthesis", "RightParenthesis", "Colon", "Comma", "Dot", "Minus", "Plus", "Star", "Slash", "Greater", "Less",
+            "LeftParenthesis", "RightParenthesis", "Colon", "Comma", "Dot", "Minus", "Plus", "Slash", "Greater", "Less", "And", "Or", "Xor"
             #single or double character Tokens
-            "NotEqual", "Not", "EqualEqual", "Equal", "And", "Xor", "Or",
+            "NotEqual", "Not", "EqualEqual", "Equal", "Star", "StarStar"
             #Literal tokens
             "String", "Number", "Identifier",
             #keyword tokens
@@ -13,10 +13,10 @@ tokens = [#single character tokens
             "EOF", "End"]
 
 #a dictionary mapping keywords to their equivalent tokens
-keywords = {"class":"Class", "def":"Def", "do":"Do", "elif":"Elif", "else":"Else",
-            "false":"False", "for":"For", "if":"If", "null":"Null",
+keywords = {"and":"And", "class":"Class", "def":"Def", "do":"Do", "elif":"Elif", "else":"Else",
+            "false":"False", "for":"For", "if":"If", "not":"Not", "null":"Null", "or":"Or",
             "return":"Return", "self":"Self", "super":"Super", "true":"True", "var":"Var",
-            "when":"Where", "where":"Where", "while":"While",}
+            "when":"Where", "where":"Where", "while":"While", "xor":"Xor",}
 
 class Token:
     def __init__(self, type, lexeme, literal, line, char, indent):

@@ -486,14 +486,12 @@ class Parser:
     def postfix(self):
         #this is right associative, so check first
         if self.checkNext("PlusPlus", "MinusMinus"):
-            print(self.peek().type)
-            print(self.peekNext().type)
+            #fetch the call that comes before
+            left = self.call()
             #fetch the operator
             operator = self.previous()
-            #fetch the call that may follow
-            right = self.call()
             #return the unary combination
-            return Unary(operator, right)
+            return Unary(operator, left, True)
         #otherwise return the literal
         return self.call()
 

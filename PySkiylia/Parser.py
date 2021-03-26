@@ -359,17 +359,17 @@ class Parser:
     #define the logical or grammar
     def logicalor(self):
         #grab the binaary operation
-        return self.leftAssociative(self.logicalxor, "Or")
+        return self.leftAssociative(self.logicalxor, "Or", ExprType=Logical)
 
     #define the logical xor grammar
     def logicalxor(self):
         #grab the binaary operation
-        return self.leftAssociative(self.logicaland, "Xor")
+        return self.leftAssociative(self.logicaland, "Xor", ExprType=Logical)
 
     #define the logical and grammar
     def logicaland(self):
         #grab the binaary operation
-        return self.leftAssociative(self.equality, "And")
+        return self.leftAssociative(self.equality, "And", ExprType=Logical)
 
     #define the equality gramar
     def equality(self):
@@ -392,7 +392,7 @@ class Parser:
         return self.leftAssociative(self.unary, "Star", "Slash", "StarStar")
 
     #shorthand code for all left associative binary operations
-    def leftAssociative(self, operand, *operators):
+    def leftAssociative(self, operand, *operators, ExprType=Binary):
         #fetch the first term
         expr = operand()
         #loop through all comparison posibilities
@@ -402,7 +402,7 @@ class Parser:
             #fetch the term associated
             right = operand()
             #create a binary expression from this
-            expr = Binary(expr, operator, right)
+            expr = ExprType(expr, operator, right)
         #return the expression
         return expr
 

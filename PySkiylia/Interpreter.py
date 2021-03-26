@@ -324,9 +324,9 @@ class Interpreter(misc, Evaluator):
         elif expr.operator.type == "Xor":
             #if left is true, 'xor' will be the opposite of right
             if self.isTruthy(left):
-                return not self.evaluate(expr.right)
-
-        return self.evaluate(expr.right)
+                return not self.isTruthy(self.evaluate(expr.right))
+        #evaluate the right operand if nothing else
+        return self.isTruthy(self.evaluate(expr.right))
 
     def GetExpr(self, expr):
         #fetch the object being refered to

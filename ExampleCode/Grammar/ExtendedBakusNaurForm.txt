@@ -77,7 +77,9 @@ term              > factor ( ( "-" | "+" ) factor )*
 factor            > unary ( ( "*" | "/" ) unary )*
 
 //then unaries
-unary             > ( "!" | "-" ) unary | call
+unary             > ( "!" | "-" | "++" | "--" )* unary | postfix
+
+postfix           > call ( "--" | "++" )?
 
 //And finally call has the lowest precedence (and is computed first)
 call              > literal ( "(" arguments? ")" | "." Identifier)*

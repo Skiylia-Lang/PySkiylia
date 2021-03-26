@@ -95,6 +95,8 @@ class Lexer:
         elif c == "+":
             return self.addToken("Plus")
         elif c == "*":
+            if self.match("*"):
+                return self.addToken("StarStar")
             return self.addToken("Star")
         elif c == "/":
             #as division and comments use the same character, check if the next is a comment

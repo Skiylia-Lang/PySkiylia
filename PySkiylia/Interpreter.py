@@ -178,6 +178,12 @@ class Interpreter(misc, Evaluator):
             if float(right) == 0:
                 raise RuntimeError([expr.operator,"division by zero"])
             return float(left) / float(right)
+        elif optype == "StarStar":
+            self.checkNumber(expr.operator, left, right)
+            #divide if given
+            if float(right) == 0:
+                raise RuntimeError([expr.operator,"division by zero"])
+            return float(left) ** float(right)
         elif optype == "Star":
             #check if one (and only one) is a number, so we can repeat substrings
             xornum = self.xorNumber(left, right)

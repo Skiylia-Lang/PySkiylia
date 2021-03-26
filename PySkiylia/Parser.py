@@ -451,7 +451,7 @@ class Parser:
         #fetch the first factor
         expr = self.unary()
         #loop through all comparison posibilities
-        while self.match("Star", "Slash"):
+        while self.match("Star", "Slash", "StarStar"):
             #fetch the operator
             operator = self.previous()
             #fetch the unary associated
@@ -571,7 +571,7 @@ class Parser:
         elif self.match("Plus"):
             a = self.term
         #and finally a factor
-        elif self.match("Slash", "Star"):
+        elif self.match("Slash", "Star", "StarStar"):
             a = self.factor
         #otherwise, return false, as we didn't encounter an erroneous left hand operation
         else:

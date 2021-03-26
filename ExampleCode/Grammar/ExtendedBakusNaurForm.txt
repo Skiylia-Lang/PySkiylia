@@ -77,7 +77,7 @@ term              > factor ( ( "-" | "+" ) factor )*
 factor            > unary ( ( "*" | "/" ) unary )*
 
 //then unaries
-unary             > ( "!" | "-" | "++" | "--" )* unary | postfix
+unary             > ( "!" | "-" )* unary | ( ( "++" | "--" ) call )? | postfix
 
 postfix           > call ( "--" | "++" )?
 

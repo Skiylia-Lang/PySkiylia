@@ -99,9 +99,16 @@ class Lexer:
         elif c == "/":
             #as division and comments use the same character, check if the next is a comment
             if self.match("/"):
-                #keep advancing until we find a newline
-                while not self.match("\n", peek=True):
-                    self.advance()
+                #as multi-line comments are ///, whereas a single line is //, we need to check for that too!
+                if self.match("/"):
+                    #keep advancing until we find the tripple comment escape
+                    self.advance(3)
+                    while self.peeklast(3) != "///":
+                        self.advance()
+                else:
+                    #keep advancing until we find a newline
+                    while not self.match("\n", peek=True) and not self.atEnd():
+                        self.advance()
             else:
                 return self.addToken("Slash")
         elif c == ">":
@@ -265,6 +272,10 @@ class Lexer:
         #otherwise return the character
         return self.source[self.current+1]
 
+    #return the previous character(s) without advancing
+    def peeklast(self, chars=1):
+        return self.source[self.current-chars:self.current]
+
     #return the previous token
     def previousToken(self):
         #get the last token and test
@@ -279,9 +290,9 @@ class Lexer:
         return self.previousToken().type == type
 
     #advance through the source code and return the character
-    def advance(self):
+    def advance(self, chars=1):
         #increment the Lexer position
-        self.current += 1
+        self.current += chars
         #return the character we just skiped over
         return self.source[self.current-1]
 

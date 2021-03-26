@@ -97,6 +97,8 @@ class ASTPrinter(Evaluator):
         return self.toparenthesis("super", expr.method)
 
     def UnaryExpr(self, expr):
+        if expr.postfix:
+            return self.toparenthesis(expr.right, expr.operator.lexeme)
         return self.toparenthesis(expr.operator.lexeme, expr.right)
 
     def VarStmt(self, stmt):

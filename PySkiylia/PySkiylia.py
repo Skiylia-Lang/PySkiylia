@@ -14,7 +14,7 @@ from ASTPrinter import ASTPrinter
 class Skiylia:
     #set the default values here
     haderror = False
-    version = "v0.6.0"
+    version = "v0.6.1"
     debug = True
     #run this at initialisation
     def __init__(self, args=""):
@@ -69,6 +69,13 @@ class Skiylia:
             #check they did not ask to quit
             if line.lower() in ["quit", "exit"]:
                 break
+            #make sure the user hasn't given a function (or otherwise) that requires multi-line
+            if line.replace(" ", "")[-1] == ":":
+                while True:
+                    nextinput = input(" |")
+                    line += "\n"+nextinput
+                    if not nextinput:
+                        break
             #else, try to run the code they provided
             self.run(line)
             #reset the error flag, if it was set

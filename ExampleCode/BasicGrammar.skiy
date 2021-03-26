@@ -1,7 +1,7 @@
 //An example of the absolute minimum required for a Skiylia pre-release
 
 //reserved words:
-true, false, null, var, if, else, elif, while, for, do, Where , When, def, class, super, self, print, str, string, int, integer, flt, float
+true, false, null, var, if, else, elif, while, for, do, Where , When, def, class, super, self, print, str, string, int, integer, float
 
 //required symbols:
 '(', ')', ':', ',', '.', '-', '+', '*', '/', '//', '>', '<', '=', '!', '"', '&', '|',
@@ -79,7 +79,7 @@ while a>5:
   a = a-1
 
 //for loop
-for (increment variable) (Where | When) (condition) do (increment operation):
+for (increment variable) ("where" | "when") (condition) "do" (increment operation):
   action-during-loop
 
 ie:

@@ -87,6 +87,7 @@ class Interpreter(misc, Evaluator):
         #define the maximum number of allowed arguments in a function call
         self.arglimit = arglimit
         #and add our primitives to the global scope
+        self.primitives = []
         self.fetchprimitives()
 
     #define the primitives
@@ -103,6 +104,7 @@ class Interpreter(misc, Evaluator):
                 if primitive.callname:
                     callname=primitive.callname
                 #add them to the global scope
+                self.primitives.append(callname)
                 self.globals.define(callname, primitive())
 
     #define the interpreter function
@@ -118,8 +120,12 @@ class Interpreter(misc, Evaluator):
             token = e.args[0][0]
             #and message
             message = e.args[0][1]
+            #default error type, if none given
+            where = "Runtime"
+            if len(e.args[0])==2:
+                where = e.args[0][2]
             #and raise an error
-            self.skiylia.error(token.line, token.char, message, "Runtime")
+            self.skiylia.error(token.line, token.char, message, where)
 
     #define a way to assign variables abstractly
     def AssignExpr(self, expr):
@@ -172,6 +178,12 @@ class Interpreter(misc, Evaluator):
             if float(right) == 0:
                 raise RuntimeError([expr.operator,"division by zero"])
             return float(left) / float(right)
+        elif optype == "StarStar":
+            self.checkNumber(expr.operator, left, right)
+            #divide if given
+            if float(right) == 0:
+                raise RuntimeError([expr.operator,"division by zero"])
+            return float(left) ** float(right)
         elif optype == "Star":
             #check if one (and only one) is a number, so we can repeat substrings
             xornum = self.xorNumber(left, right)
@@ -229,6 +241,8 @@ class Interpreter(misc, Evaluator):
             #raise an error if it was different
             raise RuntimeError([expr.parenthesis, "Expected {} argument{} but got {}.".format(arglim, "s"*(arglim!=1), len(args))])
         #return and call the callable
+        if expr.callee.name.lexeme in self.primitives:
+            return callee.call(self, args, expr.callee.name)
         return callee.call(self, args)
 
     #define how our interpreter handles classes

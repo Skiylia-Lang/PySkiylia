@@ -403,7 +403,46 @@ class Interpreter(misc, Evaluator):
         elif optype == "Not":
             #return the not of the operand
             return not self.isTruthy(right)
-
+        #check if it is an incremental
+        elif optype == "PlusPlus":
+            #ensure the operator is a number we can increment
+            self.checkNumber(expr.operator, right)
+            #fetch the value of the operand
+            value = right
+            try:
+                #check if the operand is a variable
+                var = self.VarExpr(expr.right)
+                #and update it if it was
+                self.environment.assign(expr.right.name, value + 1)
+            except:
+                #don't do anything if it wasn't
+                pass
+            #if the operator was in postfix
+            if expr.postfix:
+                #return the original value
+                return value
+            #otherwise return the value + 1
+            return value + 1
+        #check if it is an decremental
+        elif optype == "MinusMinus":
+            #ensure the operator is a number we can decrement
+            self.checkNumber(expr.operator, right)
+            #fetch the value of the operand
+            value = right
+            #check if the operand is a variable
+            try:
+                var = self.VarExpr(expr.right)
+                #and update it if it was
+                self.environment.assign(expr.right.name, value - 1)
+            except:
+                #don't do anything if it wasn't
+                pass
+            #if the operator was in postfix
+            if expr.postfix:
+                #return the original value
+                return value
+            #otherwise return the value - 1
+            return value - 1
         ##if we couldn't get the value
         return None
 

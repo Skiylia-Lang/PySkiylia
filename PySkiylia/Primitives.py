@@ -54,9 +54,14 @@ class skiyliaclock(SkiyliaCallable):
 #sqrt
 class skiyliasqrt(SkiyliaCallable):
     string = "primitive function"
+    arity=1
     callname = "sqrt"
     def call(self, interpreter, arguments, token):
-        return math.sqrt(arguments[0])
+        n = arguments[0]
+        try:
+            return math.sqrt(n)
+        except Exception as e:
+            raise RuntimeError([token, str(e), type(e).__name__])
 
 #string conversion
 class skiyliastring(SkiyliaCallable):
@@ -77,11 +82,11 @@ class skiyliainteger(SkiyliaCallable):
     arity = 1
     callname = "integer"
     def call(self, interpreter, arguments, token):
-        num = arguments[0]
+        n = arguments[0]
         try:
-            return float(int(float(num)))         #skiylia represents all numbers as floats
+            return float(int(float(n)))         #skiylia represents all numbers as floats
         except Exception as e:
-            raise RuntimeError([token, "Cannot convert '{}' to integer.".format(num)])
+            raise RuntimeError([token, str(e), type(e).__name__])
 
 #shorthand for integer
 class skiyliaint(skiyliainteger, SkiyliaCallable):
@@ -94,8 +99,80 @@ class skiyliafloat(SkiyliaCallable):
     arity = 1
     callname = "float"
     def call(self, interpreter, arguments, token):
-        num = arguments[0]
+        n = arguments[0]
         try:
-            return float(num)
+            return float(n)
         except Exception as e:
-            raise RuntimeError([token, "Cannot convert '{}' to float.".format(num)])
+            raise RuntimeError([token, str(e), type(e).__name__])
+
+#absolute value return
+class skiyliaabsolute(SkiyliaCallable):
+    string = "primitive function"
+    arity = 1
+    callname = "abs"
+    def call(self, interpreter, arguments, token):
+        n = arguments[0]
+        try:
+            return abs(float(n))
+        except Exception as e:
+            raise RuntimeError([token, str(e), type(e).__name__])
+
+#power
+class skiyliapow(SkiyliaCallable):
+    string = "primitive function"
+    arity = 2
+    callname = "pow"
+    def call(self, interpreter, arguments, token):
+        n, m = arguments
+        try:
+            return float(n) ** float(m)
+        except Exception as e:
+            raise RuntimeError([token, str(e), type(e).__name__])
+
+#modulo
+class skiyliamod(SkiyliaCallable):
+    string = "primitive function"
+    arity = 2
+    callname = "mod"
+    def call(self, interpreter, arguments, token):
+        n, m = arguments
+        try:
+            return float(n) % float(m)
+        except Exception as e:
+            raise RuntimeError([token, str(e), type(e).__name__])
+
+#floor
+class skiyliafloor(SkiyliaCallable):
+    string = "primitive function"
+    arity = 1
+    callname = "floor"
+    def call(self, interpreter, arguments, token):
+        n = arguments[0]
+        try:
+            return float(round(float(n) - .5))
+        except Exception as e:
+            raise RuntimeError([token, str(e), type(e).__name__])
+
+#ceil
+class skiyliaceil(SkiyliaCallable):
+    string = "primitive function"
+    arity = 1
+    callname = "ceil"
+    def call(self, interpreter, arguments, token):
+        n = arguments[0]
+        try:
+            return float(round(float(n) + .5))
+        except Exception as e:
+            raise RuntimeError([token, str(e), type(e).__name__])
+
+#ceil
+class skiyliaround(SkiyliaCallable):
+    string = "primitive function"
+    arity = "1,2"
+    callname = "round"
+    def call(self, interpreter, arguments, token):
+        a, b = (arguments+[0])[:2]
+        try:
+            return float(round(float(a), int(b)))
+        except Exception as e:
+            raise RuntimeError([token, str(e), type(e).__name__])

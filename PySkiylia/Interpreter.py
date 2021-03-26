@@ -120,8 +120,12 @@ class Interpreter(misc, Evaluator):
             token = e.args[0][0]
             #and message
             message = e.args[0][1]
+            #default error type, if none given
+            where = "Runtime"
+            if len(e.args[0])==2:
+                where = e.args[0][2]
             #and raise an error
-            self.skiylia.error(token.line, token.char, message, "Runtime")
+            self.skiylia.error(token.line, token.char, message, where)
 
     #define a way to assign variables abstractly
     def AssignExpr(self, expr):

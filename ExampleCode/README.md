@@ -7,7 +7,6 @@ Dynamically typed Object Oriented Program Language.
 ![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/SK1Y101/PySkiylia)
 [![codecov](https://codecov.io/gh/SK1Y101/PySkiylia/branch/main/graph/badge.svg?token=DRJ67ZQA7M)](https://codecov.io/gh/SK1Y101/PySkiylia)
 [![time tracker](https://wakatime.com/badge/github/SK1Y101/PySkiylia.svg?style=flat-square)](https://wakatime.com/badge/github/SK1Y101/PySkiylia)
-
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat)](#contributors)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
@@ -20,26 +19,49 @@ This repository folder contains examples of Skiylia-specific code, and (possibly
 
 Support here: [issues]
 
-## Contributors
+## Sample Function code
 
-All the people who have contributed ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/SK1Y101"><img src="https://avatars.githubusercontent.com/u/8695579?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jack Lloyd-Walters</b></sub></a><br /><a href="https://github.com/SK1Y101/PySkiylia/commits?author=SK1Y101" title="Code">💻</a> <a href="https://github.com/SK1Y101/PySkiylia/pulls?q=is%3Apr+reviewed-by%3ASK1Y101" title="Reviewed Pull Requests">👀</a></td>
-    <td align="center"><a href="https://github.com/SK2Y202"><img src="https://avatars.githubusercontent.com/u/81203841?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jack Lloyd-Walters</b></sub></a><br /><a href="https://github.com/SK1Y101/PySkiylia/pulls?q=is%3Apr+reviewed-by%3ASK2Y202" title="Reviewed Pull Requests">👀</a></td>
-  </tr>
-</table>
+    ///This section contains a small snippet of Skiylia
+    code that calculates the factorial of a number///
 
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
+    def factorial(n):
+      if int(n) != n:
+        return null   //can't compute factorial of a float this way
+      if n < 2:
+        return 1
+      return n * factorial(n - 1)   //recursion that makes this work
 
-<!-- ALL-CONTRIBUTORS-LIST:END -->
+    var num = 6
+    print("The factorial of", num, "is", factorial(num))
 
-This project follows the [all-contributors](https://allcontributors.org) specification.
-Contributions of any kind are welcome!
+    //output: The factorial of 6 is 720
+
+## Sample Class structure
+
+    ///This section contains a small snippet of Skiylia
+    code that demonstrates class methods and properties///
+
+    class Person:
+      init(name, age):      //executed on initialisation
+        self.name = name
+        self.age = age
+
+      hello():
+        print("Hi there, I'm", self.name, ", and I'm", self.age)
+
+      birthday():
+        self.age = self.age + 1
+
+    var John = Person("John", 24)
+    John.hello()
+
+    John.birthday()
+    John.name = "Johnathon"
+    John.hello()
+
+    ///Hi there, I'm John, and I'm 24
+       Hi there, I'm Johnathon, and I'm 25///
+
 
 [Latest release]: https://github.com/SK1Y101/PySkiylia/releases
 [issues]: https://github.com/SK1Y101/PySkiylia/issues

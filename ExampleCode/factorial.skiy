@@ -1,0 +1,13 @@
+///This section contains a small snippet of Skiylia
+code that calculates the factorial of a number///
+def factorial(n):
+  if int(n) != n:
+    return null           //can't compute factorial of a float this way
+  if n < 2:
+    return 1
+  return n * factorial(n - 1)           //recursion that makes this work
+
+var num = 6
+print("The factorial of", num, "is", factorial(num))
+
+//output: The factorial of 6 is 720

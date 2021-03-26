@@ -1,0 +1,23 @@
+///This section contains a small snippet of Skiylia
+code that demonstrates class methods and properties///
+
+class Person:
+  init(name, age):      //executed on initialisation
+    self.name = name
+    self.age = age
+
+  hello():
+    print("Hi there, I'm", self.name, ", and I'm", self.age)
+
+  birthday():
+    self.age = self.age + 1
+
+var John = Person("John", 24)
+John.hello()
+
+John.birthday()
+John.name = "Johnathon"
+John.hello()
+
+///Hi there, I'm John, and I'm 24
+   Hi there, I'm Johnathon, and I'm 25///

@@ -15,7 +15,7 @@ ExprDict = {"Assign":"name,value",
             "Self":"keyword",
             "Set":"object,name,value",
             "Super":"keyword,method",
-            "Unary":"operator,right",
+            "Unary":"operator,right,postfix",
             "Variable":"name"}
 
 StmtDict = {"Block":"statements",

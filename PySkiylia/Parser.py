@@ -358,107 +358,52 @@ class Parser:
 
     #define the logical or grammar
     def logicalor(self):
-        #fetch the expression
-        expr = self.logicalxor()
-        #while we have an 'Or' operand
-        while self.match("Or"):
-            #fetch the token
-            operator = self.previous()
-            #and the right hand side
-            right = self.logicalxor()
-            #construct the abstract Logical
-            expr = Logical(expr, operator, right)
-        #return the expression
-        return expr
+        #grab the binaary operation
+        return self.leftAssociative(self.logicalxor, "Or")
 
     #define the logical xor grammar
     def logicalxor(self):
-        #fetch the expression
-        expr = self.logicaland()
-        #while we have an 'Or' operand
-        while self.match("Xor"):
-            #fetch the token
-            operator = self.previous()
-            #and the right hand side
-            right = self.logicaland()
-            #construct the abstract Logical
-            expr = Logical(expr, operator, right)
-        #return the expression
-        return expr
+        #grab the binaary operation
+        return self.leftAssociative(self.logicaland, "Xor")
 
     #define the logical and grammar
     def logicaland(self):
-        #fetch the expression
-        expr = self.equality()
-        #while we have an 'Or' operand
-        while self.match("And"):
-            #fetch the token
-            operator = self.previous()
-            #and the right hand side
-            right = self.equality()
-            #construct the abstract Logical
-            expr = Logical(expr, operator, right)
-        #return the expression
-        return expr
+        #grab the binaary operation
+        return self.leftAssociative(self.equality, "And")
 
     #define the equality gramar
     def equality(self):
-        #define the first comparitive term
-        expr = self.comparison()
-        #loop the other possible terms in the equality
-        while self.match("NotEqual", "EqualEqual"):
-            #fetch the operator, which should be the previous token
-            operator = self.previous()
-            #fetch the comparisonassociated
-            right = self.comparison()
-            #create a binary expression from this
-            expr = Binary(expr, operator, right)
-        #return the expression
-        return expr
+        #grab the binaary operation
+        return self.leftAssociative(self.comparison, "NotEqual", "EqualEqual")
 
     #define the comparison grammar
     def comparison(self):
-        #fetch the first term
-        expr = self.term()
-        #loop through all comparison posibilities
-        while self.match("Greater", "Less"):
-            #fetch the operator
-            operator = self.previous()
-            #fetch the term associated
-            right = self.term()
-            #create a binary expression from this
-            expr = Binary(expr, operator, right)
-        #return the comparison
-        return expr
+        #grab the binaary operation
+        return self.leftAssociative(self.term, "Greater", "Less")
 
     #define the term grammar
     def term(self):
-        #fetch the first factor
-        expr = self.factor()
-        #loop through all comparison posibilities
-        while self.match("Plus", "Minus"):
-            #fetch the operator
-            operator = self.previous()
-            #fetch the factir associated
-            right = self.factor()
-            #create a binary expression from this
-            expr = Binary(expr, operator, right)
-        #return the comparison
-        return expr
+        #grab the binaary operation
+        return self.leftAssociative(self.factor, "Plus", "Minus")
 
     #define the factor grammar
     def factor(self):
-        #fetch the first factor
-        expr = self.unary()
+        #grab the binaary operation
+        return self.leftAssociative(self.unary, "Star", "Slash", "StarStar")
+
+    #shorthand code for all left associative binary operations
+    def leftAssociative(self, operand, *operators):
+        #fetch the first term
+        expr = operand()
         #loop through all comparison posibilities
-        while self.match("Star", "Slash", "StarStar"):
+        while self.match(*operators):
             #fetch the operator
             operator = self.previous()
-            #fetch the unary associated
-            right = self.unary()
+            #fetch the term associated
+            right = operand()
             #create a binary expression from this
             expr = Binary(expr, operator, right)
-        #return the comparison
+        #return the expression
         return expr
 
     #define the unary grammar

@@ -332,7 +332,24 @@ class Parser:
     #define the expression grammar
     def expression(self):
         #return an asignment
-        return self.assignment()
+        return self.conditional()
+
+    #define the conditional (ternary) operator
+    def conditional(self):
+        #fetch the first part
+        expr = self.assignment()
+        #if we have the start of a conditional
+        if self.match("Question"):
+            #the then branch
+            thenBranch = self.expression()
+            #check for grammar
+            self.consume("Expect ':' after ternary operator", "Colon")
+            #the else branch
+            elseBranch = self.conditional()
+            #create a new expression from the conditional
+            expr = Conditional(expr, thenBranch, elseBranch)
+        #return the expression
+        return expr
 
     #define the asignment gramar
     def assignment(self):

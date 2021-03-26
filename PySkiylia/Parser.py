@@ -607,10 +607,7 @@ class Parser:
         return True
 
     def constructincremental(self, var):
-        self.tokens.insert(self.current, Tokens.Token("Number", "1", 1.0, var.line, var.char, var.indent))
-        self.tokens.insert(self.current, Tokens.Token("Plus", "+", None, var.line, var.char, var.indent))
-        self.tokens.insert(self.current, var)
-        self.tokens.insert(self.current, Tokens.Token("Equal", "=", None, var.line, var.char, var.indent))
+        self.tokens.insert(self.current, Tokens.Token("PlusPlus", "++", None, var.line, var.char, var.indent))
         self.tokens.insert(self.current, var)
 
     #define a way of checking if a token is found, and consuming it

@@ -14,7 +14,7 @@ from ASTPrinter import ASTPrinter
 class Skiylia:
     #set the default values here
     haderror = False
-    version = "v0.6.3"
+    version = "v0.6.4"
     debug = False
     #run this at initialisation
     def __init__(self, args=""):

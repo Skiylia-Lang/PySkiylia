@@ -127,6 +127,9 @@ class Lexer:
             if self.match("="):
                 return self.addToken("EqualEqual")
             return self.addToken("Equal")
+        elif c == "?":
+            #conditional question mark
+            return self.addToken("Question")
         elif c == "&":
             #Check for logical and
             return self.addToken("And")

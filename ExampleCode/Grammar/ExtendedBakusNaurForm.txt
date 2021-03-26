@@ -54,7 +54,7 @@ returnstmt        > "return" expression?
 
 whilestmt         > "while" expression {Block token} statement
 
-expression        > conditional
+expression        > condition
 
 conditional       > assignment ( "?" expression ":" )?
 

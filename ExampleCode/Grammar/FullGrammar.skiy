@@ -57,6 +57,7 @@ a ^ b       //a xor b
 a and b     //a and b
 a or b      //a or b
 a xor b     //a xor b
+a ? b : c   //if a then b else c
 
 //Variables and assignment
 var a       //initialise as 0

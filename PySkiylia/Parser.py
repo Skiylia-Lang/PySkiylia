@@ -489,7 +489,9 @@ class Parser:
             #fetch the call that comes before
             left = self.call()
             #fetch the operator
-            operator = self.previous()
+            operator = self.peek()
+            #and move past the incremental operators
+            self.advance()
             #return the unary combination
             return Unary(operator, left, True)
         #otherwise return the literal

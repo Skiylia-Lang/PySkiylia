@@ -480,6 +480,21 @@ class Parser:
             #return the unary combination
             return Unary(operator, right)
         #otherwise return the literal
+        return self.postfix()
+
+    #define the postfix grammar
+    def postfix(self):
+        #this is right associative, so check first
+        if self.checkNext("PlusPlus", "MinusMinus"):
+            print(self.peek().type)
+            print(self.peekNext().type)
+            #fetch the operator
+            operator = self.previous()
+            #fetch the call that may follow
+            right = self.call()
+            #return the unary combination
+            return Unary(operator, right)
+        #otherwise return the literal
         return self.call()
 
     #define the function that checks for the end of a call
@@ -627,6 +642,15 @@ class Parser:
             return False
         #else return if the token is one of the expected ones
         return self.peek().type in expected
+
+    #basically match, but only on a single token type
+    def checkNext(self, *expected):
+        #if we've run off the end of the tokens
+        if self.atEnd():
+            #return false
+            return False
+        #else return if the token is one of the expected ones
+        return self.peekNext().type in expected
 
     #define a way of fetching the next tokens
     def advance(self):

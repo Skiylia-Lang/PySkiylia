@@ -61,7 +61,7 @@ class Super(Expr):
 		self.method = method
 
 class Unary(Expr):
-	def __init__(self, operator,right,postfix):
+	def __init__(self, operator,right,postfix=False):
 		self.operator = operator
 		self.right = right
 		self.postfix = postfix

@@ -101,6 +101,8 @@ class Lexer:
         elif c == "/":
             #as division and comments use the same character, check if the next is a comment
             if self.match("/"):
+                #as comments can mess with indentation, remove any leading up to it
+                self.removewhitespace()
                 #as multi-line comments are ///, whereas a single line is //, we need to check for that too!
                 if self.match("/"):
                     #keep advancing until we find the tripple comment escape
@@ -302,3 +304,10 @@ class Lexer:
     def atEnd(self):
         #return if the current position s greater than the source length
         return self.current >= len(self.source)
+
+    #match the indentation to any actual surrounding code
+    def removewhitespace(self):
+        #if we have a previous token
+        if self.tokens:
+            #then set our indent to that
+            self.indent = self.previousToken().indent

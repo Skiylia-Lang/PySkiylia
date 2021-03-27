@@ -105,6 +105,18 @@ class skiyliafloat(SkiyliaCallable):
         except Exception as e:
             raise RuntimeError([token, str(e), type(e).__name__])
 
+#boolean conversion
+class skiyliabool(SkiyliaCallable):
+    string="primitive function"
+    arity = 1
+    callname = "bool"
+    def call(self, interpreter, arguments, token):
+        n = arguments[0]
+        try:
+            return bool(n)
+        except Exception as e:
+            raise RuntimeError([token, str(e), type(e).__name__])
+
 #absolute value return
 class skiyliaabsolute(SkiyliaCallable):
     string = "primitive function"

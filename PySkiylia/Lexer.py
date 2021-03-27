@@ -92,15 +92,15 @@ class Lexer:
             return self.addToken("Dot")
         elif c == "-":
             if self.match("-"):
-                return self.addToken("MinusMinus")
+                return self.addToken("MMinus")
             return self.addToken("Minus")
         elif c == "+":
             if self.match("+"):
-                return self.addToken("PlusPlus")
+                return self.addToken("PPlus")
             return self.addToken("Plus")
         elif c == "*":
             if self.match("*"):
-                return self.addToken("StarStar")
+                return self.addToken("StStar")
             return self.addToken("Star")
         elif c == "/":
             #as division and comments use the same character, check if the next is a comment
@@ -120,12 +120,18 @@ class Lexer:
             else:
                 return self.addToken("Slash")
         elif c == ">":
+            if self.match("="):
+                return self.addToken("GEqual")
             return self.addToken("Greater")
         elif c == "<":
+            if self.match("="):
+                return self.addToken("LEqual")
             return self.addToken("Less")
         elif c == "=":
             if self.match("="):
-                return self.addToken("EqualEqual")
+                if self.match("="):
+                    return self.addToken("EEEqual")
+                return self.addToken("EEqual")
             return self.addToken("Equal")
         elif c == "?":
             if self.match(":"):
@@ -145,7 +151,9 @@ class Lexer:
             return self.addToken("Or")
         elif c == "!":
             if self.match("="):
-                return self.addToken("NotEqual")
+                if self.match("="):
+                    return self.addToken("NEEqual")
+                return self.addToken("NEqual")
             return self.addToken("Not")
         elif c == "\t":
             #if we met an indentation, then increment our indent tage

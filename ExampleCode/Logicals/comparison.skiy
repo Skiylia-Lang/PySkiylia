@@ -1,0 +1,33 @@
+//comparison operators
+
+print("greater")
+print(true > 0)               //true
+print(1 > 0)                  //true
+print("1" > 0)                //true
+print(true > 1)               //false
+print(1 > 1)                  //false
+print("1" > 1)                //false
+
+print("greater or equal")
+print(true >= 0)              //true
+print(1 >= 0)                 //true
+print("1" >= 0)               //true
+print(true >= 1)              //true
+print(1 >= 1)                 //true
+print("1" >= 1)               //true
+
+print("less")
+print(true < 0)               //false
+print(1 < 0)                  //false
+print("1" < 0)                //false
+print(true < 1)               //false
+print(1 < 1)                  //false
+print("1" < 1)                //false
+
+print("less or equal")
+print(true <= 0)              //false
+print(1 <= 0)                 //false
+print("1" <= 0)               //false
+print(true <= 1)              //true
+print(1 <= 1)                 //true
+print("1" <= 1)               //true

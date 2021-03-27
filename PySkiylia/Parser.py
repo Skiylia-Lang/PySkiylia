@@ -428,12 +428,12 @@ class Parser:
     #define the equality gramar
     def equality(self):
         #grab the binaary operation
-        return self.leftAssociative(self.comparison, "NotEqual", "EqualEqual")
+        return self.leftAssociative(self.comparison, "NEqual", "NEEqual", "NFuzequal", "EEqual", "EEEqual", "Fuzequal")
 
     #define the comparison grammar
     def comparison(self):
         #grab the binaary operation
-        return self.leftAssociative(self.term, "Greater", "Less")
+        return self.leftAssociative(self.term, "Greater", "EGreater", "Less", "ELess")
 
     #define the term grammar
     def term(self):
@@ -443,7 +443,7 @@ class Parser:
     #define the factor grammar
     def factor(self):
         #grab the binaary operation
-        return self.leftAssociative(self.unary, "Star", "Slash", "StarStar")
+        return self.leftAssociative(self.unary, "Star", "Slash", "StStar")
 
     #shorthand code for all left associative binary operations
     def leftAssociative(self, operand, *operators, ExprType=Binary):
@@ -471,7 +471,7 @@ class Parser:
             #return the unary combination
             return Unary(operator, right)
         #check for prefix '++' and '--'.
-        elif self.match("PlusPlus", "MinusMinus"):
+        elif self.match("PPlus", "MMinus"):
             #fetch the operator
             operator = self.previous()
             #fetch the call that may follow
@@ -484,7 +484,7 @@ class Parser:
     #define the postfix grammar
     def postfix(self):
         #this is right associative, so check first
-        if self.checkNext("PlusPlus", "MinusMinus"):
+        if self.checkNext("PPlus", "MMinus"):
             #fetch the call that comes before
             left = self.call()
             #fetch the operator
@@ -553,7 +553,7 @@ class Parser:
         elif self.match("Null"):
             return Literal(None)
         #check if a number or string
-        elif self.match("Number", "String"):
+        elif self.match("Float", "Integer", "String"):
             return Literal(self.previous().literal)
         #check if we have a "self"
         elif self.match("Self"):
@@ -584,16 +584,16 @@ class Parser:
     def checkError(self):
         a = "" #function to execute if we find an error
         #check if we have an equality
-        if self.match("NotEqual", "Equal"):
+        if self.match("NEqual", "NEEqual", "NFuzequal", "EEqual", "EEEqual", "Fuzequal"):
             a = self.equality
         #or a comparison
-        elif self.match("Greater", "Less"):
+        elif self.match("Greater", "EGreater", "Less", "ELess"):
             a = self.comparison
         #or an addition (a blank '-' is a unary operator as well)
         elif self.match("Plus"):
             a = self.term
         #and finally a factor
-        elif self.match("Slash", "Star", "StarStar"):
+        elif self.match("Slash", "Star", "StStar"):
             a = self.factor
         #otherwise, return false, as we didn't encounter an erroneous left hand operation
         else:
@@ -606,7 +606,7 @@ class Parser:
         return True
 
     def constructincremental(self, var):
-        self.tokens.insert(self.current, Tokens.Token("PlusPlus", "++", None, var.line, var.char, var.indent))
+        self.tokens.insert(self.current, Tokens.Token("PPlus", "++", None, var.line, var.char, var.indent))
         self.tokens.insert(self.current, var)
 
     #define a way of checking if a token is found, and consuming it

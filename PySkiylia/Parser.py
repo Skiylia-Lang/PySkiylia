@@ -332,7 +332,33 @@ class Parser:
     #define the expression grammar
     def expression(self):
         #return an asignment
-        return self.assignment()
+        return self.conditional()
+
+    #define the conditional (ternary) operator
+    def conditional(self):
+        #fetch the first part
+        expr = self.assignment()
+        #if we have the start of a conditional
+        if self.match("Question"):
+            #the then branch
+            thenBranch = self.expression()
+            #check for grammar
+            self.consume("Expect ':' after ternary operator", "Colon")
+            #and set the type to ternary
+            type = "T"
+        #or the start of an elvis
+        elif self.match("QColon"):
+            type, thenBranch = "E", 0
+        #or the start of a null coalescence
+        elif self.match("QQuestion"):
+            type, thenBranch = "N", 0
+        #if nothing, return the expr
+        else:
+            return expr
+        #all conditionals have an else, so fetch it
+        elseBranch = self.conditional()
+        #and fincally construct the conditional
+        return Conditional(expr, thenBranch, elseBranch, type)
 
     #define the asignment gramar
     def assignment(self):
@@ -461,7 +487,7 @@ class Parser:
         #fetch the final parenthesis
         paren = self.consume("Expect ')' after arguments.", "RightParenthesis")
         #can't have a colon after a call
-        if self.check("Colon"):
+        if self.check("Colon") and self.checkNext("End"):
             self.advance()
             raise SyntaxError(self.error(self.previous(), "':' cannot follow function calls."))
         #return the function call

@@ -1,0 +1,20 @@
+//Test the ternary operator
+print(true ? 1 : 2)         //1
+print(false ? 1 : 2)        //2
+print(0 ? 1 : 2)            //2   <- '0' evaluates as false
+print("ternary" ? 1 : 2)    //1   <- everything except '0' and "" evaluates as true
+print(null ? 1 : 2)         //2   <- 'null' evaluates as false
+
+//elvis operator
+print(true ?: 2)            //true
+print(false ?: 2)           //2
+print(0 ?: 2)               //2           <- '0' evaluates as false
+print("ternary" ?: 2)       //"ternary"   <- everything except '0' and "" evaluates as true
+print(null ?: 2)            //2           <- 'null' evaluates as false
+
+//null-coalescence operator
+print(true ?? 2)            //true
+print(false ?? 2)           //false
+print(0 ?? 2)               //0
+print("ternary" ?? 2)       //"ternary"
+print(null ?? 2)            //2           <- 'null' is the only 'null'

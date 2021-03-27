@@ -104,6 +104,16 @@ class Resolver(Evaluator):
         self.currentClass = enclosingClass
         return None
 
+    def ConditionalStmt(self, stmt):
+        #resolve the condition
+        self.resolve(stmt.condition)
+        #the then branch, if we're a ternary
+        if stmt.type=="T":
+            self.resolve(stmt.thenBranch)
+        #and the else
+        self.resolve(stmt.elseBranch)
+        return None
+
     def ExpressionStmt(self, stmt):
         #resolve the expression
         self.resolve(stmt.expression)

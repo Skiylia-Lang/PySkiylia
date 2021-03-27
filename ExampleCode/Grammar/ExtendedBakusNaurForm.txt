@@ -54,7 +54,9 @@ returnstmt        > "return" expression?
 
 whilestmt         > "while" expression {Block token} statement
 
-expression        > assignment
+expression        > condition
+
+conditional       > assignment ( ( ( "?" expression ":" ) | "?:" | "??" ) conditional )?
 
 assignment        > (call ".")? Identifier "=" assignment | logicalOr
 

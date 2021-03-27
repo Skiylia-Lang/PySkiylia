@@ -344,6 +344,8 @@ class Parser:
             thenBranch = self.expression()
             #check for grammar
             self.consume("Expect ':' after ternary operator", "Colon")
+            #and set the type to ternary
+            type = "T"
         #or the start of an elvis
         elif self.match("QColon"):
             type, thenBranch = "E", 0

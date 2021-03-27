@@ -428,7 +428,7 @@ class Parser:
     #define the equality gramar
     def equality(self):
         #grab the binaary operation
-        return self.leftAssociative(self.comparison, "NEqual", "NEEqual", "EEqual", "EEEqual")
+        return self.leftAssociative(self.comparison, "NEqual", "NEEqual", "NFuzequal", "EEqual", "EEEqual", "Fuzequal")
 
     #define the comparison grammar
     def comparison(self):
@@ -584,7 +584,7 @@ class Parser:
     def checkError(self):
         a = "" #function to execute if we find an error
         #check if we have an equality
-        if self.match("NEqual", "NEEqual", "EEqual", "EEEqual"):
+        if self.match("NEqual", "NEEqual", "NFuzequal", "EEqual", "EEEqual", "Fuzequal"):
             a = self.equality
         #or a comparison
         elif self.match("Greater", "EGreater", "Less", "ELess"):

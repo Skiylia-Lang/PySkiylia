@@ -148,6 +148,9 @@ class Resolver(Evaluator):
             self.resolve(stmt.elseBranch)
         return None
 
+    def Interuptstmt(self, stmt):
+        return None
+
     def LiteralExpr(self, expr):
         return None
 

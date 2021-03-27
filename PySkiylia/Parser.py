@@ -10,6 +10,8 @@ import Tokens
 class Parser:
     #limit the number of arguments a function can utilise
     arglimit=255
+    #use this test test if we are in a loop
+    loopdepth=0
     #initialise
     def __init__(self, skiylia, tokens=[], primitives=[]):
         #return a method for accessing the skiylia class
@@ -135,6 +137,8 @@ class Parser:
 
     #define the for loop grammar
     def forstatement(self):
+        #increment the loop counter
+        self.loopdepth+=1
         #fetch the increment variable
         if self.match("Var"):
             #if we see an explicit variable declaration, do that
@@ -182,6 +186,9 @@ class Parser:
 
         #as we require an initialiser, wrap it into the body code
         body = Block([initialiser, body])
+
+        #decrement the loop counter
+        self.loopdepth-=1
 
         #return the for loop in its' fully deconstructed form
         return body
@@ -262,6 +269,8 @@ class Parser:
     def interuptstmt(self):
         #fetch the keyword
         keyword = self.previous()
+        if self.loopdepth == 0:
+            self.error(keyword, "Cannot use {} outside of a loop.".format(keyword.lexeme))
         #and ensure there is nothing after it
         self.consume("Expressions cannot follow '{}'.".format(keyword.lexeme),"End")
         #check that the code is then deindented
@@ -307,6 +316,8 @@ class Parser:
 
     #define the while statement grammar
     def whilestatement(self):
+        #increment the loop counter
+        self.loopdepth+=1
         #fetch the while conditional
         condition = self.expression()
         #make sure we have semicolon grammar
@@ -314,6 +325,8 @@ class Parser:
             raise RuntimeError(self.error(self.peek(), "Expect ':' after while condition"))
         #fetch the body of the while loop
         body = self.statement()
+        #decrement the loop counter
+        self.loopdepth-=1
         #return the While abstraction
         return While(condition, body)
 

@@ -329,6 +329,11 @@ class Interpreter(misc, Evaluator):
             self.evaluate(stmt.elseBranch)
         return None
 
+    #define a way of using an interup (continue/break)
+    def Interuptstmt(self, stmt):
+        #raise an error
+        raise Interupt(stmt.continue)
+
     #define a way of converting from the literal AST to a runtime value
     def LiteralExpr(self, expr):
         return expr.value
@@ -493,8 +498,17 @@ class Interpreter(misc, Evaluator):
     def WhileStmt(self, stmt):
         #while the condition is truthy
         while self.isTruthy(self.evaluate(stmt.condition)):
-            #execute the body of the while loop
-            self.evaluate(stmt.body)
+            try:
+                #execute the body of the while loop
+                self.evaluate(stmt.body)
+            #if we got an interupt command
+            except Interupt as e:
+                #if the intreuption is continue
+                if e.message==True:
+                    #then do that
+                    continue
+                #otherwise, break
+                break
         #and return none
         return None
 

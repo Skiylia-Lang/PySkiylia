@@ -587,7 +587,7 @@ class Parser:
         if self.match("NEqual", "NEEqual", "EEqual", "EEEqual"):
             a = self.equality
         #or a comparison
-    elif self.match("Greater", "EGreater", "Less", "ELess"):
+        elif self.match("Greater", "EGreater", "Less", "ELess"):
             a = self.comparison
         #or an addition (a blank '-' is a unary operator as well)
         elif self.match("Plus"):

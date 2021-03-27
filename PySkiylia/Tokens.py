@@ -13,7 +13,7 @@ tokens = [#single character tokens
             "EOF", "End"]
 
 #a dictionary mapping keywords to their equivalent tokens
-keywords = {"and":"And", "class":"Class", "def":"Def", "do":"Do", "elif":"Elif", "else":"Else",
+keywords = {"and":"And", "break":"Break", "continue":"Continue", "class":"Class", "def":"Def", "do":"Do", "elif":"Elif", "else":"Else",
             "false":"False", "for":"For", "if":"If", "not":"Not", "null":"Null", "or":"Or",
             "return":"Return", "self":"Self", "super":"Super", "true":"True", "var":"Var",
             "when":"Where", "where":"Where", "while":"While", "xor":"Xor",}

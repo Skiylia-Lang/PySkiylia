@@ -10,6 +10,8 @@ import Tokens
 class Parser:
     #limit the number of arguments a function can utilise
     arglimit=255
+    #use this test test if we are in a loop
+    loopdepth=0
     #initialise
     def __init__(self, skiylia, tokens=[], primitives=[]):
         #return a method for accessing the skiylia class
@@ -95,6 +97,9 @@ class Parser:
         elif self.match("Return"):
             #fetch the return
             return self.returnstatement()
+        #if we see a break or continue
+        elif self.match("Break", "Continue"):
+            return self.interuptstmt()
         #check if the token matches a primitive, and shortcut to the call logic
         elif self.peek().lexeme in self.primitives:
             ptoken = self.peek()
@@ -132,6 +137,8 @@ class Parser:
 
     #define the for loop grammar
     def forstatement(self):
+        #increment the loop counter
+        self.loopdepth+=1
         #fetch the increment variable
         if self.match("Var"):
             #if we see an explicit variable declaration, do that
@@ -175,10 +182,13 @@ class Parser:
             #if none supplied, assume true
             condition = Literal(True)
         #construct the while loop from the conditional and body
-        body = While(condition, body)
+        body = While(condition, body, increment!=None)
 
         #as we require an initialiser, wrap it into the body code
         body = Block([initialiser, body])
+
+        #decrement the loop counter
+        self.loopdepth-=1
 
         #return the for loop in its' fully deconstructed form
         return body
@@ -255,6 +265,20 @@ class Parser:
         #return the class
         return Class(name, superclass, methods)
 
+    #define the interuption (break/continue) grammar
+    def interuptstmt(self):
+        #fetch the keyword
+        keyword = self.previous()
+        if self.loopdepth == 0:
+            self.error(keyword, "Cannot use {} outside of a loop.".format(keyword.lexeme))
+        #and ensure there is nothing after it
+        self.consume("Expressions cannot follow '{}'.".format(keyword.lexeme),"End")
+        #check that the code is then deindented
+        if not self.checkindent(keyword.indent)<0:
+            raise SyntaxError([self.peek(), "Incorect indentation for return statement", "Indentation"])
+        #create and return the abstraction
+        return Interupt(keyword, keyword.type=="Continue")
+
     #define the return grammar
     def returnstatement(self):
         #fetch the "Return" token for error reporting
@@ -292,6 +316,8 @@ class Parser:
 
     #define the while statement grammar
     def whilestatement(self):
+        #increment the loop counter
+        self.loopdepth+=1
         #fetch the while conditional
         condition = self.expression()
         #make sure we have semicolon grammar
@@ -299,6 +325,8 @@ class Parser:
             raise RuntimeError(self.error(self.peek(), "Expect ':' after while condition"))
         #fetch the body of the while loop
         body = self.statement()
+        #decrement the loop counter
+        self.loopdepth-=1
         #return the While abstraction
         return While(condition, body)
 
@@ -332,7 +360,33 @@ class Parser:
     #define the expression grammar
     def expression(self):
         #return an asignment
-        return self.assignment()
+        return self.conditional()
+
+    #define the conditional (ternary) operator
+    def conditional(self):
+        #fetch the first part
+        expr = self.assignment()
+        #if we have the start of a conditional
+        if self.match("Question"):
+            #the then branch
+            thenBranch = self.expression()
+            #check for grammar
+            self.consume("Expect ':' after ternary operator", "Colon")
+            #and set the type to ternary
+            type = "T"
+        #or the start of an elvis
+        elif self.match("QColon"):
+            type, thenBranch = "E", 0
+        #or the start of a null coalescence
+        elif self.match("QQuestion"):
+            type, thenBranch = "N", 0
+        #if nothing, return the expr
+        else:
+            return expr
+        #all conditionals have an else, so fetch it
+        elseBranch = self.conditional()
+        #and fincally construct the conditional
+        return Conditional(expr, thenBranch, elseBranch, type)
 
     #define the asignment gramar
     def assignment(self):
@@ -358,107 +412,52 @@ class Parser:
 
     #define the logical or grammar
     def logicalor(self):
-        #fetch the expression
-        expr = self.logicalxor()
-        #while we have an 'Or' operand
-        while self.match("Or"):
-            #fetch the token
-            operator = self.previous()
-            #and the right hand side
-            right = self.logicalxor()
-            #construct the abstract Logical
-            expr = Logical(expr, operator, right)
-        #return the expression
-        return expr
+        #grab the binaary operation
+        return self.leftAssociative(self.logicalxor, "Or", ExprType=Logical)
 
     #define the logical xor grammar
     def logicalxor(self):
-        #fetch the expression
-        expr = self.logicaland()
-        #while we have an 'Or' operand
-        while self.match("Xor"):
-            #fetch the token
-            operator = self.previous()
-            #and the right hand side
-            right = self.logicaland()
-            #construct the abstract Logical
-            expr = Logical(expr, operator, right)
-        #return the expression
-        return expr
+        #grab the binaary operation
+        return self.leftAssociative(self.logicaland, "Xor", ExprType=Logical)
 
     #define the logical and grammar
     def logicaland(self):
-        #fetch the expression
-        expr = self.equality()
-        #while we have an 'Or' operand
-        while self.match("And"):
-            #fetch the token
-            operator = self.previous()
-            #and the right hand side
-            right = self.equality()
-            #construct the abstract Logical
-            expr = Logical(expr, operator, right)
-        #return the expression
-        return expr
+        #grab the binaary operation
+        return self.leftAssociative(self.equality, "And", ExprType=Logical)
 
     #define the equality gramar
     def equality(self):
-        #define the first comparitive term
-        expr = self.comparison()
-        #loop the other possible terms in the equality
-        while self.match("NotEqual", "EqualEqual"):
-            #fetch the operator, which should be the previous token
-            operator = self.previous()
-            #fetch the comparisonassociated
-            right = self.comparison()
-            #create a binary expression from this
-            expr = Binary(expr, operator, right)
-        #return the expression
-        return expr
+        #grab the binaary operation
+        return self.leftAssociative(self.comparison, "NEqual", "NEEqual", "NFuzequal", "EEqual", "EEEqual", "Fuzequal")
 
     #define the comparison grammar
     def comparison(self):
-        #fetch the first term
-        expr = self.term()
-        #loop through all comparison posibilities
-        while self.match("Greater", "Less"):
-            #fetch the operator
-            operator = self.previous()
-            #fetch the term associated
-            right = self.term()
-            #create a binary expression from this
-            expr = Binary(expr, operator, right)
-        #return the comparison
-        return expr
+        #grab the binaary operation
+        return self.leftAssociative(self.term, "Greater", "EGreater", "Less", "ELess")
 
     #define the term grammar
     def term(self):
-        #fetch the first factor
-        expr = self.factor()
-        #loop through all comparison posibilities
-        while self.match("Plus", "Minus"):
-            #fetch the operator
-            operator = self.previous()
-            #fetch the factir associated
-            right = self.factor()
-            #create a binary expression from this
-            expr = Binary(expr, operator, right)
-        #return the comparison
-        return expr
+        #grab the binaary operation
+        return self.leftAssociative(self.factor, "Plus", "Minus")
 
     #define the factor grammar
     def factor(self):
-        #fetch the first factor
-        expr = self.unary()
+        #grab the binaary operation
+        return self.leftAssociative(self.unary, "Star", "Slash", "StStar")
+
+    #shorthand code for all left associative binary operations
+    def leftAssociative(self, operand, *operators, ExprType=Binary):
+        #fetch the first term
+        expr = operand()
         #loop through all comparison posibilities
-        while self.match("Star", "Slash", "StarStar"):
+        while self.match(*operators):
             #fetch the operator
             operator = self.previous()
-            #fetch the unary associated
-            right = self.unary()
+            #fetch the term associated
+            right = operand()
             #create a binary expression from this
-            expr = Binary(expr, operator, right)
-        #return the comparison
+            expr = ExprType(expr, operator, right)
+        #return the expression
         return expr
 
     #define the unary grammar
@@ -471,6 +470,29 @@ class Parser:
             right = self.unary()
             #return the unary combination
             return Unary(operator, right)
+        #check for prefix '++' and '--'.
+        elif self.match("PPlus", "MMinus"):
+            #fetch the operator
+            operator = self.previous()
+            #fetch the call that may follow
+            right = self.call()
+            #return the unary combination
+            return Unary(operator, right)
+        #otherwise return the literal
+        return self.postfix()
+
+    #define the postfix grammar
+    def postfix(self):
+        #this is right associative, so check first
+        if self.checkNext("PPlus", "MMinus"):
+            #fetch the call that comes before
+            left = self.call()
+            #fetch the operator
+            operator = self.peek()
+            #and move past the incremental operators
+            self.advance()
+            #return the unary combination
+            return Unary(operator, left, True)
         #otherwise return the literal
         return self.call()
 
@@ -493,9 +515,9 @@ class Parser:
         #fetch the final parenthesis
         paren = self.consume("Expect ')' after arguments.", "RightParenthesis")
         #can't have a colon after a call
-        if self.check("Colon"):
+        '''if self.check("Colon") and self.checkNext("End"):
             self.advance()
-            raise SyntaxError(self.error(self.previous(), "':' cannot follow function calls."))
+            raise SyntaxError(self.error(self.previous(), "':' cannot follow function calls."))'''
         #return the function call
         return Call(callee, paren, arguments)
 
@@ -531,7 +553,7 @@ class Parser:
         elif self.match("Null"):
             return Literal(None)
         #check if a number or string
-        elif self.match("Number", "String"):
+        elif self.match("Float", "Integer", "String"):
             return Literal(self.previous().literal)
         #check if we have a "self"
         elif self.match("Self"):
@@ -562,16 +584,16 @@ class Parser:
     def checkError(self):
         a = "" #function to execute if we find an error
         #check if we have an equality
-        if self.match("NotEqual", "Equal"):
+        if self.match("NEqual", "NEEqual", "NFuzequal", "EEqual", "EEEqual", "Fuzequal"):
             a = self.equality
         #or a comparison
-        elif self.match("Greater", "Less"):
+        elif self.match("Greater", "EGreater", "Less", "ELess"):
             a = self.comparison
         #or an addition (a blank '-' is a unary operator as well)
         elif self.match("Plus"):
             a = self.term
         #and finally a factor
-        elif self.match("Slash", "Star", "StarStar"):
+        elif self.match("Slash", "Star", "StStar"):
             a = self.factor
         #otherwise, return false, as we didn't encounter an erroneous left hand operation
         else:
@@ -584,10 +606,7 @@ class Parser:
         return True
 
     def constructincremental(self, var):
-        self.tokens.insert(self.current, Tokens.Token("Number", "1", 1.0, var.line, var.char, var.indent))
-        self.tokens.insert(self.current, Tokens.Token("Plus", "+", None, var.line, var.char, var.indent))
-        self.tokens.insert(self.current, var)
-        self.tokens.insert(self.current, Tokens.Token("Equal", "=", None, var.line, var.char, var.indent))
+        self.tokens.insert(self.current, Tokens.Token("PPlus", "++", None, var.line, var.char, var.indent))
         self.tokens.insert(self.current, var)
 
     #define a way of checking if a token is found, and consuming it
@@ -619,6 +638,15 @@ class Parser:
             return False
         #else return if the token is one of the expected ones
         return self.peek().type in expected
+
+    #basically match, but only on a single token type
+    def checkNext(self, *expected):
+        #if we've run off the end of the tokens
+        if self.atEnd():
+            #return false
+            return False
+        #else return if the token is one of the expected ones
+        return self.peekNext().type in expected
 
     #define a way of fetching the next tokens
     def advance(self):

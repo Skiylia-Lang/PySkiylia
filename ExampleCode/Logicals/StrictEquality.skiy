@@ -1,0 +1,52 @@
+//test the strict equality operator
+print("comparisons")
+print(true === true)         //true
+print(true === false)        //false
+print(false === true)        //false
+print(false === false)       //true
+
+print("non-boolean")
+print(true === 1)            //true     <- '1' is an implicit true
+print(false === 0)           //true     <- '0' is an implicit false
+print(true === "true")       //false
+print(false === "false")     //false    <- none of these have the same type as a boolean
+print(false === "")          //false
+
+print("strings, integers, and float")
+print(1 === 1)               //true     <- have to be both same type and same value to show as false
+print(1 === 1.0)             //false
+print(1 === "1")             //false
+print(1 === "1.0")           //false
+print(1 === true)            //false
+print(1.0 === "1")           //false     <- if they're different type, even if same value, then true
+print(1.0 === "1.0")         //false
+print(1.0 === true)          //false
+print("1" === "1.0")         //false
+print("1" === true)          //false
+print("1.0" === true)        //false
+
+print("comparisons")
+print(true !== true)         //false
+print(true !== false)        //true
+print(false !== true)        //true
+print(false !== false)       //false
+
+print("non-boolean")
+print(true !== 1)            //false
+print(false !== 0)           //false
+print(true !== "true")       //true
+print(false !== "false")     //true     <- none of these have the same type as a boolean
+print(false !== "")          //true
+
+print("strings, integers, and float")
+print(1 !== 1)               //false    <- have to be both same type and same value to show as false
+print(1 !== 1.0)             //true
+print(1 !== "1")             //true
+print(1 !== "1.0")           //true
+print(1 !== true)            //true     <- if they're different type, even if same value, then true
+print(1.0 !== "1")           //true
+print(1.0 !== "1.0")         //true
+print(1.0 !== true)          //true
+print("1" !== "1.0")         //true
+print("1" !== true)          //true
+print("1.0" !== true)        //true

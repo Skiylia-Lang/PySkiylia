@@ -14,10 +14,12 @@ from ASTPrinter import ASTPrinter
 class Skiylia:
     #set the default values here
     haderror = False
-    version = "v0.6.3"
+    version = "v0.7.0"
     debug = False
     #run this at initialisation
     def __init__(self, args=""):
+        os.system("title PySkiylia {}".format(self.version))
+        title=""
         #check if the user has asked for help
         if args and args[-1] in ["--help", "-h", "-?", "/?"]:
             #show them the default usage
@@ -29,6 +31,7 @@ class Skiylia:
             self.debug = True
             #ad remove the flag from the arguments list
             args = args[:-1]
+            title += " (Debug mode)"
         #we won't support more than one argument
         if len(args) > 1:
             #tell the user and exit
@@ -38,9 +41,12 @@ class Skiylia:
         elif len(args) == 1:
             #save the argument if it is valid
             self.args = self.checkValidFile(args[0])
+            title = " - " + self.args.split("/")[-1] + title
         else:
             #otherwise we have no argument to speak of
+            title = " Interactive" + title
             self.args = ""
+        os.system("title PySkiylia {}{}".format(self.version, title))
 
     #run this to determine the runtype
     def init(self):

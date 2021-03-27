@@ -7,6 +7,11 @@ class Return(Exception):
     def __init__(self, value):
         self.message = value
 
+#the interupt exception class
+class Interupt(Exception):
+    def __init__(self, value):
+        self.message = value
+
 #define the callable class
 class SkiyliaCallable:
     arity=0

@@ -39,7 +39,7 @@ parameters        > Identifier ( "," Identifier )*
 
 vardeclaration    > ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
 
-statement         > exprstmt | forstmt | ifstmt | returnstmt | whilestmt | block
+statement         > exprstmt | forstmt | ifstmt | interuptstmt | returnstmt | whilestmt | block
 
 block             > {Indent level increases} declaration {End token}+ {token with lower indentation}
 
@@ -50,11 +50,15 @@ forstmt           > "for" (vardeclaration | exprstmt) (("when" | "where") expres
 
 ifstmt            > "if" expression {Block token} statement ("else" statement)?
 
+interuptstmt       > "break" | "continue"
+
 returnstmt        > "return" expression?
 
 whilestmt         > "while" expression {Block token} statement
 
-expression        > assignment
+expression        > condition
+
+conditional       > assignment ( ( ( "?" expression ":" ) | "?:" | "??" ) conditional )?
 
 assignment        > (call ".")? Identifier "=" assignment | logicalOr
 
@@ -65,10 +69,10 @@ logicalXor        > logicalAnd ( ( "^" | "xor" ) logicalAnd )*
 
 logicalAnd        > equality ( ( ( "&" | "and" ) ) equality )*
 
-equality          > comparison ( ( "!=" | "==" ) comparison )*
+equality          > comparison ( ( "!=" | "==" | "!==" | "===" | "!~~" | "~~~" ) comparison )*
 
 //Then comparisons
-comparison        > term ( ( ">" | "<" ) term )*
+comparison        > term ( ( ">" | ">=" | "<" | "<=" ) term )*
 
 //Then terms
 term              > factor ( ( "-" | "+" ) factor )*
@@ -77,7 +81,9 @@ term              > factor ( ( "-" | "+" ) factor )*
 factor            > unary ( ( "*" | "/" ) unary )*
 
 //then unaries
-unary             > ( "!" | "-" ) unary | call
+unary             > ( "!" | "-" )* unary | ( ( "++" | "--" ) call )? | postfix
+
+postfix           > call ( "--" | "++" )?
 
 //And finally call has the lowest precedence (and is computed first)
 call              > literal ( "(" arguments? ")" | "." Identifier)*

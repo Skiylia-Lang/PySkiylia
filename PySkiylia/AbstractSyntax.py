@@ -61,9 +61,10 @@ class Super(Expr):
 		self.method = method
 
 class Unary(Expr):
-	def __init__(self, operator,right):
+	def __init__(self, operator,right,postfix=False):
 		self.operator = operator
 		self.right = right
+		self.postfix = postfix
 
 class Variable(Expr):
 	def __init__(self, name):
@@ -84,6 +85,13 @@ class Class(Stmt):
 		self.superclass = superclass
 		self.methods = methods
 
+class Conditional(Stmt):
+	def __init__(self, condition,thenBranch,elseBranch,type):
+		self.condition = condition
+		self.thenBranch = thenBranch
+		self.elseBranch = elseBranch
+		self.type = type
+
 class Expression(Stmt):
 	def __init__(self, expression):
 		self.expression = expression
@@ -100,12 +108,18 @@ class If(Stmt):
 		self.thenBranch = thenBranch
 		self.elseBranch = elseBranch
 
+class Interupt(Stmt):
+	def __init__(self, keyword,cont=False):
+		self.keyword = keyword
+		self.cont = cont
+
 class Var(Stmt):
 	def __init__(self, name,initial):
 		self.name = name
 		self.initial = initial
 
 class While(Stmt):
-	def __init__(self, condition,body):
+	def __init__(self, condition,body,hasincrement=False):
 		self.condition = condition
 		self.body = body
+		self.hasincrement = hasincrement

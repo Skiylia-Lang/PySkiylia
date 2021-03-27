@@ -16,11 +16,13 @@ class Evaluator:
                      "Binary": self.BinaryExpr,
                      "Call": self.CallExpr,
                      "Class": self.ClassStmt,
+                     "Conditional": self.ConditionalStmt,
                      "Expression": self.ExpressionStmt,
                      "Function": self.FunctionStmt,
                      "Get": self.GetExpr,
                      "Grouping": self.GroupingExpr,
                      "If": self.IfStmt,
+                     "Interupt": self.Interuptstmt,
                      "Logical": self.LogicalExpr,
                      "Literal": self.LiteralExpr,
                      "Return": self.ReturnStmt,
@@ -59,6 +61,13 @@ class ASTPrinter(Evaluator):
             return self.toparenthesis("class {}".format(stmt.name.lexeme), "superclass {}".format(stmt.superclass.name.lexeme), [x for x in stmt.methods])
         return self.toparenthesis("class {}".format(stmt.name.lexeme), [x for x in stmt.methods])
 
+    def ConditionalStmt(self, stmt):
+        if stmt.type=="T":
+            return self.toparenthesis("conditional", stmt.condition, stmt.thenBranch, stmt.elseBranch)
+        elif stmt.type=="E":
+            return self.toparenthesis("conditional-elvis", stmt.condition, stmt.elseBranch)
+        return self.toparenthesis("conditional-null", stmt.condition, stmt.elseBranch)
+
     def ExpressionStmt(self, stmt):
         return self.toparenthesis("",stmt.expression)
 
@@ -75,6 +84,9 @@ class ASTPrinter(Evaluator):
         if not stmt.elseBranch:
             return self.toparenthesis("if", stmt.condition, stmt.thenBranch)
         return self.toparenthesis("if-else", stmt.condition, stmt.thenBranch, stmt.elseBranch)
+
+    def Interuptstmt(self, stmt):
+        return self.toparenthesis(stmt.keyword.lexeme)
 
     def LiteralExpr(self, expr):
         if expr.value == None:
@@ -97,6 +109,8 @@ class ASTPrinter(Evaluator):
         return self.toparenthesis("super", expr.method)
 
     def UnaryExpr(self, expr):
+        if expr.postfix:
+            return self.toparenthesis(expr.right, expr.operator.lexeme)
         return self.toparenthesis(expr.operator.lexeme, expr.right)
 
     def VarStmt(self, stmt):

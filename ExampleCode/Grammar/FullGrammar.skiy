@@ -1,0 +1,183 @@
+//An example of the absolute minimum required for a Skiylia pre-release
+
+//reserved words:
+true, false, null, var, and, or, xor, if, else, elif, while, for, do, Where, When, def, class, super, self, {primitives}
+
+//required symbols:
+'(', ')', ':', ',', '.', '-', '+', '*', '/', '>', '<', '=', '!', '?', '"', '&', '|',
+
+//GRAMMAR IDEAS BELOW
+//single line comments
+
+///this is a multi-line comment.
+  it must be completed with another set of three slashes///
+
+//Bool
+true
+false
+
+//numbers
+123         //int
+12.4        //float
+0           //zero evaluates as false, all others as true
+
+//strings
+"56"        //string, not int
+"hi there"  //strings
+""          //empty, evaluates as false, all else true
+
+//miscellaneous
+null        //None-type
+//null can be implicitly converted to zero if required
+
+//Expressions
+a + b       //addition
+a - b       //subtraction
+a * b       //multiplication
+a ** b      //exponentiation
+a / c       //division
+
+--a         //prefix negation
+++a         //prefix addition
+a--         //postfix negation
+a++         //postfix addition
+
+//Comparisons and equalities
+a < b       //less than
+a <= b      //less than or equal to
+a > b       //greater than
+a >= b      //greater than or equal to
+a == b      //equal to
+a === b     //strictly equal to (same type, as well as same value)   <- "3.0" == 3 gives true, "3.0" === 3 gives false, as "3.0" is a string
+a ~~~ b     //Fuzzily equal to (same type, don't care about value)   <- "3.0" == 3 gives false, "3.0" === 3 gives false, none of them have the same type
+a != b      //not equal to
+a !== b     //not strictly equal to
+a !~~ b     //not fuzzily equal to
+
+//Logical operators
+-a          //negates the value of a  -6 -> 6, "-6" causes an error (at the present)
+!a          //not a
+a & b       //a and b
+a | b       //a or b
+a ^ b       //a xor b
+a and b     //a and b
+a or b      //a or b
+a xor b     //a xor b
+a ? b : c   //if a then b else c              <-ternary operator
+a ?: b      //if a is true, then a, else b    <-elvis operator, equivalent to a ? a : b, but does not evaluate 'a' twice
+a ?? b      //if a null, then b, else a       <-null coalescence operator, equivalent to a!=null ? a : b, but does not evaluate 'a' twice
+
+//Variables and assignment
+var a       //initialise as 0
+a = 5       //reassign a as 5. a must already exist
+
+//control flow
+//if statements
+if (condition):
+  action-if-True
+  action-if-true
+elif (condition):   //not always required
+  action-if-True
+  action-if-true
+else:               //not always required
+  action otherwise
+
+ie:
+if a > 5:
+  print("a was greater than 5")
+else:
+  print("a was not greater than 5")
+
+//while loop
+while condition:    //require any variables to be defined prior to
+  action-while-True
+  action-while-True
+
+ie:
+a=100
+while true:
+  print(a--)
+  if a < 10:
+    break
+
+//for loop
+for (increment variable) ("where" | "when") (condition) "do" (increment operation):
+  action-during-loop
+
+ie:
+for x (Where | When) x<=10:
+  print(x)
+//the loop increments by one implicitly
+
+for x (Where | When) x<10 do x=x+2
+  print(x)
+//explicitly defining the increment operation
+
+for x in 10:
+  print(x)
+//implicitly define '(Where | When) x<10' as 'in 10'        <-- NOT SURE IF I WANT TO KEEP THIS BEHAVIOUR
+
+for x do x=x+2:
+  print(x)
+//basically a while loop with a defined increment and implicitly declared variable
+
+//functions
+def thisFunc(a, b, c=""):
+  return a+b
+
+thisFunc(1, 2)
+
+//use def to declare, can have any number of required arguments, can assign default arguments to them too
+//implicitly return null, unless a "return" block is provided
+
+a = thisFunc
+a(1, 2)
+//gives same result, as function declaration counts as a varibale (first class function declaration)
+
+//Classes
+class Parent:
+  init():
+    print("I am a parent")
+
+class Child(Parent):
+  def init()
+    print("I am a child")
+
+class Child2(Parent):
+  init():
+    print("I am a child who executes my Parents' functions too")
+    super.init()
+
+a = Child()
+a.trial = 4
+print(a.trial)  //4
+
+//declared with class, inherited by placing parent in brackets. methods can be implicitly declared without "def" if desired.
+//super accesses parent methods,
+//self accesses own methods and variables
+//can implictly store variables and functions using (class).(method/function)
+
+def trial(a, b):
+  print(a + b)
+
+class Test:
+  init():
+    trial(5, 2)       //outputs 7, as it searches for global functions first  //fails is class does not have method, shows warning that global does not exist either
+    self.trial(5, 2)  //3, as this forces looking for own method. //fails if class does not have method
+  trial(a, b):
+    print(a - b)
+
+//Standard library
+print(thing-to-print)   //shows display to screen, can be any data-type or variable
+str(a) / string(a)      //explicitly converts a to a string
+int(a) / integer(a)     //explicitly converts a to an integer
+float(a)                //explicitly converts a to a float
+
+//primitives (Functions from the base language, rather than ones I wrote myself)
+clock                   //returns the current utc time
+abs(a)                  //return the absolute value of a
+ceil(a)                 //returns a, rounded up
+floor(a)                //returns a, rounded down
+pow(a, b)               //returns a raised to the power b
+mod(a, b)               //returns a modulo b
+round(a, b)             //returns a, rounded to 'b' decimal places

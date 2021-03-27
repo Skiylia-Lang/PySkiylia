@@ -4,7 +4,7 @@
 #import our code
 from AbstractSyntax import *
 from Environment import Environment
-from SkiyliaCallable import Return, SkiyliaCallable, SkiyliaFunction, SkiyliaClass, SkiyliaInstance
+from SkiyliaCallable import Return, Interupt, SkiyliaCallable, SkiyliaFunction, SkiyliaClass, SkiyliaInstance
 from ASTPrinter import Evaluator
 import Primitives
 
@@ -67,10 +67,13 @@ class misc:
         if (a==None) and (b==None):
             return True
         #if only one is null, return false
-        if not a:
+        if a==None:
             return False
-        #else return the python equality
-        return a==b
+        try:
+            return float(a) == float(b)
+        except:
+            #else return the python equality
+            return a==b
 
 #define the Interpreter class
 class Interpreter(misc, Evaluator):
@@ -86,6 +89,8 @@ class Interpreter(misc, Evaluator):
         self.locals = dict()
         #define the maximum number of allowed arguments in a function call
         self.arglimit = arglimit
+        #define a way of skipping to the last part of a block
+        self.skipToLast = False
         #and add our primitives to the global scope
         self.primitives = []
         self.fetchprimitives()
@@ -158,17 +163,45 @@ class Interpreter(misc, Evaluator):
             self.checkNumber(expr.operator, left, right)
             #greater comparison
             return float(left) > float(right)
-        if optype == "Less":
+        elif optype == "EGreater":
             self.checkNumber(expr.operator, left, right)
-            #greater comparison
+            #greater or equal comparison
+            return float(left) >= float(right)
+        elif optype == "Less":
+            self.checkNumber(expr.operator, left, right)
+            #less comparison
             return float(left) < float(right)
-        if optype == "NotEqual":
+        elif optype == "ELess":
+            self.checkNumber(expr.operator, left, right)
+            #less of equal comparison
+            return float(left) <= float(right)
+        elif optype == "NEqual":
             #inequality comparison
             return not self.isEqual(left, right)
-        if optype == "EqualEqual":
+        elif optype == "EEqual":
             #equality comparison
             return self.isEqual(left, right)
-        if optype == "Minus":
+        elif optype == "NEEqual":
+            #strictly not equal
+            if (isinstance(left, type(right)) or isinstance(right, type(left))) and self.isEqual(left, right):
+                #if they're the same type, and are equal, return false
+                return False
+            #true in any other case
+            return True
+        elif optype == "EEEqual":
+            #strictly equal
+            if (isinstance(left, type(right)) or isinstance(right, type(left))):
+                #if they're the same type, check if they are equal
+                return self.isEqual(left, right)
+            #false if they have different types
+            return False
+        elif optype == "NFuzequal":
+            #Fuzzily equal only checks for type equality
+            return not (isinstance(left, type(right)) or isinstance(right, type(left)))
+        elif optype == "Fuzequal":
+            #Fuzzily equal only checks for type equality
+            return (isinstance(left, type(right)) or isinstance(right, type(left)))
+        elif optype == "Minus":
             self.checkNumber(expr.operator, left, right)
             #subtract if given
             return float(left) - float(right)
@@ -178,7 +211,7 @@ class Interpreter(misc, Evaluator):
             if float(right) == 0:
                 raise RuntimeError([expr.operator,"division by zero"])
             return float(left) / float(right)
-        elif optype == "StarStar":
+        elif optype == "StStar":
             self.checkNumber(expr.operator, left, right)
             return float(left) ** float(right)
         elif optype == "Star":
@@ -276,6 +309,31 @@ class Interpreter(misc, Evaluator):
         #and return none by default
         return None
 
+    #define the way of interpreting a conditional statement
+    def ConditionalStmt(self, stmt):
+        #evaluate the conditional
+        cond = self.evaluate(stmt.condition)
+        #fetch the conditional type
+        type = stmt.type
+        #check if we have null and a null coalescence conditional
+        if (type=="N"):
+            #unless conditional is explicitly null
+            if cond!=None:
+                #return it
+                return cond
+            #otherwise, execute the else branch
+            return self.evaluate(stmt.elseBranch)
+        #otherwise, evaluate the truthiness of the if condition
+        elif self.isTruthy(cond):
+            #if the conditional is ternary:
+            if type == "T":
+                #evaluate the 'then'
+                return self.evaluate(stmt.thenBranch)
+            #otherwise, its an elvis, so just return the condition
+            return cond
+        #otherwise, execute the else branch
+        return self.evaluate(stmt.elseBranch)
+
     #define the way of interpreting an expression statement
     def ExpressionStmt(self, stmt):
         #evaluate the expression
@@ -304,6 +362,11 @@ class Interpreter(misc, Evaluator):
             self.evaluate(stmt.elseBranch)
         return None
 
+    #define a way of using an interup (continue/break)
+    def Interuptstmt(self, stmt):
+        #raise an error
+        raise Interupt(stmt.cont)
+
     #define a way of converting from the literal AST to a runtime value
     def LiteralExpr(self, expr):
         return expr.value
@@ -324,9 +387,9 @@ class Interpreter(misc, Evaluator):
         elif expr.operator.type == "Xor":
             #if left is true, 'xor' will be the opposite of right
             if self.isTruthy(left):
-                return not self.evaluate(expr.right)
-
-        return self.evaluate(expr.right)
+                return not self.isTruthy(self.evaluate(expr.right))
+        #evaluate the right operand if nothing else
+        return self.isTruthy(self.evaluate(expr.right))
 
     def GetExpr(self, expr):
         #fetch the object being refered to
@@ -403,7 +466,46 @@ class Interpreter(misc, Evaluator):
         elif optype == "Not":
             #return the not of the operand
             return not self.isTruthy(right)
-
+        #check if it is an incremental
+        elif optype == "PPlus":
+            #ensure the operator is a number we can increment
+            self.checkNumber(expr.operator, right)
+            #fetch the value of the operand
+            value = right
+            try:
+                #check if the operand is a variable
+                var = self.VarExpr(expr.right)
+                #and update it if it was
+                self.environment.assign(expr.right.name, value + 1)
+            except:
+                #don't do anything if it wasn't
+                pass
+            #if the operator was in postfix
+            if expr.postfix:
+                #return the original value
+                return value
+            #otherwise return the value + 1
+            return value + 1
+        #check if it is an decremental
+        elif optype == "MMinus":
+            #ensure the operator is a number we can decrement
+            self.checkNumber(expr.operator, right)
+            #fetch the value of the operand
+            value = right
+            #check if the operand is a variable
+            try:
+                var = self.VarExpr(expr.right)
+                #and update it if it was
+                self.environment.assign(expr.right.name, value - 1)
+            except:
+                #don't do anything if it wasn't
+                pass
+            #if the operator was in postfix
+            if expr.postfix:
+                #return the original value
+                return value
+            #otherwise return the value - 1
+            return value - 1
         ##if we couldn't get the value
         return None
 
@@ -429,8 +531,22 @@ class Interpreter(misc, Evaluator):
     def WhileStmt(self, stmt):
         #while the condition is truthy
         while self.isTruthy(self.evaluate(stmt.condition)):
-            #execute the body of the while loop
-            self.evaluate(stmt.body)
+            try:
+                #execute the body of the while loop
+                self.evaluate(stmt.body)
+            #if we got an interupt command
+            except Interupt as e:
+                #if the intreuption is continue
+                if e.message==True:
+                    #if the loop contains an incremental
+                    if stmt.hasincrement:
+                        #try to execute it (it will always be the last thing in the while block)
+                        self.skipToLast = True
+                        self.evaluate(stmt.body)
+                    #now it will redo the loop
+                else:
+                    #otherwise, break
+                    break
         #and return none
         return None
 
@@ -441,10 +557,17 @@ class Interpreter(misc, Evaluator):
         try:
             #make sure the current scope is the one to compute with
             self.environment = environment
-            #loop through the given statements
-            for statement in statements:
-                #and execute them
-                self.evaluate(statement)
+            #check if we only want to execute the last part of the block
+            if not self.skipToLast:
+                #loop through the given statements
+                for statement in statements:
+                    #and execute them
+                    self.evaluate(statement)
+            else:
+                #reset the skip flag
+                self.skipToLast = False
+                #and evaluate the last part of the block
+                self.evaluate(statements[-1])
         finally:
             #restore the parent scope now we have finished
             self.environment = previous

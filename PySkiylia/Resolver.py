@@ -107,8 +107,9 @@ class Resolver(Evaluator):
     def ConditionalStmt(self, stmt):
         #resolve the condition
         self.resolve(stmt.condition)
-        #the then branch
-        self.resolve(stmt.thenBranch)
+        #the then branch, if we're a ternary
+        if stmt.type=="T":
+            self.resolve(stmt.thenBranch)
         #and the else
         self.resolve(stmt.elseBranch)
         return None

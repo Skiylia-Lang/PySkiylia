@@ -347,7 +347,10 @@ class Parser:
             #the else branch
             elseBranch = self.conditional()
             #create a new expression from the conditional
-            expr = Conditional(expr, thenBranch, elseBranch)
+            expr = Conditional(expr, thenBranch, elseBranch, "T")
+        elif self.match("QColon"):
+            elseBranch = self.conditional()
+            expr = Conditional(expr, 0, elseBranch, "E")
         #return the expression
         return expr
 

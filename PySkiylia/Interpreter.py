@@ -160,16 +160,38 @@ class Interpreter(misc, Evaluator):
             self.checkNumber(expr.operator, left, right)
             #greater comparison
             return float(left) > float(right)
+        if optype == "EGreater":
+            self.checkNumber(expr.operator, left, right)
+            #greater or equal comparison
+            return float(left) >= float(right)
         if optype == "Less":
             self.checkNumber(expr.operator, left, right)
-            #greater comparison
+            #less comparison
             return float(left) < float(right)
-        if optype == "NotEqual":
+        if optype == "ELess":
+            self.checkNumber(expr.operator, left, right)
+            #less of equal comparison
+            return float(left) <= float(right)
+        if optype == "NEqual":
             #inequality comparison
             return not self.isEqual(left, right)
-        if optype == "EqualEqual":
+        if optype == "EEqual":
             #equality comparison
             return self.isEqual(left, right)
+        if optype == "NEEqual":
+            #strictly not equal
+            if isinstance(left, type(right)) and self.isEqual(left, right):
+                #if they're the same type, and are equal, return false
+                return False
+            #true in any other case
+            return True
+        if optype == "EEEqual":
+            #strictly equal
+            if isinstance(left, type(right)):
+                #if they're the same type, check if they are equal
+                return self.isEqual(left, right)
+            #false if they have different types
+            return False
         if optype == "Minus":
             self.checkNumber(expr.operator, left, right)
             #subtract if given
@@ -180,7 +202,7 @@ class Interpreter(misc, Evaluator):
             if float(right) == 0:
                 raise RuntimeError([expr.operator,"division by zero"])
             return float(left) / float(right)
-        elif optype == "StarStar":
+        elif optype == "StStar":
             self.checkNumber(expr.operator, left, right)
             return float(left) ** float(right)
         elif optype == "Star":
@@ -436,7 +458,7 @@ class Interpreter(misc, Evaluator):
             #return the not of the operand
             return not self.isTruthy(right)
         #check if it is an incremental
-        elif optype == "PlusPlus":
+        elif optype == "PPlus":
             #ensure the operator is a number we can increment
             self.checkNumber(expr.operator, right)
             #fetch the value of the operand
@@ -456,7 +478,7 @@ class Interpreter(misc, Evaluator):
             #otherwise return the value + 1
             return value + 1
         #check if it is an decremental
-        elif optype == "MinusMinus":
+        elif optype == "MMinus":
             #ensure the operator is a number we can decrement
             self.checkNumber(expr.operator, right)
             #fetch the value of the operand

@@ -48,9 +48,11 @@ a <= b      //less than or equal to
 a > b       //greater than
 a >= b      //greater than or equal to
 a == b      //equal to
-a === b     //exactly equal to (same type, as well as same value)   <- "3.0" == 3 gives true, "3.0" === 3 gives false, as "3.0" is a string
+a === b     //strictly equal to (same type, as well as same value)   <- "3.0" == 3 gives true, "3.0" === 3 gives false, as "3.0" is a string
+a ~~~ b     //Fuzzily equal to (same type, don't care about value)   <- "3.0" == 3 gives false, "3.0" === 3 gives false, none of them have the same type
 a != b      //not equal to
-a !== b     //not exactly equal to
+a !== b     //not strictly equal to
+a !~~ b     //not fuzzily equal to
 
 //Logical operators
 -a          //negates the value of a  -6 -> 6, "-6" causes an error (at the present)

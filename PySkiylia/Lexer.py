@@ -121,11 +121,11 @@ class Lexer:
                 return self.addToken("Slash")
         elif c == ">":
             if self.match("="):
-                return self.addToken("GEqual")
+                return self.addToken("EGreater")
             return self.addToken("Greater")
         elif c == "<":
             if self.match("="):
-                return self.addToken("LEqual")
+                return self.addToken("ELess")
             return self.addToken("Less")
         elif c == "=":
             if self.match("="):

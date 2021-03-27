@@ -4,7 +4,7 @@
 tokens = [#single character tokens
             "LeftParenthesis", "RightParenthesis", "Colon", "Comma", "Dot", "Slash", "And", "Or", "Xor",
             #single or double character Tokens
-            "NEEqual", "NEqual", "Not", "EEEqual", "EEqual", "Equal", "Greater", "GEqual", "Less", "LEqual"
+            "NEEqual", "NEqual", "Not", "EEEqual", "EEqual", "Equal", "Greater", "EGreater", "Less", "ELess"
             "Star", "StStar", "Minus", "MMinus", "Plus", "PPlus", "Question", "QColon", "QQuestion",
             #Literal tokens
             "String", "Number", "Identifier",

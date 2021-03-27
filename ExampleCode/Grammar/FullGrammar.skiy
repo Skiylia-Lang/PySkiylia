@@ -57,8 +57,9 @@ a ^ b       //a xor b
 a and b     //a and b
 a or b      //a or b
 a xor b     //a xor b
-a ? b : c   //if a then b else c    <-ternary operator
-a ?: c      //if a is true, then a, else c  <-elvis operator (0, false, "", are all false)
+a ? b : c   //if a then b else c              <-ternary operator
+a ?: b      //if a is true, then a, else b    <-elvis operator, equivalent to a ? a : b, but does not evaluate 'a' twice
+a ?? b      //if a null, then b, else a       <-null coalescence operator, equivalent to a!=null ? a : b, but does not evaluate 'a' twice
 
 //Variables and assignment
 var a       //initialise as 0

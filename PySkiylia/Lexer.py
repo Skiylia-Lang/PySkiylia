@@ -128,6 +128,8 @@ class Lexer:
                 return self.addToken("EqualEqual")
             return self.addToken("Equal")
         elif c == "?":
+            if self.match(":"):
+                return self.addToken("QColon")
             #conditional question mark
             return self.addToken("Question")
         elif c == "&":

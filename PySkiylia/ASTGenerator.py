@@ -20,6 +20,7 @@ ExprDict = {"Assign":"name,value",
 
 StmtDict = {"Block":"statements",
             "Class":"name,superclass,methods",
+            "Conditional":"condition,thenBranch,elseBranch",
             "Expression":"expression",
             "Function": "name,params,body",
             "If":"condition,thenBranch,elseBranch",

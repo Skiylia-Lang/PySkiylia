@@ -16,6 +16,7 @@ class Evaluator:
                      "Binary": self.BinaryExpr,
                      "Call": self.CallExpr,
                      "Class": self.ClassStmt,
+                     "Conditional": self.ConditionalStmt,
                      "Expression": self.ExpressionStmt,
                      "Function": self.FunctionStmt,
                      "Get": self.GetExpr,
@@ -58,6 +59,9 @@ class ASTPrinter(Evaluator):
         if stmt.superclass:
             return self.toparenthesis("class {}".format(stmt.name.lexeme), "superclass {}".format(stmt.superclass.name.lexeme), [x for x in stmt.methods])
         return self.toparenthesis("class {}".format(stmt.name.lexeme), [x for x in stmt.methods])
+
+    def ConditionalStmt(self, stmt):
+        return self.toparenthesis("conditional", stmt.condition, stmt.thenBranch, stmt.elseBranch)
 
     def ExpressionStmt(self, stmt):
         return self.toparenthesis("",stmt.expression)

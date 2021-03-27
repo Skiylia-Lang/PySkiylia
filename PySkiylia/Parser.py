@@ -478,7 +478,7 @@ class Parser:
         #fetch the final parenthesis
         paren = self.consume("Expect ')' after arguments.", "RightParenthesis")
         #can't have a colon after a call
-        if self.check("Colon"):
+        if self.check("Colon") and self.checkNext("End"):
             self.advance()
             raise SyntaxError(self.error(self.previous(), "':' cannot follow function calls."))
         #return the function call

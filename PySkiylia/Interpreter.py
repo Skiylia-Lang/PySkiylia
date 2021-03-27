@@ -276,6 +276,15 @@ class Interpreter(misc, Evaluator):
         #and return none by default
         return None
 
+    #define the way of interpreting a conditional statement
+    def ConditionalStmt(self, stmt):
+        #evaluate the truthiness of the if condition
+        if self.isTruthy(self.evaluate(stmt.condition)):
+            #if true, execute
+            return self.evaluate(stmt.thenBranch)
+        #otherwise, execute the else branch
+        return self.evaluate(stmt.elseBranch)
+
     #define the way of interpreting an expression statement
     def ExpressionStmt(self, stmt):
         #evaluate the expression

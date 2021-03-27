@@ -14,7 +14,11 @@ from ASTPrinter import ASTPrinter
 class Skiylia:
     #set the default values here
     haderror = False
+<<<<<<< HEAD
     version = "v0.7.1"
+=======
+    version = "v0.7.0"
+>>>>>>> a0a18c5... update readme and include better integer handling
     title = ""
     debug = False
     #run this at initialisation

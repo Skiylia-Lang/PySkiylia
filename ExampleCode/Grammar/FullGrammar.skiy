@@ -4,7 +4,7 @@
 true, false, null, var, and, or, xor, if, else, elif, while, for, do, Where, When, def, class, super, self, {primitives}
 
 //required symbols:
-'(', ')', ':', ',', '.', '-', '+', '*', '/', '>', '<', '=', '!', '"', '&', '|',
+'(', ')', ':', ',', '.', '-', '+', '*', '/', '>', '<', '=', '!', '?', '"', '&', '|',
 
 //GRAMMAR IDEAS BELOW
 //single line comments
@@ -57,7 +57,8 @@ a ^ b       //a xor b
 a and b     //a and b
 a or b      //a or b
 a xor b     //a xor b
-a ? b : c   //if a then b else c
+a ? b : c   //if a then b else c    <-ternary operator
+a ?: c      //if a is true, then a, else c  <-elvis operator (0, false, "", are all false)
 
 //Variables and assignment
 var a       //initialise as 0

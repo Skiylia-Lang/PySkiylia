@@ -61,7 +61,9 @@ class ASTPrinter(Evaluator):
         return self.toparenthesis("class {}".format(stmt.name.lexeme), [x for x in stmt.methods])
 
     def ConditionalStmt(self, stmt):
-        return self.toparenthesis("conditional", stmt.condition, stmt.thenBranch, stmt.elseBranch)
+        if stmt.type=="T":
+            return self.toparenthesis("conditional", stmt.condition, stmt.thenBranch, stmt.elseBranch)
+        return self.toparenthesis("conditional", stmt.condition, stmt.elseBranch)
 
     def ExpressionStmt(self, stmt):
         return self.toparenthesis("",stmt.expression)

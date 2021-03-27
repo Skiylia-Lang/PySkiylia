@@ -70,8 +70,7 @@ class misc:
         if a==None:
             return False
         try:
-            b = type(a)(b)
-            return a==b
+            return float(a) == float(b)
         except:
             #else return the python equality
             return a==b
@@ -164,39 +163,45 @@ class Interpreter(misc, Evaluator):
             self.checkNumber(expr.operator, left, right)
             #greater comparison
             return float(left) > float(right)
-        if optype == "EGreater":
+        elif optype == "EGreater":
             self.checkNumber(expr.operator, left, right)
             #greater or equal comparison
             return float(left) >= float(right)
-        if optype == "Less":
+        elif optype == "Less":
             self.checkNumber(expr.operator, left, right)
             #less comparison
             return float(left) < float(right)
-        if optype == "ELess":
+        elif optype == "ELess":
             self.checkNumber(expr.operator, left, right)
             #less of equal comparison
             return float(left) <= float(right)
-        if optype == "NEqual":
+        elif optype == "NEqual":
             #inequality comparison
             return not self.isEqual(left, right)
-        if optype == "EEqual":
+        elif optype == "EEqual":
             #equality comparison
             return self.isEqual(left, right)
-        if optype == "NEEqual":
+        elif optype == "NEEqual":
             #strictly not equal
             if isinstance(left, type(right)) and self.isEqual(left, right):
                 #if they're the same type, and are equal, return false
                 return False
             #true in any other case
             return True
-        if optype == "EEEqual":
+        elif optype == "EEEqual":
             #strictly equal
             if isinstance(left, type(right)):
                 #if they're the same type, check if they are equal
                 return self.isEqual(left, right)
             #false if they have different types
             return False
-        if optype == "Minus":
+        elif optype == "NFuzequal":
+            #Fuzzily equal only checks for type equality
+            return not isinstance(left, type(right))
+        elif optype == "Fuzequal":
+            #Fuzzily equal only checks for type equality
+            return isinstance(left, type(right))
+        elif optype == "Minus":
             self.checkNumber(expr.operator, left, right)
             #subtract if given
             return float(left) - float(right)

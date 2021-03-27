@@ -69,10 +69,10 @@ logicalXor        > logicalAnd ( ( "^" | "xor" ) logicalAnd )*
 
 logicalAnd        > equality ( ( ( "&" | "and" ) ) equality )*
 
-equality          > comparison ( ( "!=" | "==" ) comparison )*
+equality          > comparison ( ( "!=" | "==" | "!==" | "===" ) comparison )*
 
 //Then comparisons
-comparison        > term ( ( ">" | "<" ) term )*
+comparison        > term ( ( ">" | ">=" | "<" | "<=" ) term )*
 
 //Then terms
 term              > factor ( ( "-" | "+" ) factor )*

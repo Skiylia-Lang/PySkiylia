@@ -44,9 +44,13 @@ a++         //postfix addition
 
 //Comparisons and equalities
 a < b       //less than
+a <= b      //less than or equal to
 a > b       //greater than
+a >= b      //greater than or equal to
 a == b      //equal to
+a === b     //exactly equal to (same type, as well as same value)   <- "3.0" == 3 gives true, "3.0" === 3 gives false, as "3.0" is a string
 a != b      //not equal to
+a !== b     //not exactly equal to
 
 //Logical operators
 -a          //negates the value of a  -6 -> 6, "-6" causes an error (at the present)

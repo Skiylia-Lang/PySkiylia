@@ -98,7 +98,7 @@ class Parser:
             #fetch the return
             return self.returnstatement()
         #if we see a break or continue
-        elif self.match("Break", "continue"):
+        elif self.match("Break", "Continue"):
             return self.interuptstmt()
         #check if the token matches a primitive, and shortcut to the call logic
         elif self.peek().lexeme in self.primitives:

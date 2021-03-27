@@ -109,9 +109,9 @@ class If(Stmt):
 		self.elseBranch = elseBranch
 
 class Interupt(Stmt):
-	def __init__(self, keyword,continue=False):
+	def __init__(self, keyword,cont=False):
 		self.keyword = keyword
-		self.continue = continue
+		self.cont = cont
 
 class Var(Stmt):
 	def __init__(self, name,initial):

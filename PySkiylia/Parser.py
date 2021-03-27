@@ -95,6 +95,9 @@ class Parser:
         elif self.match("Return"):
             #fetch the return
             return self.returnstatement()
+        #if we see a break or continue
+        elif self.match("Break", "continue"):
+            return self.interuptstmt()
         #check if the token matches a primitive, and shortcut to the call logic
         elif self.peek().lexeme in self.primitives:
             ptoken = self.peek()
@@ -254,6 +257,18 @@ class Parser:
                 self.advance()
         #return the class
         return Class(name, superclass, methods)
+
+    #define the interuption (break/continue) grammar
+    def interuptstmt(self):
+        #fetch the keyword
+        keyword = self.previous()
+        #and ensure there is nothing after it
+        self.consume("Expressions cannot follow '{}'.".format(keyword.lexeme),"End")
+        #check that the code is then deindented
+        if not self.checkindent(keyword.indent)<0:
+            raise SyntaxError([self.peek(), "Incorect indentation for return statement", "Indentation"])
+        #create and return the abstraction
+        return Interupt(keyword, value, keyword.type=="Continue")
 
     #define the return grammar
     def returnstatement(self):

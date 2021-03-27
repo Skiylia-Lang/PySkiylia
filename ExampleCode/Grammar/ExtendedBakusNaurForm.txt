@@ -39,7 +39,7 @@ parameters        > Identifier ( "," Identifier )*
 
 vardeclaration    > ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
 
-statement         > exprstmt | forstmt | ifstmt | interupstmt | returnstmt | whilestmt | block
+statement         > exprstmt | forstmt | ifstmt | interuptstmt | returnstmt | whilestmt | block
 
 block             > {Indent level increases} declaration {End token}+ {token with lower indentation}
 
@@ -50,7 +50,7 @@ forstmt           > "for" (vardeclaration | exprstmt) (("when" | "where") expres
 
 ifstmt            > "if" expression {Block token} statement ("else" statement)?
 
-interupstmt       > "break" | "continue"
+interuptstmt       > "break" | "continue"
 
 returnstmt        > "return" expression?
 

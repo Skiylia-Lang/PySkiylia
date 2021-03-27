@@ -183,24 +183,24 @@ class Interpreter(misc, Evaluator):
             return self.isEqual(left, right)
         elif optype == "NEEqual":
             #strictly not equal
-            if isinstance(left, type(right)) and self.isEqual(left, right):
+            if (isinstance(left, type(right)) or isinstance(right, type(left))) and self.isEqual(left, right):
                 #if they're the same type, and are equal, return false
                 return False
             #true in any other case
             return True
         elif optype == "EEEqual":
             #strictly equal
-            if isinstance(left, type(right)):
+            if (isinstance(left, type(right)) or isinstance(right, type(left))):
                 #if they're the same type, check if they are equal
                 return self.isEqual(left, right)
             #false if they have different types
             return False
         elif optype == "NFuzequal":
             #Fuzzily equal only checks for type equality
-            return not isinstance(left, type(right))
+            return not (isinstance(left, type(right)) or isinstance(right, type(left)))
         elif optype == "Fuzequal":
             #Fuzzily equal only checks for type equality
-            return isinstance(left, type(right))
+            return (isinstance(left, type(right)) or isinstance(right, type(left)))
         elif optype == "Minus":
             self.checkNumber(expr.operator, left, right)
             #subtract if given

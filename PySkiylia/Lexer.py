@@ -130,6 +130,8 @@ class Lexer:
         elif c == "?":
             if self.match(":"):
                 return self.addToken("QColon")
+            elif self.match("?"):
+                return self.addToken("QQuestion")
             #conditional question mark
             return self.addToken("Question")
         elif c == "&":

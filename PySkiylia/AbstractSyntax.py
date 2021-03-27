@@ -119,6 +119,7 @@ class Var(Stmt):
 		self.initial = initial
 
 class While(Stmt):
-	def __init__(self, condition,body):
+	def __init__(self, condition,body,hasincrement=False):
 		self.condition = condition
 		self.body = body
+		self.hasincrement = hasincrement

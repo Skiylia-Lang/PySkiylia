@@ -12,8 +12,10 @@ while true:
 
 //don't compute the rest of the loop, unless a condition
 for var n = 1 when n < 20 do n = n + 2:
-  if mod(n, 3)!=0:
+  if mod(n, 3):
+    print(n)
     continue
-  print(n, "divisible by 3")
+  else:
+    print(n, "divisible by 3")
 
 //1, divisible by 3, 5, 7, divisible by 3, 11, 13, divisible by 3, 17, 19

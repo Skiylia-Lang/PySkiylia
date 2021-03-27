@@ -182,7 +182,7 @@ class Parser:
             #if none supplied, assume true
             condition = Literal(True)
         #construct the while loop from the conditional and body
-        body = While(condition, body)
+        body = While(condition, body, increment!=None)
 
         #as we require an initialiser, wrap it into the body code
         body = Block([initialiser, body])

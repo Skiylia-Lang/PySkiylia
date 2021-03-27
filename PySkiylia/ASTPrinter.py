@@ -86,7 +86,7 @@ class ASTPrinter(Evaluator):
         return self.toparenthesis("if-else", stmt.condition, stmt.thenBranch, stmt.elseBranch)
 
     def Interuptstmt(self, stmt):
-        return self.toparenthesis(stms.name.lexeme)
+        return self.toparenthesis(stmt.keyword.lexeme)
 
     def LiteralExpr(self, expr):
         if expr.value == None:

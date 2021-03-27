@@ -26,7 +26,7 @@ StmtDict = {"Block":"statements",
             "If":"condition,thenBranch,elseBranch",
             "Interupt":"keyword,cont=False",
             "Var":"name,initial",
-            "While":"condition,body"}
+            "While":"condition,body,hasincrement=False"}
 
 #create the class for the AST generator
 class ASTGen:

@@ -86,6 +86,8 @@ class Interpreter(misc, Evaluator):
         self.locals = dict()
         #define the maximum number of allowed arguments in a function call
         self.arglimit = arglimit
+        #define a way of skipping to the last part of a block
+        self.skipToLast = False
         #and add our primitives to the global scope
         self.primitives = []
         self.fetchprimitives()
@@ -505,10 +507,15 @@ class Interpreter(misc, Evaluator):
             except Interupt as e:
                 #if the intreuption is continue
                 if e.message==True:
-                    #then do that
-                    continue
-                #otherwise, break
-                break
+                    #if the loop contains an incremental
+                    if stmt.hasincrement:
+                        #try to execute it (it will always be the last thing in the while block)
+                        self.skipToLast = True
+                        self.evaluate(stmt.body)
+                    #now it will redo the loop
+                else:
+                    #otherwise, break
+                    break
         #and return none
         return None
 
@@ -519,10 +526,17 @@ class Interpreter(misc, Evaluator):
         try:
             #make sure the current scope is the one to compute with
             self.environment = environment
-            #loop through the given statements
-            for statement in statements:
-                #and execute them
-                self.evaluate(statement)
+            #check if we only want to execute the last part of the block
+            if not self.skipToLast:
+                #loop through the given statements
+                for statement in statements:
+                    #and execute them
+                    self.evaluate(statement)
+            else:
+                #reset the skip flag
+                self.skipToLast = False
+                #and evaluate the last part of the block
+                self.evaluate(statements[-1])
         finally:
             #restore the parent scope now we have finished
             self.environment = previous

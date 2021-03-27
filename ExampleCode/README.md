@@ -21,47 +21,61 @@ Support here: [issues]
 
 ## Sample Function code
 
-    ///This section contains a small snippet of Skiylia
-    code that calculates the factorial of a number///
+```skiylia
+///This section contains a small snippet of Skiylia
+code that calculates the Tribonacci numbers///
 
-    def factorial(n):
-      if int(n) != n:
-        return null   //can't compute factorial of a float this way
-      if n < 2:
-        return 1
-      return n * factorial(n - 1)   //recursion that makes this work
+def Trib(n):
+  var a = 0
+  var b = 0
+  var c = 1
+  var out = 0
+  for var x when x<n do x++:
+    out = a + b + c
+    c = b
+    b = a
+    a = out
+  return out
 
-    var num = 6
-    print("The factorial of", num, "is", factorial(num))
+for var x when x<=10:
+  print(Trib(x))
 
-    //output: The factorial of 6 is 720
+//0, 1, 1, 2, 4, 7, 13, 24, 44, 81, 149
+```
 
 ## Sample Class structure
 
-    ///This section contains a small snippet of Skiylia
-    code that demonstrates class methods and properties///
+```skiylia
+///This section contains a small snippet of Skiylia
+code that demonstrates class methods and properties///
 
-    class Person:
-      init(name, age):      //executed on initialisation
-        self.name = name
-        self.age = age
+class Person:
+  init(name, age):      //executed on initialisation
+    self.name = name
+    self.age = age
 
-      hello():
-        print("Hi there, I'm", self.name, ", and I'm", self.age)
+  hello():
+    print("Hi there, I'm", self.name, ", and I'm", self.age)
 
-      birthday():
-        self.age = self.age + 1
+  birthday():
+    self.age = self.age + 1
 
-    var John = Person("John", 24)
-    John.hello()
+class John(Person):
+  birthday():
+    super.birthday()
+    print("I hate getting older")
 
-    John.birthday()
-    John.name = "Johnathon"
-    John.hello()
+var John = Person("John", 24)
+John.hello()
 
-    ///Hi there, I'm John, and I'm 24
-       Hi there, I'm Johnathon, and I'm 25///
+John.birthday()
+John.name = "Johnathon"
+John.hello()
 
+///Hi there, I'm John, and I'm 24
+   I hate getting older
+   Hi there, I'm Johnathon, and I'm 25///
+```
 
 [Latest release]: https://github.com/SK1Y101/PySkiylia/releases
 [issues]: https://github.com/SK1Y101/PySkiylia/issues

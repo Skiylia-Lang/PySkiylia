@@ -1,0 +1,19 @@
+///This section contains a small snippet of Skiylia
+code that calculates the Tribonacci numbers///
+
+def Trib(n):
+  var a = 0
+  var b = 0
+  var c = 1
+  var out = 0
+  for var x when x<n do x++:
+    out = a + b + c
+    c = b
+    b = a
+    a = out
+  return out
+
+for var x when x<=100:
+  print(Trib(x))
+
+//0, 1, 1, 2, 4, 7, 13, 24, 44, 81, 149

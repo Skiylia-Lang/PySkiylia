@@ -127,8 +127,10 @@ class Interpreter(misc, Evaluator):
             message = e.args[0][1]
             #default error type, if none given
             where = "Runtime"
-            if len(e.args[0])==2:
+            try:
                 where = e.args[0][2]
+            except:
+                where = "Runtime"
             #and raise an error
             self.skiylia.error(token.line, token.char, message, where)
 

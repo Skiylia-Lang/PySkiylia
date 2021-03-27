@@ -10,6 +10,8 @@ import Tokens
 class Parser:
     #limit the number of arguments a function can utilise
     arglimit=255
+    #use this test test if we are in a loop
+    loopdepth=0
     #initialise
     def __init__(self, skiylia, tokens=[], primitives=[]):
         #return a method for accessing the skiylia class
@@ -95,6 +97,9 @@ class Parser:
         elif self.match("Return"):
             #fetch the return
             return self.returnstatement()
+        #if we see a break or continue
+        elif self.match("Break", "Continue"):
+            return self.interuptstmt()
         #check if the token matches a primitive, and shortcut to the call logic
         elif self.peek().lexeme in self.primitives:
             ptoken = self.peek()
@@ -132,6 +137,8 @@ class Parser:
 
     #define the for loop grammar
     def forstatement(self):
+        #increment the loop counter
+        self.loopdepth+=1
         #fetch the increment variable
         if self.match("Var"):
             #if we see an explicit variable declaration, do that
@@ -175,10 +182,13 @@ class Parser:
             #if none supplied, assume true
             condition = Literal(True)
         #construct the while loop from the conditional and body
-        body = While(condition, body)
+        body = While(condition, body, increment!=None)
 
         #as we require an initialiser, wrap it into the body code
         body = Block([initialiser, body])
+
+        #decrement the loop counter
+        self.loopdepth-=1
 
         #return the for loop in its' fully deconstructed form
         return body
@@ -255,6 +265,20 @@ class Parser:
         #return the class
         return Class(name, superclass, methods)
 
+    #define the interuption (break/continue) grammar
+    def interuptstmt(self):
+        #fetch the keyword
+        keyword = self.previous()
+        if self.loopdepth == 0:
+            self.error(keyword, "Cannot use {} outside of a loop.".format(keyword.lexeme))
+        #and ensure there is nothing after it
+        self.consume("Expressions cannot follow '{}'.".format(keyword.lexeme),"End")
+        #check that the code is then deindented
+        if not self.checkindent(keyword.indent)<0:
+            raise SyntaxError([self.peek(), "Incorect indentation for return statement", "Indentation"])
+        #create and return the abstraction
+        return Interupt(keyword, keyword.type=="Continue")
+
     #define the return grammar
     def returnstatement(self):
         #fetch the "Return" token for error reporting
@@ -292,6 +316,8 @@ class Parser:
 
     #define the while statement grammar
     def whilestatement(self):
+        #increment the loop counter
+        self.loopdepth+=1
         #fetch the while conditional
         condition = self.expression()
         #make sure we have semicolon grammar
@@ -299,6 +325,8 @@ class Parser:
             raise RuntimeError(self.error(self.peek(), "Expect ':' after while condition"))
         #fetch the body of the while loop
         body = self.statement()
+        #decrement the loop counter
+        self.loopdepth-=1
         #return the While abstraction
         return While(condition, body)
 
@@ -487,9 +515,9 @@ class Parser:
         #fetch the final parenthesis
         paren = self.consume("Expect ')' after arguments.", "RightParenthesis")
         #can't have a colon after a call
-        if self.check("Colon") and self.checkNext("End"):
+        '''if self.check("Colon") and self.checkNext("End"):
             self.advance()
-            raise SyntaxError(self.error(self.previous(), "':' cannot follow function calls."))
+            raise SyntaxError(self.error(self.previous(), "':' cannot follow function calls."))'''
         #return the function call
         return Call(callee, paren, arguments)
 

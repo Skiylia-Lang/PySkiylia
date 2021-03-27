@@ -108,12 +108,18 @@ class If(Stmt):
 		self.thenBranch = thenBranch
 		self.elseBranch = elseBranch
 
+class Interupt(Stmt):
+	def __init__(self, keyword,cont=False):
+		self.keyword = keyword
+		self.cont = cont
+
 class Var(Stmt):
 	def __init__(self, name,initial):
 		self.name = name
 		self.initial = initial
 
 class While(Stmt):
-	def __init__(self, condition,body):
+	def __init__(self, condition,body,hasincrement=False):
 		self.condition = condition
 		self.body = body
+		self.hasincrement = hasincrement

@@ -4,7 +4,7 @@
 #import our code
 from AbstractSyntax import *
 from Environment import Environment
-from SkiyliaCallable import Return, SkiyliaCallable, SkiyliaFunction, SkiyliaClass, SkiyliaInstance
+from SkiyliaCallable import Return, Interupt, SkiyliaCallable, SkiyliaFunction, SkiyliaClass, SkiyliaInstance
 from ASTPrinter import Evaluator
 import Primitives
 
@@ -67,7 +67,7 @@ class misc:
         if (a==None) and (b==None):
             return True
         #if only one is null, return false
-        if not a:
+        if a==None:
             return False
         #else return the python equality
         return a==b
@@ -86,6 +86,8 @@ class Interpreter(misc, Evaluator):
         self.locals = dict()
         #define the maximum number of allowed arguments in a function call
         self.arglimit = arglimit
+        #define a way of skipping to the last part of a block
+        self.skipToLast = False
         #and add our primitives to the global scope
         self.primitives = []
         self.fetchprimitives()
@@ -329,6 +331,11 @@ class Interpreter(misc, Evaluator):
             self.evaluate(stmt.elseBranch)
         return None
 
+    #define a way of using an interup (continue/break)
+    def Interuptstmt(self, stmt):
+        #raise an error
+        raise Interupt(stmt.cont)
+
     #define a way of converting from the literal AST to a runtime value
     def LiteralExpr(self, expr):
         return expr.value
@@ -493,8 +500,22 @@ class Interpreter(misc, Evaluator):
     def WhileStmt(self, stmt):
         #while the condition is truthy
         while self.isTruthy(self.evaluate(stmt.condition)):
-            #execute the body of the while loop
-            self.evaluate(stmt.body)
+            try:
+                #execute the body of the while loop
+                self.evaluate(stmt.body)
+            #if we got an interupt command
+            except Interupt as e:
+                #if the intreuption is continue
+                if e.message==True:
+                    #if the loop contains an incremental
+                    if stmt.hasincrement:
+                        #try to execute it (it will always be the last thing in the while block)
+                        self.skipToLast = True
+                        self.evaluate(stmt.body)
+                    #now it will redo the loop
+                else:
+                    #otherwise, break
+                    break
         #and return none
         return None
 
@@ -505,10 +526,17 @@ class Interpreter(misc, Evaluator):
         try:
             #make sure the current scope is the one to compute with
             self.environment = environment
-            #loop through the given statements
-            for statement in statements:
-                #and execute them
-                self.evaluate(statement)
+            #check if we only want to execute the last part of the block
+            if not self.skipToLast:
+                #loop through the given statements
+                for statement in statements:
+                    #and execute them
+                    self.evaluate(statement)
+            else:
+                #reset the skip flag
+                self.skipToLast = False
+                #and evaluate the last part of the block
+                self.evaluate(statements[-1])
         finally:
             #restore the parent scope now we have finished
             self.environment = previous

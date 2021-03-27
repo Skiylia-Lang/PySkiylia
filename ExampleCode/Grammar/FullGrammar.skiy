@@ -88,10 +88,11 @@ while condition:    //require any variables to be defined prior to
   action-while-True
 
 ie:
-a=10
-while a>5:
-  print(a)
-  a = a-1
+a=100
+while true:
+  print(a--)
+  if a < 10:
+    break
 
 //for loop
 for (increment variable) ("where" | "when") (condition) "do" (increment operation):

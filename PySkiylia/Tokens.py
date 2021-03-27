@@ -2,11 +2,13 @@
 """Stores token definitions, may end up moving this elsewhere"""
 
 tokens = [#single character tokens
-            "LeftParenthesis", "RightParenthesis", "Colon", "Comma", "Dot", "Slash", "Greater", "Less", "And", "Or", "Xor",
+            "LeftParenthesis", "RightParenthesis", "Colon", "Comma", "Dot", "Slash", "And", "Or", "Xor",
             #single or double character Tokens
-            "NotEqual", "Not", "EqualEqual", "Equal", "Star", "StarStar", "Minus", "MinusMinus", "Plus", "PlusPlus", "Question", "QColon", "QQuestion",
+            "NFuzequal", "NEEqual", "NEqual", "Not", "Fuzequal", "EEEqual", "EEqual", "Equal",
+            "Greater", "EGreater", "Less", "ELess", "Question", "QColon", "QQuestion",
+            "Star", "StStar", "Minus", "MMinus", "Plus", "PPlus",
             #Literal tokens
-            "String", "Number", "Identifier",
+            "String", "Integer", "Float", "Identifier",
             #keyword tokens
             "Class", "Def", "Do", "Elif", "Else", "False", "For", "If", "Null", "Return", "Self", "Super", "True", "Var", "Where", "While",
             #miscellaneous

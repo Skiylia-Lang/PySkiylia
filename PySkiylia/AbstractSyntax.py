@@ -86,10 +86,11 @@ class Class(Stmt):
 		self.methods = methods
 
 class Conditional(Stmt):
-	def __init__(self, condition,thenBranch,elseBranch):
+	def __init__(self, condition,thenBranch,elseBranch,type):
 		self.condition = condition
 		self.thenBranch = thenBranch
 		self.elseBranch = elseBranch
+		self.type = type
 
 class Expression(Stmt):
 	def __init__(self, expression):

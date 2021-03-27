@@ -108,6 +108,11 @@ class If(Stmt):
 		self.thenBranch = thenBranch
 		self.elseBranch = elseBranch
 
+class Interupt(Stmt):
+	def __init__(self, keyword,continue=False):
+		self.keyword = keyword
+		self.continue = continue
+
 class Var(Stmt):
 	def __init__(self, name,initial):
 		self.name = name

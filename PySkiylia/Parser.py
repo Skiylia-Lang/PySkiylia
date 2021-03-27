@@ -268,7 +268,7 @@ class Parser:
         if not self.checkindent(keyword.indent)<0:
             raise SyntaxError([self.peek(), "Incorect indentation for return statement", "Indentation"])
         #create and return the abstraction
-        return Interupt(keyword, value, keyword.type=="Continue")
+        return Interupt(keyword, keyword.type=="Continue")
 
     #define the return grammar
     def returnstatement(self):

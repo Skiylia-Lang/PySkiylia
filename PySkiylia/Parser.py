@@ -344,15 +344,19 @@ class Parser:
             thenBranch = self.expression()
             #check for grammar
             self.consume("Expect ':' after ternary operator", "Colon")
-            #the else branch
-            elseBranch = self.conditional()
-            #create a new expression from the conditional
-            expr = Conditional(expr, thenBranch, elseBranch, "T")
+        #or the start of an elvis
         elif self.match("QColon"):
-            elseBranch = self.conditional()
-            expr = Conditional(expr, 0, elseBranch, "E")
-        #return the expression
-        return expr
+            type, thenBranch = "E", 0
+        #or the start of a null coalescence
+        elif self.match("QQuestion"):
+            type, thenBranch = "N", 0
+        #if nothing, return the expr
+        else:
+            return expr
+        #all conditionals have an else, so fetch it
+        elseBranch = self.conditional()
+        #and fincally construct the conditional
+        return Conditional(expr, thenBranch, elseBranch, type)
 
     #define the asignment gramar
     def assignment(self):

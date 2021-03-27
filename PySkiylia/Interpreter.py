@@ -4,7 +4,7 @@
 #import our code
 from AbstractSyntax import *
 from Environment import Environment
-from SkiyliaCallable import Return, SkiyliaCallable, SkiyliaFunction, SkiyliaClass, SkiyliaInstance
+from SkiyliaCallable import Return, Interupt, SkiyliaCallable, SkiyliaFunction, SkiyliaClass, SkiyliaInstance
 from ASTPrinter import Evaluator
 import Primitives
 
@@ -332,7 +332,7 @@ class Interpreter(misc, Evaluator):
     #define a way of using an interup (continue/break)
     def Interuptstmt(self, stmt):
         #raise an error
-        raise Interupt(stmt.continue)
+        raise Interupt(stmt.cont)
 
     #define a way of converting from the literal AST to a runtime value
     def LiteralExpr(self, expr):

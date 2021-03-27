@@ -67,7 +67,7 @@ class misc:
         if (a==None) and (b==None):
             return True
         #if only one is null, return false
-        if not a:
+        if a==None:
             return False
         #else return the python equality
         return a==b

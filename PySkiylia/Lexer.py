@@ -133,6 +133,8 @@ class Lexer:
                     return self.addToken("EEEqual")
                 return self.addToken("EEqual")
             return self.addToken("Equal")
+        elif c == "~" and self.match("~") and self.match("~"):
+            return self.addToken("Fuzequal")
         elif c == "?":
             if self.match(":"):
                 return self.addToken("QColon")
@@ -154,6 +156,8 @@ class Lexer:
                 if self.match("="):
                     return self.addToken("NEEqual")
                 return self.addToken("NEqual")
+            elif self.match("~") and self.match("~"):
+                return self.addToken("NFuzequal")
             return self.addToken("Not")
         elif c == "\t":
             #if we met an indentation, then increment our indent tage

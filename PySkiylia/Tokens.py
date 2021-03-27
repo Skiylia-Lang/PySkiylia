@@ -4,10 +4,11 @@
 tokens = [#single character tokens
             "LeftParenthesis", "RightParenthesis", "Colon", "Comma", "Dot", "Slash", "And", "Or", "Xor",
             #single or double character Tokens
-            "NEEqual", "NEqual", "Not", "EEEqual", "EEqual", "Equal", "Greater", "EGreater", "Less", "ELess"
-            "Star", "StStar", "Minus", "MMinus", "Plus", "PPlus", "Question", "QColon", "QQuestion",
+            "NFuzequal", "NEEqual", "NEqual", "Not", "Fuzequal", "EEEqual", "EEqual", "Equal",
+            "Greater", "EGreater", "Less", "ELess", "Question", "QColon", "QQuestion",
+            "Star", "StStar", "Minus", "MMinus", "Plus", "PPlus",
             #Literal tokens
-            "String", "Number", "Identifier",
+            "String", "Integer", "Float", "Identifier",
             #keyword tokens
             "Class", "Def", "Do", "Elif", "Else", "False", "For", "If", "Null", "Return", "Self", "Super", "True", "Var", "Where", "While",
             #miscellaneous

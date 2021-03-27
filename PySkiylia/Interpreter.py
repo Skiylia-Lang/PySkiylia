@@ -280,10 +280,20 @@ class Interpreter(misc, Evaluator):
     def ConditionalStmt(self, stmt):
         #evaluate the conditional
         cond = self.evaluate(stmt.condition)
-        #evaluate the truthiness of the if condition
-        if self.isTruthy(cond):
+        #fetch the conditional type
+        type = stmt.type
+        #check if we have null and a null coalescence conditional
+        if (type=="N"):
+            #unless conditional is explicitly null
+            if cond!=None:
+                #return it
+                return cond
+            #otherwise, execute the else branch
+            return self.evaluate(stmt.elseBranch)
+        #otherwise, evaluate the truthiness of the if condition
+        elif self.isTruthy(cond):
             #if the conditional is ternary:
-            if stmt.type == "T":
+            if type == "T":
                 #evaluate the 'then'
                 return self.evaluate(stmt.thenBranch)
             #otherwise, its an elvis, so just return the condition

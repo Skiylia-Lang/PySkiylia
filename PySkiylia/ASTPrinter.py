@@ -63,7 +63,9 @@ class ASTPrinter(Evaluator):
     def ConditionalStmt(self, stmt):
         if stmt.type=="T":
             return self.toparenthesis("conditional", stmt.condition, stmt.thenBranch, stmt.elseBranch)
-        return self.toparenthesis("conditional", stmt.condition, stmt.elseBranch)
+        elif stmt.type=="E":
+            return self.toparenthesis("conditional-elvis", stmt.condition, stmt.elseBranch)
+        return self.toparenthesis("conditional-null", stmt.condition, stmt.elseBranch)
 
     def ExpressionStmt(self, stmt):
         return self.toparenthesis("",stmt.expression)

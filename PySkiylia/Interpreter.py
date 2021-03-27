@@ -69,8 +69,12 @@ class misc:
         #if only one is null, return false
         if a==None:
             return False
-        #else return the python equality
-        return a==b
+        try:
+            b = type(a)(b)
+            return a==b
+        except:
+            #else return the python equality
+            return a==b
 
 #define the Interpreter class
 class Interpreter(misc, Evaluator):

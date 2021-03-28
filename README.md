@@ -36,6 +36,8 @@ To create an issue, be it a bug, question, feature request, or other, use this l
 
 Skiylia is dynamically typed, object oriented, and most importantly *interpreted*. While it may share many similarities with C derivatives, its heritage is definitely Pythonic.
 
+The main directory housing the PySkiylia interpreter is [here](https://github.com/SK1Y101/PySkiylia/tree/main/PySkiylia). Within that directory is a separate document listing the most important syntax for Skiylia.
+
 ## Sample code
 
 ```skiylia

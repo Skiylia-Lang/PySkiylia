@@ -3,28 +3,28 @@ Dynamically typed Object Oriented Programming Language.
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
-![GitHub](https://img.shields.io/github/license/Skiylia/PySkiylia)
-![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/Skiylia/PySkiylia)
-[![codecov](https://codecov.io/gh/Skiylia/PySkiylia/branch/main/graph/badge.svg?token=DRJ67ZQA7M)](https://codecov.io/gh/Skiylia/PySkiylia)
-[![time tracker](https://wakatime.com/badge/github/Skiylia/PySkiylia.svg?style=flat-square)](https://wakatime.com/badge/github/Skiylia/PySkiylia)
-![GitHub language count](https://img.shields.io/github/languages/count/Skiylia/PySkiylia)
-![GitHub top language](https://img.shields.io/github/languages/top/Skiylia/PySkiylia)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Skiylia/PySkiylia)
-![Lines of code](https://img.shields.io/tokei/lines/github.com/Skiylia/PySkiylia)
+![GitHub](https://img.shields.io/github/license/Skiylia-Lang/PySkiylia)
+![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/Skiylia-Lang/PySkiylia)
+[![codecov](https://codecov.io/gh/Skiylia-Lang/PySkiylia/branch/main/graph/badge.svg?token=DRJ67ZQA7M)](https://codecov.io/gh/Skiylia-Lang/PySkiylia)
+[![time tracker](https://wakatime.com/badge/github/Skiylia-Lang/PySkiylia.svg)](https://wakatime.com/badge/github/Skiylia-Lang/PySkiylia)
+![GitHub language count](https://img.shields.io/github/languages/count/Skiylia-Lang/PySkiylia)
+![GitHub top language](https://img.shields.io/github/languages/top/Skiylia-Lang/PySkiylia)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Skiylia-Lang/PySkiylia)
+![Lines of code](https://img.shields.io/tokei/lines/github.com/Skiylia-Lang/PySkiylia)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat)](#contributors)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Releases
 
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/Skiylia/PySkiylia?include_prereleases)
-![GitHub commits since latest release (by date including pre-releases)](https://img.shields.io/github/commits-since/Skiylia/PySkiylia/latest/develop?include_prereleases)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/w/Skiylia/PySkiylia)
-![GitHub milestone](https://img.shields.io/github/milestones/progress/Skiylia/PySkiylia/1)
-![GitHub milestones](https://img.shields.io/github/milestones/open/Skiylia/PySkiylia)
-![GitHub issues](https://img.shields.io/github/issues-raw/Skiylia/PySkiylia)
-![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/Skiylia/PySkiylia)
-![GitHub last commit](https://img.shields.io/github/last-commit/Skiylia/PySkiylia)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/Skiylia-Lang/PySkiylia?include_prereleases)
+![GitHub commits since latest release (by date including pre-releases)](https://img.shields.io/github/commits-since/Skiylia-Lang/PySkiylia/latest/develop?include_prereleases)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/Skiylia-Lang/PySkiylia)
+![GitHub milestone](https://img.shields.io/github/milestones/progress/Skiylia-Lang/PySkiylia/1)
+![GitHub milestones](https://img.shields.io/github/milestones/open/Skiylia-Lang/PySkiylia)
+![GitHub issues](https://img.shields.io/github/issues-raw/Skiylia-Lang/PySkiylia)
+![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/Skiylia-Lang/PySkiylia)
+![GitHub last commit](https://img.shields.io/github/last-commit/Skiylia-Lang/PySkiylia)
 
 **PySkiylia: [Latest release](../releases)**
 
@@ -94,8 +94,8 @@ All the people who have contributed ([emoji key](https://allcontributors.org/doc
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/SK1Y101"><img src="https://avatars.githubusercontent.com/u/8695579?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jack Lloyd-Walters</b></sub></a><br /><a href="https://github.com/Skiylia/PySkiylia/commits?author=SK1Y101" title="Code">💻</a> <a href="https://github.com/Skiylia/PySkiylia/pulls?q=is%3Apr+reviewed-by%3ASK1Y101" title="Reviewed Pull Requests">👀</a></td>
-    <td align="center"><a href="https://github.com/SK2Y202"><img src="https://avatars.githubusercontent.com/u/81203841?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jack Lloyd-Walters</b></sub></a><br /><a href="https://github.com/Skiylia/PySkiylia/pulls?q=is%3Apr+reviewed-by%3ASK2Y202" title="Reviewed Pull Requests">👀</a></td>
+    <td align="center"><a href="https://github.com/SK1Y101"><img src="https://avatars.githubusercontent.com/u/8695579?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jack Lloyd-Walters</b></sub></a><br /><a href="https://github.com/Skiylia-Lang/PySkiylia/commits?author=SK1Y101" title="Code">💻</a> <a href="https://github.com/Skiylia-Lang/PySkiylia/pulls?q=is%3Apr+reviewed-by%3ASK1Y101" title="Reviewed Pull Requests">👀</a></td>
+    <td align="center"><a href="https://github.com/SK2Y202"><img src="https://avatars.githubusercontent.com/u/81203841?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jack Lloyd-Walters</b></sub></a><br /><a href="https://github.com/Skiylia-Lang/PySkiylia/pulls?q=is%3Apr+reviewed-by%3ASK2Y202" title="Reviewed Pull Requests">👀</a></td>
   </tr>
 </table>
 

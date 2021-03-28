@@ -3,18 +3,22 @@ Dynamically typed Object Oriented Program Language.
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
-![GitHub](https://img.shields.io/github/license/SK1Y101/PySkiylia)
-![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/SK1Y101/PySkiylia)
-[![codecov](https://codecov.io/gh/SK1Y101/PySkiylia/branch/main/graph/badge.svg?token=DRJ67ZQA7M)](https://codecov.io/gh/SK1Y101/PySkiylia)
-[![time tracker](https://wakatime.com/badge/github/SK1Y101/PySkiylia.svg?style=flat-square)](https://wakatime.com/badge/github/SK1Y101/PySkiylia)
+![GitHub](https://img.shields.io/github/license/Skiylia/PySkiylia)
+![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/Skiylia/PySkiylia)
+[![codecov](https://codecov.io/gh/Skiylia/PySkiylia/branch/main/graph/badge.svg?token=DRJ67ZQA7M)](https://codecov.io/gh/Skiylia/PySkiylia)
+[![time tracker](https://wakatime.com/badge/github/Skiylia/PySkiylia.svg?style=flat-square)](https://wakatime.com/badge/github/Skiylia/PySkiylia)
 
-## Releases
+**PySkiylia: [Latest release](../releases)**
 
-**PySkiylia: [Latest release]**
+Open issues can be found here: [issues](../issues)
 
-Support here: [issues]
+To create an issue, be it a bug, question, feature request, or other, use this link here: [Open an issue](../issues/new/choose)
 
-Within this directory is the entire PySkiylia interpreter. Firing up 'PySkiylia.py' opens the interactive REPL interpreter, or passing a filepath to a .skiy file will interpret and execute that script.
+# Skiylia
+
+Skiylia is dynamically typed, object oriented, and most importantly *interpreted*. While it may share many similarities with C derivatives, its heritage is definitely Pythonic.
+
+The main directory housing the PySkiylia interpreter is [here](../tree/main/PySkiylia). Within that directory is a separate document listing the most important syntax for Skiylia.
 
 # Syntax overview
 
@@ -173,6 +177,3 @@ else: print("'a' was false!")
 Now you know the most important basics of Skiylia, so grab that interpreter and give it a whirl! Just remember that the language is still evolving, and it's entirely possible that things written above may be modified or removed in future versions.
 
 Thanks for reading this far, happy coding!
-
-[Latest release]: https://github.com/SK1Y101/PySkiylia/releases
-[issues]: https://github.com/SK1Y101/PySkiylia/issues

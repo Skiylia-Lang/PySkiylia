@@ -26,17 +26,17 @@ Dynamically typed Object Oriented Programming Language.
 ![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/Skiylia-Lang/PySkiylia)
 ![GitHub last commit](https://img.shields.io/github/last-commit/Skiylia-Lang/PySkiylia)
 
-**PySkiylia: [Latest release](../releases)**
+**PySkiylia: [Latest release](/releases)**
 
-Open issues can be found here: [issues](../issues)
+Open issues can be found here: [issues](/issues)
 
-To create an issue, be it a bug, question, feature request, or other, use this link here: [Open an issue](../issues/new/choose)
+To create an issue, be it a bug, question, feature request, or other, use this link here: [Open an issue](/issues/new/choose)
 
 # Skiylia
 
 Skiylia is dynamically typed, object oriented, and most importantly *interpreted*. While it may share many similarities with C derivatives, its heritage is definitely Pythonic.
 
-The main directory housing the PySkiylia interpreter is [here](../tree/main/PySkiylia). Within that directory is a separate document listing the most important syntax for Skiylia.
+The main directory housing the PySkiylia interpreter is [here](/tree/main/PySkiylia). Within that directory is a separate document listing the most important syntax for Skiylia.
 
 ## Sample code
 
@@ -57,7 +57,7 @@ print("The factorial of", num, "is", factorial(num))
 //output: The factorial of 6 is 720
 ```
 
-Within this [folder](../tree/main/ExampleCode) is a collection of code examples that have been used to test the project. While not exhaustive by any means, they should cover the basics. Feel free to play around and get a feel for the language!
+Within this [folder](/tree/main/ExampleCode) is a collection of code examples that have been used to test the project. While not exhaustive by any means, they should cover the basics. Feel free to play around and get a feel for the language!
 
 Who knows, at some point in the future there may even be a link to a Skiylia tutorial. It's certainly an idea in the works.
 

@@ -15,10 +15,14 @@ class Skiylia:
     #set the default values here
     haderror = False
 <<<<<<< HEAD
+<<<<<<< HEAD
     version = "v0.7.1"
 =======
     version = "v0.7.0"
 >>>>>>> a0a18c5... update readme and include better integer handling
+=======
+    version = "v0.7.1"
+>>>>>>> 18a971e... update version number
     title = ""
     debug = False
     #run this at initialisation

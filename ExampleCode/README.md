@@ -3,18 +3,24 @@ Dynamically typed Object Oriented Program Language.
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
-![GitHub](https://img.shields.io/github/license/SK1Y101/PySkiylia)
-![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/SK1Y101/PySkiylia)
-[![codecov](https://codecov.io/gh/SK1Y101/PySkiylia/branch/main/graph/badge.svg?token=DRJ67ZQA7M)](https://codecov.io/gh/SK1Y101/PySkiylia)
-[![time tracker](https://wakatime.com/badge/github/SK1Y101/PySkiylia.svg?style=flat-square)](https://wakatime.com/badge/github/SK1Y101/PySkiylia)
+![GitHub](https://img.shields.io/github/license/Skiylia/PySkiylia)
+![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/Skiylia/PySkiylia)
+[![codecov](https://codecov.io/gh/Skiylia/PySkiylia/branch/main/graph/badge.svg?token=DRJ67ZQA7M)](https://codecov.io/gh/Skiylia/PySkiylia)
+[![time tracker](https://wakatime.com/badge/github/Skiylia/PySkiylia.svg?style=flat-square)](https://wakatime.com/badge/github/Skiylia/PySkiylia)
 
 This repository folder contains examples of Skiylia-specific code, and (possibly) the equivalent in python.
 
-## Releases
+**PySkiylia: [Latest release](../releases)**
 
-**PySkiylia: [Latest release]**
+Open issues can be found here: [issues](../issues)
 
-Support here: [issues]
+To create an issue, be it a bug, question, feature request, or other, use this link here: [Open an issue](../issues/new/choose)
+
+# Skiylia
+
+Skiylia is dynamically typed, object oriented, and most importantly *interpreted*. While it may share many similarities with C derivatives, its heritage is definitely Pythonic.
+
+The main directory housing the PySkiylia interpreter is [here](../tree/main/PySkiylia). Within that directory is a separate document listing the most important syntax for Skiylia.
 
 ## Sample Function code
 
@@ -73,7 +79,3 @@ John.hello()
    I hate getting older
    Hi there, I'm Johnathon, and I'm 25///
 ```
-
-[Latest release]: https://github.com/SK1Y101/PySkiylia/releases
-[issues]: https://github.com/SK1Y101/PySkiylia/issues
-[folder]: https://github.com/SK1Y101/PySkiylia/ExampleCode

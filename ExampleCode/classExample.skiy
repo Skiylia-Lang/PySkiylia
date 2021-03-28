@@ -12,6 +12,11 @@ class Person:
   birthday():
     self.age = self.age + 1
 
+class John(Person):
+  birthday():
+    super.birthday()
+    print("I hate getting older")
+
 var John = Person("John", 24)
 John.hello()
 
@@ -20,4 +25,5 @@ John.name = "Johnathon"
 John.hello()
 
 ///Hi there, I'm John, and I'm 24
+   I hate getting older
    Hi there, I'm Johnathon, and I'm 25///

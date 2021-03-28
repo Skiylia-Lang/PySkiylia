@@ -23,7 +23,7 @@ def stringify(obj):
     #if it's a number
     if isinstance(obj, float) or isinstance(obj, int):
         #if it's an integer, cast to integer first
-        if obj.is_integer():
+        if isinstance(obj, int) or obj.is_integer():
             return str(int(obj))
         #else just return it
         return str(obj)

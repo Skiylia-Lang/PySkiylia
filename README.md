@@ -36,22 +36,26 @@ To create an issue, be it a bug, question, feature request, or other, use this l
 
 Skiylia is dynamically typed, object oriented, and most importantly *interpreted*. While it may share many similarities with C derivatives, its heritage is definitely Pythonic.
 
+The main directory housing the PySkiylia interpreter is [here](https://github.com/SK1Y101/PySkiylia/tree/main/PySkiylia). Within that directory is a separate document listing the most important syntax for Skiylia.
+
 ## Sample code
 
-    ///This section contains a small snippet of Skiylia
-    code that calculates the factorial of a number///
+```skiylia
+///This section contains a small snippet of Skiylia
+code that calculates the factorial of a number///
 
-    def factorial(n):
-      if int(n) != n:
-        return null   //can't compute factorial of a float this way
-      if n < 2:
-        return 1
-      return n * factorial(n - 1)   //recursion that makes this work
+def factorial(n):
+  if int(n) != n:
+    return null   //can't compute factorial of a float this way
+  if n < 2:
+    return 1
+  return n * factorial(n - 1)   //recursion that makes this work
 
-    var num = 6
-    print("The factorial of", num, "is", factorial(num))
+var num = 6
+print("The factorial of", num, "is", factorial(num))
 
-    //output: The factorial of 6 is 720
+//output: The factorial of 6 is 720
+```
 
 Within this [folder] is a collection of code examples that have been used to test the project. While not exhaustive by any means, they should cover the basics. Feel free to play around and get a feel for the language!
 

@@ -14,12 +14,11 @@ from ASTPrinter import ASTPrinter
 class Skiylia:
     #set the default values here
     haderror = False
-    version = "v0.7.0"
+    version = "v0.7.1"
+    title = ""
     debug = False
     #run this at initialisation
     def __init__(self, args=""):
-        os.system("title PySkiylia {}".format(self.version))
-        title=""
         #check if the user has asked for help
         if args and args[-1] in ["--help", "-h", "-?", "/?"]:
             #show them the default usage
@@ -31,7 +30,7 @@ class Skiylia:
             self.debug = True
             #ad remove the flag from the arguments list
             args = args[:-1]
-            title += " (Debug mode)"
+            self.title += " (Debug mode)"
         #we won't support more than one argument
         if len(args) > 1:
             #tell the user and exit
@@ -41,12 +40,11 @@ class Skiylia:
         elif len(args) == 1:
             #save the argument if it is valid
             self.args = self.checkValidFile(args[0])
-            title = " - " + self.args.split("/")[-1] + title
+            self.title = " - " + self.args.split("/")[-1] + self.title
         else:
             #otherwise we have no argument to speak of
-            title = " Interactive" + title
+            self.title = " Interactive" + self.title
             self.args = ""
-        os.system("title PySkiylia {}{}".format(self.version, title))
 
     #run this to determine the runtype
     def init(self):
@@ -162,5 +160,7 @@ class Skiylia:
 if __name__ == "__main__":
     #startup the script, fetching any arguments passed
     skiylia = Skiylia(sys.argv[1:])
+    #set the window title
+    os.system("title PySkiylia {}{}".format(skiylia.version, skiylia.title))
     #start running the interpreter
     skiylia.init()

@@ -241,9 +241,8 @@ class Lexer:
             while self.isDigit(self.peek()):
                 #advance to the next character
                 self.advance()
-            return self.addToken("Float", float(self.source[self.start:self.current]))
         #create a numeric token and return.
-        return self.addToken("Integer", int(self.source[self.start:self.current]))
+        return self.addToken("Number", self.source[self.start:self.current])
 
     #define a way of checking if the value is a digit
     def isDigit(self, char):

@@ -10,17 +10,17 @@ Dynamically typed Object Oriented Program Language.
 
 This repository folder contains examples of Skiylia-specific code, and (possibly) the equivalent in python.
 
-**PySkiylia: [Latest release](../releases)**
+**PySkiylia: [Latest release](../../releases)**
 
-Open issues can be found here: [issues](../issues)
+Open issues can be found here: [issues](../../issues)
 
-To create an issue, be it a bug, question, feature request, or other, use this link here: [Open an issue](../issues/new/choose)
+To create an issue, be it a bug, question, feature request, or other, use this link here: [Open an issue](../../issues/new/choose)
 
 # Skiylia
 
 Skiylia is dynamically typed, object oriented, and most importantly *interpreted*. While it may share many similarities with C derivatives, its heritage is definitely Pythonic.
 
-The main directory housing the PySkiylia interpreter is [here](../tree/main/PySkiylia). Within that directory is a separate document listing the most important syntax for Skiylia.
+The main directory housing the PySkiylia interpreter is [here](../../tree/main/PySkiylia). Within that directory is a separate document listing the most important syntax for Skiylia.
 
 ## Sample Function code
 

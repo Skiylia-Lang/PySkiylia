@@ -1,5 +1,0 @@
-print (int(5))
-
-print(int(5).__add__(1))
-
-print(6 + 7)

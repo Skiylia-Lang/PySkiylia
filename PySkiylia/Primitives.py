@@ -6,11 +6,9 @@ import time, math
 
 #import our code
 from SkiyliaCallable import SkiyliaCallable
-from DataTypes import *
 
 #convert internal representation to user readible code
 def stringify(obj):
-    print(obj, type(obj), isinstance(obj, SkiyliaInt))
     #if none, show null
     if obj==None:
         return "null"
@@ -22,14 +20,11 @@ def stringify(obj):
         #else the object is false
         elif obj==False:
             return "false"
-    #if the object is an instance, reclaim the class
-    if isinstance(obj, SkiyliaInstance):
-        obj = obj.thisclass
     #if it's a number
-    if isinstance(obj, float) or isinstance(obj, SkiyliaInt):
+    if isinstance(obj, float) or isinstance(obj, int):
         #if it's an integer, cast to integer first
-        if isinstance(obj, SkiyliaInt):
-            return obj.value
+        if isinstance(obj, int) or obj.is_integer():
+            return str(int(obj))
         #else just return it
         return str(obj)
     #return the string of the object
@@ -46,14 +41,6 @@ class skiyliaprint(SkiyliaCallable):
     def call(self, interpreter, arguments, token):
         print(*map(stringify, arguments))
         return None
-
-#typeof
-class skiyliatype(SkiyliaCallable):
-    string = "primitive"
-    arity=1
-    callname = "type"
-    def call(self, interpreter, arguments, token):
-        return type(arguments[0])
 
 #clock
 class skiyliaclock(SkiyliaCallable):
@@ -76,7 +63,7 @@ class skiyliasqrt(SkiyliaCallable):
         except Exception as e:
             raise RuntimeError([token, str(e), type(e).__name__])
 
-'''#string conversion
+#string conversion
 class skiyliastring(SkiyliaCallable):
     string = "primitive function"
     arity = "0,*"
@@ -128,7 +115,7 @@ class skiyliabool(SkiyliaCallable):
         try:
             return bool(n)
         except Exception as e:
-            raise RuntimeError([token, str(e), type(e).__name__])'''
+            raise RuntimeError([token, str(e), type(e).__name__])
 
 #absolute value return
 class skiyliaabsolute(SkiyliaCallable):

@@ -180,7 +180,7 @@ class Parser:
         #check if we didn't have a conditional
         if not condition:
             #if none supplied, assume true
-            condition = Literal(True, "Bool")
+            condition = Literal(True)
         #construct the while loop from the conditional and body
         body = While(condition, body, increment!=None)
 
@@ -304,7 +304,7 @@ class Parser:
         #fetch the variable name
         name = self.consume("Expect variable name.", "Identifier")
         #define it's initial value as null
-        initial = Literal(0.0, "Number") #None
+        initial = Literal(0.0) #None
         #if there is an equals, set it
         if self.match("Equal"):
             #fetch the value
@@ -545,16 +545,16 @@ class Parser:
     def literal(self):
         #check if we have any known identifiers
         if self.match("False"):
-            return Literal(False, "Bool")
+            return Literal(False)
         #check if true
         elif self.match("True"):
-            return Literal(True, "Bool")
+            return Literal(True)
         #check if null
         elif self.match("Null"):
-            return Literal(None, "Null")
+            return Literal(None)
         #check if a number or string
         elif self.match("Number", "String"):
-            return Literal(self.previous().literal, self.previous().type)
+            return Literal(self.previous().literal)
         #check if we have a "self"
         elif self.match("Self"):
             return Self(self.previous())

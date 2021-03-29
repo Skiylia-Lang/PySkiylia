@@ -4,9 +4,8 @@
 #import our code
 from AbstractSyntax import *
 from Environment import Environment
+from SkiyliaCallable import Return, Interupt, SkiyliaCallable, SkiyliaFunction, SkiyliaClass, SkiyliaInstance
 from ASTPrinter import Evaluator
-from SkiyliaCallable import *
-from DataTypes import *
 import Primitives
 
 #A class that will hold miscellaneous help code
@@ -88,26 +87,13 @@ class Interpreter(misc, Evaluator):
         self.environment = self.globals
         #define the locals dictionary
         self.locals = dict()
-        #define the builtins list
-        self.builtins = []
         #define the maximum number of allowed arguments in a function call
         self.arglimit = arglimit
         #define a way of skipping to the last part of a block
         self.skipToLast = False
-        #fetch all of the datatype classes
-        self.fetchDataTypes()
         #and add our primitives to the global scope
+        self.primitives = []
         self.fetchprimitives()
-
-    #fetch and load the datatypes into the global scope
-    def fetchDataTypes(self):
-        datatypes = SkiyliaDataType.__subclasses__()
-        for dtype in datatypes:
-            callname = dtype.__name__
-            if dtype.callname:
-                callname = dtype.callname
-            self.builtins.append(callname)
-            self.globals.define(callname, dtype(interpreter = self.environment))
 
     #define the primitives
     def fetchprimitives(self):
@@ -116,14 +102,14 @@ class Interpreter(misc, Evaluator):
         #itterate through them
         for primitive in primitives:
             #if they are from the primitives module
-            if primitive.__module__ in ["Primitives", "DataType"]:
+            if primitive.__module__ == "Primitives":
                 #fetch the call name
                 callname = primitive.__name__
                 #check if a custom one has been defined
                 if primitive.callname:
                     callname=primitive.callname
                 #add them to the global scope
-                self.builtins.append(callname)
+                self.primitives.append(callname)
                 self.globals.define(callname, primitive())
 
     #define the interpreter function
@@ -287,7 +273,7 @@ class Interpreter(misc, Evaluator):
             #raise an error if it was different
             raise RuntimeError([expr.parenthesis, "Expected {} argument{} but got {}.".format(arglim, "s"*(arglim!=1), len(args))])
         #return and call the callable
-        if expr.callee.name.lexeme in self.builtins:
+        if expr.callee.name.lexeme in self.primitives:
             return callee.call(self, args, expr.callee.name)
         return callee.call(self, args)
 
@@ -385,10 +371,7 @@ class Interpreter(misc, Evaluator):
 
     #define a way of converting from the literal AST to a runtime value
     def LiteralExpr(self, expr):
-        if expr.type == "Number":
-            if float(expr.value).is_integer():
-                return SkiyliaInt(expr.value)
-            return SkiyliaFloat(expr.value)
+        return expr.value
 
     #define a way of unpacking abstracted Logicals
     def LogicalExpr(self, expr):

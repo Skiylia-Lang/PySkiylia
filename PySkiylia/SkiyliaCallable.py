@@ -129,8 +129,12 @@ class SkiyliaInstance(SkiyliaCallable):
         method = self.thisclass.findMethod(name.lexeme)
         #if it is a method instead
         if method:
-            #return that
-            return method.bind(self)
+            try:
+                #try to bind and return the method
+                return method.bind(self)
+            except:
+                #otherwise, we may have to tell the method what it's binding
+                return method.bind(method, self)
         #else throw an error
         raise RuntimeError([name, "Undefined property '{}'.".format(name.lexeme)])
 

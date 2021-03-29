@@ -37,8 +37,9 @@ class Logical(Expr):
 		self.right = right
 
 class Literal(Expr):
-	def __init__(self, value):
+	def __init__(self, value, type):
 		self.value = value
+		self.type = type
 
 class Return(Expr):
 	def __init__(self, keyword,value):

@@ -26,7 +26,7 @@ class SkiyliaCallable:
         return "<{}>".format(self.string)
 
     #define the way of calling the function
-    def call(self, interpreter, arguments, token):
+    def call(self, interpreter, arguments, token=""):
         #we're given the interpreter state in case we need it's memory
         pass
 
@@ -74,7 +74,7 @@ class SkiyliaClass(SkiyliaCallable):
     #what to print
     string = "skiylia class"
     #initialiser
-    def __init__(self, name, superclass, methods):
+    def __init__(self, name=None, superclass=None, methods=[]):
         #assign our name
         self.name = name
         self.superclass = superclass
@@ -87,7 +87,7 @@ class SkiyliaClass(SkiyliaCallable):
             #define our arity
             self.arity = self.initialiser.arity
     #what to do when we call the class
-    def call(self, interpreter, arguments):
+    def call(self, interpreter, arguments, token=""):
         #create a new instance of the class
         instance = SkiyliaInstance(self)
         #if we have an initialiser
@@ -113,6 +113,7 @@ class SkiyliaInstance(SkiyliaCallable):
     def __init__(self, thisclass):
         #store the class that this instance is attatched to
         self.thisclass = thisclass
+        self.classtype = type(thisclass)
         #the string that will be printed
         self.string = "_skiyliaClass.{}_instance".format(thisclass.name)
         #and the internal fields dictionary
@@ -126,7 +127,7 @@ class SkiyliaInstance(SkiyliaCallable):
             return self.fields[name.lexeme]
         #if the name is not, it may be a class method
         method = self.thisclass.findMethod(name.lexeme)
-        #if it is
+        #if it is a method instead
         if method:
             #return that
             return method.bind(self)

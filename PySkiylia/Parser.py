@@ -553,7 +553,7 @@ class Parser:
         elif self.match("Null"):
             return Literal(None)
         #check if a number or string
-        elif self.match("Float", "Integer", "String"):
+        elif self.match("Number", "String"):
             return Literal(self.previous().literal)
         #check if we have a "self"
         elif self.match("Self"):

@@ -8,7 +8,7 @@ tokens = [#single character tokens
             "Greater", "EGreater", "Less", "ELess", "Question", "QColon", "QQuestion",
             "Star", "StStar", "Minus", "MMinus", "Plus", "PPlus",
             #Literal tokens
-            "String", "Integer", "Float", "Identifier",
+            "String", "Number", "Identifier",
             #keyword tokens
             "Class", "Def", "Do", "Elif", "Else", "False", "For", "If", "Null", "Return", "Self", "Super", "True", "Var", "Where", "While",
             #miscellaneous

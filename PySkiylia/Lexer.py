@@ -6,7 +6,7 @@ import Tokens
 #create the Lexer class
 class Lexer:
     #the function to run at initialisation
-    def __init__(self, skiylia, source):
+    def __init__(self, skiylia, source, fetchprimitives=True):
         #return a method for accessing the skiylia class
         self.skiylia = skiylia
         #initialise the Lexer
@@ -16,8 +16,9 @@ class Lexer:
         #start at first character
         self.line = self.char = 1
         #start empty primitives
-        self.primitives = []
-        self.fetchprimitives()
+        if fetchprimitives:
+            self.primitives = []
+            self.fetchprimitives()
 
     #create tokens for primitives, so we do not have to search for a call
     def fetchprimitives(self):

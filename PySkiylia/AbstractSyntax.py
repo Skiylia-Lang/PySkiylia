@@ -109,8 +109,9 @@ class If(Stmt):
 		self.elseBranch = elseBranch
 
 class Import(Stmt):
-	def __init__(self, name):
+	def __init__(self, name,body):
 		self.name = name
+		self.body = body
 
 class Interupt(Stmt):
 	def __init__(self, keyword,cont=False):

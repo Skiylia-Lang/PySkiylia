@@ -51,6 +51,14 @@ class skiyliaclock(SkiyliaCallable):
     def call(self, interpreter, arguments, token):
         return time.time()
 
+#user input
+class skiyliainput(SkiyliaCallable):
+    string = "primitive function"
+    arity = "0,*"
+    callname = "input"
+    def call(self, interpreter, arguments, token):
+        return input(*map(stringify, arguments))
+
 #sqrt
 class skiyliasqrt(SkiyliaCallable):
     string = "primitive function"

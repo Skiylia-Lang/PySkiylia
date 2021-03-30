@@ -152,11 +152,13 @@ class Resolver(Evaluator):
         #declare the module name
         self.declare(stmt.name)
         self.define(stmt.name)
-        #create a new scope
+        #create a scope for the module
         self.beginScope()
-        #resolve the contents of the block
-        self.resolve(stmt.body)
-        #finalise the scope
+        #fetch all of the module methods
+        for method in stmt.methods:
+            #and resolve them
+            self.resolveFunction(method, "Module Function")
+        #end the scope
         self.endScope()
         #return none
         return None

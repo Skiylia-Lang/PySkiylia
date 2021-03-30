@@ -16,7 +16,7 @@ class Parser:
     #use this test test if we are in a loop
     loopdepth=0
     #initialise
-    def __init__(self, skiylia, tokens=[], primitives=[], workingdir=""):
+    def __init__(self, skiylia, tokens=[], primitives=[], workingdir="", imported=[]):
         #return a method for accessing the skiylia class
         self.skiylia = skiylia
         #set our parser position to zero
@@ -31,6 +31,8 @@ class Parser:
         self.blockStart = ["Colon"]
         #define the current directory
         self.mydir = workingdir
+        #and define a list of imported modules
+        self.imported = imported
 
     #define a way of starting up the parser
     def parse(self):
@@ -128,11 +130,25 @@ class Parser:
         #consume the final end token
         self.consume("Unbounded import declaration.", "End")
         fpath = "{}\{}.skiy".format(self.mydir, module.lexeme)
-        print(fpath)
         #check the module being imported exists
-        if os.path.isfile(fpath):
-            #import that module
-            print("Starting import")
+        if module.lexeme in self.imported:
+            print("Module already imported")
+            pass
+        elif os.path.isfile(fpath):
+            self.imported.append(module.lexeme)
+            #fetcht the contents of the other module
+            with open(fpath, "r") as f:
+                bytes = f.read()
+            #Pass the sourcecode to a new lexer
+            lexer = Lexer(self.skiylia, bytes, False)
+            #and scan the sourcecode for tokens
+            tokens = lexer.scanTokens()
+            #create a parser object
+            parser = Parser(self.skiylia, tokens, self.primitives, workingdir=self.mydir)
+            #and parse the sourcecode
+            source = parser.parse()
+            #create a module abstraction
+            return Import(module, source)
         else:
             #otherwise, throw an error
             raise SyntaxError([module, "Module with name '{}' cannot be found.".format(module.lexeme), "Import"])

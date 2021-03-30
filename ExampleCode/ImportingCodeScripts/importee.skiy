@@ -1,3 +1,10 @@
 //the file to be imported
 def hello():
   print("Hi there!")
+
+class test:
+  init():
+    print("This class import worked too")
+
+  trial():
+    print("Even class methods work!")

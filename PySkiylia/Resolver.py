@@ -155,9 +155,8 @@ class Resolver(Evaluator):
         #create a scope for the module
         self.beginScope()
         #fetch all of the module methods
-        for method in stmt.methods:
-            #and resolve them
-            self.resolveFunction(method, "Module Function")
+        for stmts in stmt.body:
+            self.evaluate(stmts)
         #end the scope
         self.endScope()
         #return none

@@ -108,6 +108,10 @@ class SkiyliaClass(SkiyliaCallable):
         #otherwise return none
         return None
 
+    def bind(self, instance):
+        #return a class reference
+        return SkiyliaClass(self.name, None, self.methods)
+
 #internal handling of modules
 class SkiyliaModule(SkiyliaCallable):
     #what to print
@@ -127,9 +131,6 @@ class SkiyliaModule(SkiyliaCallable):
         if name in self.methods:
             #if it is, return that
             return self.methods[name]
-        #otherwise check in our superclass if we have one
-        elif self.superclass:
-            return self.superclass.findMethod(name)
         #otherwise return none
         return None
 

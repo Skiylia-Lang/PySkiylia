@@ -148,7 +148,7 @@ class Parser:
             #and parse the sourcecode
             source = parser.parse()
             #fetch all of the top level functions
-            methods = [x for x in source if isinstance(x, Function)]
+            methods = [x for x in source if isinstance(x, Function) or isinstance(x, Class)]
             #create a module abstraction
             return Import(module, source, methods)
         else:

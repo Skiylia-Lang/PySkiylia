@@ -309,7 +309,7 @@ class Interpreter(misc, Evaluator):
         #and assign it the pointer created above
         self.environment.assign(stmt.name, thisclass)
         #and return none by default
-        return None
+        return thisclass
 
     #define the way of interpreting a conditional statement
     def ConditionalStmt(self, stmt):
@@ -373,7 +373,7 @@ class Interpreter(misc, Evaluator):
         #iterate through all the methods
         for method in stmt.methods:
             #create functions for each of the module methods
-            function = SkiyliaFunction(method, self.globals, method.name.lexeme=="init")
+            function = self.evaluate(method) #SkiyliaFunction(method, self.globals, method.name.lexeme=="init")
             #and set it within our methods dictionary
             methods[method.name.lexeme] = function
         #create a new module object

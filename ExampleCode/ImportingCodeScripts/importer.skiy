@@ -4,3 +4,11 @@ import importee
 importee.hello()
 
 //expected output: "Hi there"
+
+var imtest = importee.test()
+
+//"This class import worked too"
+
+imtest.trial()
+
+//"Even class methods work!"

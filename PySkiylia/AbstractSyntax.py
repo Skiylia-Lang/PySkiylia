@@ -108,6 +108,10 @@ class If(Stmt):
 		self.thenBranch = thenBranch
 		self.elseBranch = elseBranch
 
+class Import(Stmt):
+	def __init__(self, name):
+		self.name = name
+
 class Interupt(Stmt):
 	def __init__(self, keyword,cont=False):
 		self.keyword = keyword

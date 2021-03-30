@@ -95,6 +95,9 @@ class Skiylia:
     def runFile(self, fname):
         #check the path exists first
         if os.path.isfile(fname):
+            #set the working directory
+            self.workdir = os.path.split(fname)[0]
+            print(self.workdir)
             #open the file
             with open(fname, "r") as f:
                 #return the contents
@@ -119,7 +122,7 @@ class Skiylia:
             print(*["{} {},".format(token.type, token.indent) for token in tokens])
 
         #fetch the Parser class
-        parser = Parser(self, tokens, lexer.primitives)
+        parser = Parser(self, tokens, lexer.primitives, workingdir=self.workdir)
         #run the parser
         statements = parser.parse()
         #stop if we had an error
@@ -160,6 +163,8 @@ class Skiylia:
 if __name__ == "__main__":
     #startup the script, fetching any arguments passed
     skiylia = Skiylia(sys.argv[1:])
+    #set the working directory
+    skiylia.workdir = os.getcwd()
     #set the window title
     os.system("title PySkiylia {}{}".format(skiylia.version, skiylia.title))
     #start running the interpreter

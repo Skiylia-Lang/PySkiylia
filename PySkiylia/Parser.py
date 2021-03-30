@@ -1,9 +1,12 @@
  #!/usr/bin/env python
 """Generates usable code from our tokens"""
 #The gramar of Skiylia is encoded in the Parser Class
+#base python functions
+import os
 
 #import our code
 from AbstractSyntax import *
+from Lexer import Lexer
 import Tokens
 
 #define the parser class
@@ -13,7 +16,7 @@ class Parser:
     #use this test test if we are in a loop
     loopdepth=0
     #initialise
-    def __init__(self, skiylia, tokens=[], primitives=[]):
+    def __init__(self, skiylia, tokens=[], primitives=[], workingdir=""):
         #return a method for accessing the skiylia class
         self.skiylia = skiylia
         #set our parser position to zero
@@ -26,6 +29,8 @@ class Parser:
         self.primitives = primitives
         #define all of the tokens that can start a block (not a lot as of current)
         self.blockStart = ["Colon"]
+        #define the current directory
+        self.mydir = workingdir
 
     #define a way of starting up the parser
     def parse(self):
@@ -75,6 +80,9 @@ class Parser:
         #if an indentation follows something that isn't a block definer
         elif (self.checkindent() > 0) and (self.previous().type not in self.blockStart):
             raise SyntaxError([self.peek(), "Incorect indentation for statement", "Indentation"])
+        #check for a module import
+        elif self.match("Import"):
+            return self.importdeclaration()
         #if the next token is an if
         elif self.match("If"):
             #compute the if statement
@@ -112,6 +120,22 @@ class Parser:
             return callfunc
         #else return an expression statement
         return self.expressionstatement()
+
+    #define the import grammar
+    def importdeclaration(self):
+        #fetch the name of the module
+        module = self.consume("Expect module name after 'import'.", "Identifier")
+        #consume the final end token
+        self.consume("Unbounded import declaration.", "End")
+        fpath = "{}\{}.skiy".format(self.mydir, module.lexeme)
+        print(fpath)
+        #check the module being imported exists
+        if os.path.isfile(fpath):
+            #import that module
+            print("Starting import")
+        else:
+            #otherwise, throw an error
+            raise SyntaxError([module, "Module with name '{}' cannot be found.".format(module.lexeme), "Import"])
 
     #define the if statement grammar
     def ifstatement(self):

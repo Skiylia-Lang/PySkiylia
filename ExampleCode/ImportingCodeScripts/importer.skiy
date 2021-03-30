@@ -1,0 +1,6 @@
+//import code from another .skiy file, and run it
+import importee
+
+importee.hello()
+
+//expected output: "Hi there"

@@ -147,8 +147,10 @@ class Parser:
             parser = Parser(self.skiylia, tokens, self.primitives, workingdir=self.mydir)
             #and parse the sourcecode
             source = parser.parse()
+            #fetch all of the top level functions
+            methods = [x for x in source if isinstance(x, Function)]
             #create a module abstraction
-            return Import(module, source)
+            return Import(module, source, methods)
         else:
             #otherwise, throw an error
             raise SyntaxError([module, "Module with name '{}' cannot be found.".format(module.lexeme), "Import"])

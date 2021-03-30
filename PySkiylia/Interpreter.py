@@ -2,10 +2,10 @@
 """Executes code from Abstractions"""
 
 #import our code
-from AbstractSyntax import *
 from Environment import Environment
-from SkiyliaCallable import Return, Interupt, SkiyliaCallable, SkiyliaFunction, SkiyliaClass, SkiyliaInstance
 from ASTPrinter import Evaluator
+from SkiyliaCallable import *
+from AbstractSyntax import *
 import Primitives
 
 #A class that will hold miscellaneous help code
@@ -362,6 +362,27 @@ class Interpreter(misc, Evaluator):
         elif stmt.elseBranch:
             #execute it
             self.evaluate(stmt.elseBranch)
+        return None
+
+    #define a way of handling an imported module
+    def ImportStmt(self, stmt):
+        #define the module in the interpreter globals
+        self.globals.define(stmt.name.lexeme, None)
+        #define all of the accessible functions and classes in this module
+        methods = dict()
+        #iterate through all the methods
+        for method in stmt.methods:
+            #create functions for each of the module methods
+            function = SkiyliaFunction(method, self.globals, method.name.lexeme=="init")
+            #and set it within our methods dictionary
+            methods[method.name.lexeme] = function
+        #create a new module object
+        module = SkiyliaModule(stmt.name.lexeme, methods)
+        #and return the instantiated module
+        module = module.instance
+        #and assign this module to the environment
+        self.globals.assign(stmt.name, module)
+        #and return none
         return None
 
     #define a way of using an interup (continue/break)

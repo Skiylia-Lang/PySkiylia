@@ -1,9 +1,12 @@
  #!/usr/bin/env python
 """Generates usable code from our tokens"""
 #The gramar of Skiylia is encoded in the Parser Class
+#base python functions
+import os
 
 #import our code
 from AbstractSyntax import *
+from Lexer import Lexer
 import Tokens
 
 #define the parser class
@@ -13,7 +16,7 @@ class Parser:
     #use this test test if we are in a loop
     loopdepth=0
     #initialise
-    def __init__(self, skiylia, tokens=[], primitives=[]):
+    def __init__(self, skiylia, tokens=[], primitives=[], workingdir="", imported=[]):
         #return a method for accessing the skiylia class
         self.skiylia = skiylia
         #set our parser position to zero
@@ -26,6 +29,10 @@ class Parser:
         self.primitives = primitives
         #define all of the tokens that can start a block (not a lot as of current)
         self.blockStart = ["Colon"]
+        #define the current directory
+        self.mydir = workingdir
+        #and define a list of imported modules
+        self.imported = imported
 
     #define a way of starting up the parser
     def parse(self):
@@ -75,6 +82,9 @@ class Parser:
         #if an indentation follows something that isn't a block definer
         elif (self.checkindent() > 0) and (self.previous().type not in self.blockStart):
             raise SyntaxError([self.peek(), "Incorect indentation for statement", "Indentation"])
+        #check for a module import
+        elif self.match("Import"):
+            return self.importdeclaration()
         #if the next token is an if
         elif self.match("If"):
             #compute the if statement
@@ -112,6 +122,38 @@ class Parser:
             return callfunc
         #else return an expression statement
         return self.expressionstatement()
+
+    #define the import grammar
+    def importdeclaration(self):
+        #fetch the name of the module
+        module = self.consume("Expect module name after 'import'.", "Identifier")
+        #consume the final end token
+        self.consume("Unbounded import declaration.", "End")
+        fpath = "{}\{}.skiy".format(self.mydir, module.lexeme)
+        #check the module being imported exists
+        if module.lexeme in self.imported:
+            print("Module already imported")
+            pass
+        elif os.path.isfile(fpath):
+            self.imported.append(module.lexeme)
+            #fetcht the contents of the other module
+            with open(fpath, "r") as f:
+                bytes = f.read()
+            #Pass the sourcecode to a new lexer
+            lexer = Lexer(self.skiylia, bytes, False)
+            #and scan the sourcecode for tokens
+            tokens = lexer.scanTokens()
+            #create a parser object
+            parser = Parser(self.skiylia, tokens, self.primitives, workingdir=self.mydir)
+            #and parse the sourcecode
+            source = parser.parse()
+            #fetch all of the top level functions
+            methods = [x for x in source if isinstance(x, Function)]
+            #create a module abstraction
+            return Import(module, source, methods)
+        else:
+            #otherwise, throw an error
+            raise SyntaxError([module, "Module with name '{}' cannot be found.".format(module.lexeme), "Import"])
 
     #define the if statement grammar
     def ifstatement(self):

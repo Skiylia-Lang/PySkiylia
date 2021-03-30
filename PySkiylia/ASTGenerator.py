@@ -24,6 +24,7 @@ StmtDict = {"Block":"statements",
             "Expression":"expression",
             "Function": "name,params,body",
             "If":"condition,thenBranch,elseBranch",
+            "Import":"name,body,methods",
             "Interupt":"keyword,cont=False",
             "Var":"name,initial",
             "While":"condition,body,hasincrement=False"}

@@ -148,6 +148,21 @@ class Resolver(Evaluator):
             self.resolve(stmt.elseBranch)
         return None
 
+    def ImportStmt(self, stmt):
+        #declare the module name
+        self.declare(stmt.name)
+        self.define(stmt.name)
+        #create a scope for the module
+        self.beginScope()
+        #fetch all of the module methods
+        for method in stmt.methods:
+            #and resolve them
+            self.resolveFunction(method, "Module Function")
+        #end the scope
+        self.endScope()
+        #return none
+        return None
+
     def Interuptstmt(self, stmt):
         return None
 

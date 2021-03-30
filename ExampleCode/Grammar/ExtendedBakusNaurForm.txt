@@ -27,7 +27,9 @@
 
 program           > declaration* EOF
 
-declaration       > classdeclaration | functiondeclaration | vardeclaration | statement
+declaration       > importdeclaration | classdeclaration | functiondeclaration | vardeclaration | statement
+
+importdeclaration > "import" Identifier
 
 classdeclaration  > "class" Identifier ( "(" Idenitifer ")" )? {Block token} function*
 

@@ -108,6 +108,31 @@ class SkiyliaClass(SkiyliaCallable):
         #otherwise return none
         return None
 
+#internal handling of modules
+class SkiyliaModule(SkiyliaCallable):
+    #what to print
+    string = "skiylia module"
+    #initialiser
+    def __init__(self, name=None, methods=[]):
+        #assign our name, methods, and string
+        self.name = name
+        self.methods = methods
+        self.string = "_skiyliaModule.{}".format(name)
+        #create an instance, so we can call funtions
+        self.instance = SkiyliaInstance(self)
+
+    #lookig for internal methods yo
+    def findMethod(self, name):
+        #check if the name is one of our methods
+        if name in self.methods:
+            #if it is, return that
+            return self.methods[name]
+        #otherwise check in our superclass if we have one
+        elif self.superclass:
+            return self.superclass.findMethod(name)
+        #otherwise return none
+        return None
+
 #internal instance handling
 class SkiyliaInstance(SkiyliaCallable):
     def __init__(self, thisclass):
@@ -115,7 +140,7 @@ class SkiyliaInstance(SkiyliaCallable):
         self.thisclass = thisclass
         self.classtype = type(thisclass)
         #the string that will be printed
-        self.string = "_skiyliaClass.{}_instance".format(thisclass.name)
+        self.string = "{}.{}_instance".format(thisclass.string.split(".")[0], thisclass.name)
         #and the internal fields dictionary
         self.fields = dict()
 

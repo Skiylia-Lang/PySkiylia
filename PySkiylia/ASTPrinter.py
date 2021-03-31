@@ -95,7 +95,7 @@ class ASTPrinter(Evaluator):
         return self.toparenthesis(stmt.keyword.lexeme)
 
     def LiteralExpr(self, expr):
-        if expr.value == None:
+        if expr.value is None:
             return "null"
         return str(expr.value)
 

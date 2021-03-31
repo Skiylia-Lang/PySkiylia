@@ -43,12 +43,10 @@ class Resolver(Evaluator):
         self.resolve(expr.value)
         #and then resolve our name
         self.resolveLocal(expr, expr.name)
-        return None
 
     def BinaryExpr(self, expr):
         self.resolve(expr.left)
         self.resolve(expr.right)
-        return None
 
     #check through the contents of a block
     def BlockStmt(self, stmt):
@@ -58,14 +56,11 @@ class Resolver(Evaluator):
         self.resolve(stmt.statements)
         #finalise the scope
         self.endScope()
-        #return none
-        return None
 
     def CallExpr(self, expr):
         self.resolve(expr.callee)
         for arg in expr.arguments:
             self.resolve(arg)
-        return None
 
     def ClassStmt(self, stmt):
         #store a reference to the enclosing class
@@ -102,7 +97,6 @@ class Resolver(Evaluator):
             self.endScope()
         #return the class enclosure to what it was
         self.currentClass = enclosingClass
-        return None
 
     def ConditionalStmt(self, stmt):
         #resolve the condition
@@ -112,12 +106,10 @@ class Resolver(Evaluator):
             self.resolve(stmt.thenBranch)
         #and the else
         self.resolve(stmt.elseBranch)
-        return None
 
     def ExpressionStmt(self, stmt):
         #resolve the expression
         self.resolve(stmt.expression)
-        return None
 
     def FunctionStmt(self, stmt):
         #declare the function name
@@ -128,15 +120,12 @@ class Resolver(Evaluator):
         self.currentFunction = self.FunctionType["Function"]
         #and resolve the body of the function
         self.resolveFunction(stmt, self.currentFunction)
-        return None
 
     def GetExpr(self, expr):
         self.resolve(expr.object)
-        return None
 
     def GroupingExpr(self, expr):
         self.resolve(expr.expression)
-        return None
 
     def IfStmt(self, stmt):
         #resolve the condition
@@ -146,7 +135,6 @@ class Resolver(Evaluator):
         #and if it has an if
         if stmt.elseBranch:
             self.resolve(stmt.elseBranch)
-        return None
 
     def ImportStmt(self, stmt):
         #declare the module name
@@ -159,19 +147,16 @@ class Resolver(Evaluator):
             self.evaluate(stmts)
         #end the scope
         self.endScope()
-        #return none
-        return None
 
     def Interuptstmt(self, stmt):
-        return None
+        pass
 
     def LiteralExpr(self, expr):
-        return None
+        pass
 
     def LogicalExpr(self, expr):
         self.resolve(expr.left)
         self.resolve(expr.right)
-        return None
 
     def ReturnStmt(self, stmt):
         #if we aren't in a function
@@ -182,7 +167,6 @@ class Resolver(Evaluator):
         if stmt.value:
             #return that
             self.resolve(stmt.value)
-        return None
 
     def SelfExpr(self, expr):
         #ensure we are in a class first
@@ -190,14 +174,12 @@ class Resolver(Evaluator):
             self.error(expr.keyword, "Can't use 'self' outside of a class")
         #return the value
         self.resolveLocal(expr, expr.keyword)
-        return None
 
     def SetExpr(self, expr):
         #resolve the value for the set
         self.resolve(expr.value)
         #and resolve the property it is refering to
         self.resolve(expr.object)
-        return None
 
     def SuperExpr(self, expr):
         if self.currentClass == self.ClassType["None"]:
@@ -205,11 +187,9 @@ class Resolver(Evaluator):
         elif self.currentClass == self.ClassType["Class"]:
             self.error(expr.keyword, "Can't use 'super' within a class with no superclass.")
         self.resolveLocal(expr, expr.keyword)
-        return None
 
     def UnaryExpr(self, expr):
         self.resolve(expr.right)
-        return None
 
     #calling variables
     def VarExpr(self, expr):
@@ -219,7 +199,6 @@ class Resolver(Evaluator):
             self.error(expr.name, "Can't read local variable in its own initialiser")
         #otherwise resolve the local variables
         self.resolveLocal(expr, expr.name)
-        return None
 
     #declare variables?
     def VarStmt(self, stmt):
@@ -231,12 +210,10 @@ class Resolver(Evaluator):
             self.resolve(stmt.initial)
         #define the variable
         self.define(stmt.name)
-        return None
 
     def WhileStmt(self, stmt):
         self.resolve(stmt.condition)
         self.resolve(stmt.body)
-        return None
 
     #create a local scope
     def beginScope(self):

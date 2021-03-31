@@ -133,7 +133,6 @@ class Parser:
         #check the module being imported exists
         if module.lexeme in self.imported:
             print("Module already imported")
-            pass
         elif os.path.isfile(fpath):
             self.imported.append(module.lexeme)
             #fetcht the contents of the other module
@@ -148,7 +147,7 @@ class Parser:
             #and parse the sourcecode
             source = parser.parse()
             #fetch all of the top level functions
-            methods = [x for x in source if isinstance(x, Function) or isinstance(x, Class)]
+            methods = [x for x in source if isinstance(x, (Function, Class))]
             #create a module abstraction
             return Import(module, source, methods)
         else:
@@ -232,7 +231,7 @@ class Parser:
             #if none supplied, assume true
             condition = Literal(True)
         #construct the while loop from the conditional and body
-        body = While(condition, body, increment!=None)
+        body = While(condition, body, increment is not None)
 
         #as we require an initialiser, wrap it into the body code
         body = Block([initialiser, body])
@@ -324,7 +323,7 @@ class Parser:
         #and ensure there is nothing after it
         self.consume("Expressions cannot follow '{}'.".format(keyword.lexeme),"End")
         #check that the code is then deindented
-        if not self.checkindent(keyword.indent)<0:
+        if self.checkindent(keyword.indent)>=0:
             raise SyntaxError([self.peek(), "Incorect indentation for return statement", "Indentation"])
         #create and return the abstraction
         return Interupt(keyword, keyword.type=="Continue")
@@ -341,7 +340,7 @@ class Parser:
         #make sure there is an ending attatched to the return
         self.consume("Unbounded return statement.", "End")
         #check that the code is then deindented
-        if not self.checkindent(keyword.indent)<0:
+        if self.checkindent(keyword.indent)>=0:
             raise SyntaxError([self.peek(), "Incorect indentation for return statement", "Indentation"])
         #return the return... interesting
         return Return(keyword, value)
@@ -423,20 +422,20 @@ class Parser:
             #check for grammar
             self.consume("Expect ':' after ternary operator", "Colon")
             #and set the type to ternary
-            type = "T"
+            tertype = "T"
         #or the start of an elvis
         elif self.match("QColon"):
-            type, thenBranch = "E", 0
+            tertype, thenBranch = "E", 0
         #or the start of a null coalescence
         elif self.match("QQuestion"):
-            type, thenBranch = "N", 0
+            tertype, thenBranch = "N", 0
         #if nothing, return the expr
         else:
             return expr
         #all conditionals have an else, so fetch it
         elseBranch = self.conditional()
         #and fincally construct the conditional
-        return Conditional(expr, thenBranch, elseBranch, type)
+        return Conditional(expr, thenBranch, elseBranch, tertype)
 
     #define the asignment gramar
     def assignment(self):
@@ -565,9 +564,9 @@ class Parser:
         #fetch the final parenthesis
         paren = self.consume("Expect ')' after arguments.", "RightParenthesis")
         #can't have a colon after a call
-        '''if self.check("Colon") and self.checkNext("End"):
-            self.advance()
-            raise SyntaxError(self.error(self.previous(), "':' cannot follow function calls."))'''
+        #if self.check("Colon") and self.checkNext("End"):
+        #    self.advance()
+        #    raise SyntaxError(self.error(self.previous(), "':' cannot follow function calls."))'''
         #return the function call
         return Call(callee, paren, arguments)
 
@@ -660,9 +659,9 @@ class Parser:
         self.tokens.insert(self.current, var)
 
     #define a way of checking if a token is found, and consuming it
-    def consume(self, errorMessage, *type):
+    def consume(self, errorMessage, *tokentypes):
         #if it's the token we want, return it
-        if self.check(*type):
+        if self.check(*tokentypes):
             return self.advance()
         #else show an error
         raise RuntimeError(self.error(self.peek(), errorMessage))
@@ -671,9 +670,9 @@ class Parser:
     #define a way of checking if the current token is any of the supplied types
     def match(self, *args):
         #loop through all types given to the function
-        for type in args:
+        for tokentype in args:
             #check if the type matches
-            if self.check(type):
+            if self.check(tokentype):
                 #advance and return true if it does
                 self.advance()
                 return True

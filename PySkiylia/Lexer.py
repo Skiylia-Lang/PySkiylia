@@ -167,8 +167,6 @@ class Lexer:
             #Two spaces are equivalent to and indent <- TEMPORARILY MIND YOU
             if self.match(" "):
                 self.indent +=1
-            #skip whitespace
-            pass
         elif c == '"':
             #if we have a string identifier
             return self.findString()
@@ -310,12 +308,12 @@ class Lexer:
         return self.tokens[-1]
 
     #return if the previous token was of an appropriate type
-    def checkPreviousToken(self, type):
+    def checkPreviousToken(self, tokentype):
         #if we don't have any tokens, this is false
         if len(self.tokens)==0:
             return False
         #if we don't have any tokens, this is false
-        return self.previousToken().type == type
+        return self.previousToken().type == tokentype
 
     #advance through the source code and return the character
     def advance(self, chars=1):

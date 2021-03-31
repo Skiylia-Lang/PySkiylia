@@ -95,8 +95,8 @@ class SkiyliaArray(SkiyliaCallable):
                 except:
                     #or show them an error if it wasn't valid
                     raise SyntaxError([name, "Invalid index '{}' for array.".format(arguments[0])])
-                    #return the list if no error was raised
-                    return self.list
+                #return the list if no error was raised
+                return self.list
             #overwrite the call function with our new array one
             a.call = getcall
             #and return the callable
@@ -167,8 +167,8 @@ class SkiyliaArray(SkiyliaCallable):
                 except:
                     #or show them an error if it wasn't valid
                     raise SyntaxError([name, "Invalid index '{}' for array.".format(arguments[0])])
-                    #return the list if no error was raised
-                    return self.list
+                #return the list if no error was raised
+                return self.list
             #overwrite the call function with our new array one
             a.call = setcall
             #and return the callable
@@ -197,7 +197,7 @@ class SkiyliaFunction(SkiyliaCallable):
             interpreter.executeBlock(self.declaration.body.statements, self.environment)
         except Return as ret:
             #check if we are an init function, with a blank return
-            if self.isinit and (ret.message == None):
+            if self.isinit and (ret.message is None):
                 #return a reference to the class
                 return self.closure.getAt(0, "self")
             #if we had a return, return the contents

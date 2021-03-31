@@ -191,17 +191,27 @@ class Parser:
         #fetch the increment variable
         if self.match("Var"):
             #if we see an explicit variable declaration, do that
-            initialiser = self.varDeclaration("Where", "Do", "Colon")
+            initialiser = self.varDeclaration("Where", "When", "Do", "Colon")
             #as we consumed the last token, back up one
             self.current -=1
         else:
-            #else assume it's an expression
-            initialiser = self.expressionstatement()
+            try:
+                #store the state of the parser location before trying
+                loc = self.current
+                #try to assume it's an expression
+                initialiser = self.expressionstatement(True)
+            except:
+                #and reset back to there if we had an exception
+                self.current = loc
+                #otherwise it might be an implicit variable declaration I guess
+                initialiser = self.varDeclaration("Where", "When", "Do", "Colon")
+                #as we consumed the last token, back up one
+                self.current -=1
 
         #condition
         condition = None
         #check it has not been ommited
-        if self.match("Where"):
+        if self.match("Where", "When"):
             #fetch the conditional
             condition = self.expression()
 
@@ -380,11 +390,11 @@ class Parser:
         return While(condition, body)
 
     #define the expression statement grammar
-    def expressionstatement(self):
+    def expressionstatement(self, silentError=False):
         #fetch the expression
         expr = self.expression()
         #consume the end token
-        self.consume("Unbounded expression.", "End")
+        self.consume("Unbounded expression.", "End", silentError=silentError)
         #return the abstraction
         return Expression(expr)
 
@@ -659,11 +669,13 @@ class Parser:
         self.tokens.insert(self.current, var)
 
     #define a way of checking if a token is found, and consuming it
-    def consume(self, errorMessage, *tokentypes):
+    def consume(self, errorMessage, *tokentypes, silentError=False):
         #if it's the token we want, return it
         if self.check(*tokentypes):
             return self.advance()
         #else show an error
+        if silentError:
+            raise
         raise RuntimeError(self.error(self.peek(), errorMessage))
         #could include a raise here instead I guess?
 

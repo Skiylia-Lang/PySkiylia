@@ -56,7 +56,7 @@ class misc:
         if isinstance(obj, bool):
             return obj
         #if the object is the number zero
-        if obj is 0:
+        if obj == 0:
             return False
         #everything else is true
         return True

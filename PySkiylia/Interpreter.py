@@ -16,7 +16,7 @@ class misc:
         #loop through all provided arguments
         for operand in args:
             #if it is a float or int
-            if isinstance(operand, float) or isinstance(operand, int):
+            if isinstance(operand, (float, int)):
                 #jump to the next value
                 continue
             #if it's a string
@@ -27,7 +27,7 @@ class misc:
                     #if no errors, jump to the next value
                     continue
                 except:
-                    pass
+                    raise RuntimeError([operator,"'{}' not valid for '{}' operator, requires a number.".format(operand, operator.lexeme)])
             #if we get to here, throw an error
             raise RuntimeError([operator,"'{}' not valid for '{}' operator, requires a number.".format(operand, operator.lexeme)])
 
@@ -50,26 +50,24 @@ class misc:
     #define a way of checking if something is truthy
     def isTruthy(self, obj):
         #If the object is none, false
-        if obj == None:
+        if obj is None:
             return False
         #if the object is boolean, return that
         if isinstance(obj, bool):
             return obj
         #if the object is the number zero
-        if obj == 0:
+        if obj is 0:
             return False
         #everything else is true
         return True
 
     #define a way of checking if two values are equal
     def isEqual(self, a, b):
-        #if they are both null, return true
-        if (a==None) and (b==None):
-            return True
-        #if only one is null, return false
-        if a==None:
-            return False
+        #if they are both null, return true, if only one is, return false
+        if (a is None):
+            return b is None
         try:
+            #check for equivalent valuation, if not equivalent typing
             return float(a) == float(b)
         except:
             #else return the python equality
@@ -242,14 +240,11 @@ class Interpreter(misc, Evaluator):
             #compute calculation if all went well
             return float(left) + float(right)
             #if neither triggered, this is probably wrong
-        #if we can't evaluate it at all, return None
-        return None
 
     #define the methods for dealing with block abstractions
     def BlockStmt(self, stmt):
         #execute the next block, passing in the statements and creating a new environment
         self.executeBlock(stmt.statements, Environment(self.environment))
-        return None
 
     #define a way of performing a call
     def CallExpr(self, expr):
@@ -318,11 +313,11 @@ class Interpreter(misc, Evaluator):
         #evaluate the conditional
         cond = self.evaluate(stmt.condition)
         #fetch the conditional type
-        type = stmt.type
+        contype = stmt.type
         #check if we have null and a null coalescence conditional
-        if (type=="N"):
+        if (contype=="N"):
             #unless conditional is explicitly null
-            if cond!=None:
+            if cond is not None:
                 #return it
                 return cond
             #otherwise, execute the else branch
@@ -330,7 +325,7 @@ class Interpreter(misc, Evaluator):
         #otherwise, evaluate the truthiness of the if condition
         elif self.isTruthy(cond):
             #if the conditional is ternary:
-            if type == "T":
+            if contype == "T":
                 #evaluate the 'then'
                 return self.evaluate(stmt.thenBranch)
             #otherwise, its an elvis, so just return the condition
@@ -342,8 +337,6 @@ class Interpreter(misc, Evaluator):
     def ExpressionStmt(self, stmt):
         #evaluate the expression
         self.evaluate(stmt.expression)
-        #and return none
-        return None
 
     #define the way of interpreting a function
     def FunctionStmt(self, stmt):
@@ -372,7 +365,6 @@ class Interpreter(misc, Evaluator):
             if stmt.elseBranch:
                 #execute it
                 self.evaluate(stmt.elseBranch)
-        return None
 
     #define a way of handling an imported module
     def ImportStmt(self, stmt):
@@ -392,8 +384,6 @@ class Interpreter(misc, Evaluator):
         module = module.instance
         #and assign this module to the environment
         self.globals.assign(stmt.name, module)
-        #and return none
-        return None
 
     #define a way of using an interup (continue/break)
     def Interuptstmt(self, stmt):
@@ -426,11 +416,11 @@ class Interpreter(misc, Evaluator):
 
     def GetExpr(self, expr):
         #fetch the object being refered to
-        object = self.evaluate(expr.object)
+        obj = self.evaluate(expr.object)
         #if the object is an instance
-        if isinstance(object, SkiyliaInstance):
+        if isinstance(obj, SkiyliaInstance):
             #return the properties of the ibject
-            return object.get(expr.name)
+            return obj.get(expr.name)
         #throw an error if not
         raise RuntimeError([expr.name, "Only instances have properties."])
 
@@ -456,14 +446,14 @@ class Interpreter(misc, Evaluator):
 
     def SetExpr(self, expr):
         #get the object this is refering to
-        object = self.evaluate(expr.object)
+        obj = self.evaluate(expr.object)
         #if the object is not a skiylia instance
-        if not isinstance(object, SkiyliaInstance):
+        if not isinstance(obj, SkiyliaInstance):
             raise RuntimeError([expr.name, "Only instances have fields."])
         #fetch the value that is to be set
         value = self.evaluate(expr.value)
         #and set the instance property
-        object.set(expr.name, value)
+        obj.set(expr.name, value)
         #and return the value that was set
         return value
 
@@ -504,15 +494,12 @@ class Interpreter(misc, Evaluator):
             #ensure the operator is a number we can increment
             self.checkNumber(expr.operator, right)
             #fetch the value of the operand
-            value = right
-            try:
-                #check if the operand is a variable
+            value = float(right)
+            #check if the operand is a variable
+            if isinstance(expr.right, Variable):
                 var = self.VarExpr(expr.right)
                 #and update it if it was
                 self.environment.assign(expr.right.name, value + 1)
-            except:
-                #don't do anything if it wasn't
-                pass
             #if the operator was in postfix
             if expr.postfix:
                 #return the original value
@@ -524,23 +511,18 @@ class Interpreter(misc, Evaluator):
             #ensure the operator is a number we can decrement
             self.checkNumber(expr.operator, right)
             #fetch the value of the operand
-            value = right
+            value = float(right)
             #check if the operand is a variable
-            try:
+            if isinstance(expr.right, Variable):
                 var = self.VarExpr(expr.right)
                 #and update it if it was
                 self.environment.assign(expr.right.name, value - 1)
-            except:
-                #don't do anything if it wasn't
-                pass
             #if the operator was in postfix
             if expr.postfix:
                 #return the original value
                 return value
             #otherwise return the value - 1
             return value - 1
-        ##if we couldn't get the value
-        return None
 
     #define the method of fetching a variables value
     def VarExpr(self, expr):
@@ -557,8 +539,6 @@ class Interpreter(misc, Evaluator):
             value = self.evaluate(stmt.initial)
         #store the variable in our environment
         self.environment.define(stmt.name.lexeme, value)
-        #and return none
-        return None
 
     #define how we handle the while abstraction
     def WhileStmt(self, stmt):
@@ -570,7 +550,7 @@ class Interpreter(misc, Evaluator):
             #if we got an interupt command
             except Interupt as e:
                 #if the intreuption is continue
-                if e.message==True:
+                if e.message is True:
                     #if the loop contains an incremental
                     if stmt.hasincrement:
                         #try to execute it (it will always be the last thing in the while block)
@@ -580,8 +560,6 @@ class Interpreter(misc, Evaluator):
                 else:
                     #otherwise, break
                     break
-        #and return none
-        return None
 
     #define a way of executing block code
     def executeBlock(self, statements, environment):
@@ -618,7 +596,7 @@ class Interpreter(misc, Evaluator):
         except:
             dist = None
         #if we have a dist
-        if dist != None:
+        if dist is not None:
             #then fetch from there
             return self.environment.getAt(dist, name.lexeme)
         #otherwise we have a global

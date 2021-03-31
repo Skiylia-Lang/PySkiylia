@@ -464,7 +464,7 @@ class Interpreter(misc, Evaluator):
         #and retrun the actual reference to it
         superclass = self.environment.getAt(dist, "super")
         #return the reference to the class calling it's super
-        object = self.environment.getAt(dist - 1, "self")
+        obj = self.environment.getAt(dist - 1, "self")
         #and get the method being called
         method = superclass.findMethod(expr.method.lexeme)
         #if the method doesn't exist
@@ -472,7 +472,7 @@ class Interpreter(misc, Evaluator):
             #throw an error
             raise RuntimeError([expr.method, "Undefined property '{}'.".format(expr.method.lexeme)])
         #return the method, bound to the child class
-        return method.bind(object)
+        return method.bind(obj)
 
     #define a way of unpacking a Unary
     def UnaryExpr(self, expr):

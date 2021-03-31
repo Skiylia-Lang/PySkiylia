@@ -84,7 +84,9 @@ class ASTPrinter(Evaluator):
     def IfStmt(self, stmt):
         if not stmt.elseBranch:
             return self.toparenthesis("if", stmt.condition, stmt.thenBranch)
-        return self.toparenthesis("if-else", stmt.condition, stmt.thenBranch, stmt.elseBranch)
+        if not stmt.elseifs:
+            return self.toparenthesis("if-else", stmt.condition, stmt.thenBranch, stmt.elseBranch)
+        return self.toparenthesis("if-elif-else", stmt.condition, stmt.thenBranch, *stmt.elseifs, stmt.elseBranch)
 
     def ImportStmt(self, stmt):
         return self.toparenthesis("import", stmt.name.lexeme)

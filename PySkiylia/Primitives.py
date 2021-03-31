@@ -2,10 +2,10 @@
 """Define primitive functions here"""
 
 #import python code
-import time, math
+import time, math, os
 
 #import our code
-from SkiyliaCallable import SkiyliaCallable
+from SkiyliaCallable import *
 
 #convert internal representation to user readible code
 def stringify(obj):
@@ -21,12 +21,15 @@ def stringify(obj):
         elif obj==False:
             return "false"
     #if it's a number
-    if isinstance(obj, float) or isinstance(obj, int):
+    elif isinstance(obj, float) or isinstance(obj, int):
         #if it's an integer, cast to integer first
         if isinstance(obj, int) or obj.is_integer():
             return str(int(obj))
         #else just return it
         return str(obj)
+    #cehck if we are trying to print an array
+    if isinstance(obj, SkiyliaInstance) and isinstance(obj.thisclass, SkiyliaArray):
+        return "Array({})".format(", ".join(map(stringify, obj.thisclass.list)))
     #return the string of the object
     return str(obj)
 
@@ -51,17 +54,43 @@ class skiyliaclock(SkiyliaCallable):
     def call(self, interpreter, arguments, token):
         return time.time()
 
-#sqrt
-class skiyliasqrt(SkiyliaCallable):
+#user input
+class skiyliainput(SkiyliaCallable):
     string = "primitive function"
-    arity=1
-    callname = "sqrt"
+    arity = "0,*"
+    callname = "input"
     def call(self, interpreter, arguments, token):
-        n = arguments[0]
-        try:
-            return math.sqrt(n)
-        except Exception as e:
-            raise RuntimeError([token, str(e), type(e).__name__])
+        return input(*map(stringify, arguments))
+
+#read a string from a file
+class skiyliafileread(SkiyliaCallable):
+    string = "primitive function"
+    arity = 1
+    callname = "readfile"
+    def call(self, interpreter, arguments, token):
+        fname = "{}\\{}".format(interpreter.mydir, arguments[0])
+        source=""
+        if os.path.isfile(fname):
+            with open(fname, "r") as f:
+                source = f.read()
+            return str(source)
+        else:
+            raise SyntaxError([token, "File with name '{}' cannot be found.".format(arguments[0]), "Import"])
+
+#read a string from a file
+class skiyliafilewrite(SkiyliaCallable):
+    string = "primitive function"
+    arity = 2
+    callname = "writefile"
+    def call(self, interpreter, arguments, token):
+        fname = "{}\\{}".format(interpreter.mydir, arguments[0])
+        type = "w"
+        source=""
+        if os.path.isfile(fname):
+            type = "a"
+        source = "\n".join(arguments[1:]).replace("\\n", "\n")+"\n"
+        with open(fname, type) as f:
+            f.write(source)
 
 #string conversion
 class skiyliastring(SkiyliaCallable):
@@ -117,6 +146,15 @@ class skiyliabool(SkiyliaCallable):
         except Exception as e:
             raise RuntimeError([token, str(e), type(e).__name__])
 
+#array handline
+class skiyliaarray(SkiyliaCallable):
+    string = "array object"
+    arity = "0,*"
+    callname = "Array"
+    def call(self, interpreter, arguments, token):
+        array = SkiyliaArray(*arguments)
+        return array.instance
+
 #absolute value return
 class skiyliaabsolute(SkiyliaCallable):
     string = "primitive function"
@@ -138,6 +176,18 @@ class skiyliapow(SkiyliaCallable):
         n, m = arguments
         try:
             return float(n) ** float(m)
+        except Exception as e:
+            raise RuntimeError([token, str(e), type(e).__name__])
+
+#sqrt
+class skiyliasqrt(SkiyliaCallable):
+    string = "primitive function"
+    arity=1
+    callname = "sqrt"
+    def call(self, interpreter, arguments, token):
+        n = arguments[0]
+        try:
+            return math.sqrt(n)
         except Exception as e:
             raise RuntimeError([token, str(e), type(e).__name__])
 

@@ -78,7 +78,7 @@ class misc:
 #define the Interpreter class
 class Interpreter(misc, Evaluator):
     ##initialise
-    def __init__(self, skiylia, arglimit):
+    def __init__(self, skiylia, arglimit, workingdir=""):
         #return a method for accessing the skiylia class
         self.skiylia = skiylia
         #track the current global environment scope
@@ -89,6 +89,8 @@ class Interpreter(misc, Evaluator):
         self.locals = dict()
         #define the maximum number of allowed arguments in a function call
         self.arglimit = arglimit
+        #define our current working directory
+        self.mydir = workingdir
         #define a way of skipping to the last part of a block
         self.skipToLast = False
         #and add our primitives to the global scope
@@ -358,10 +360,18 @@ class Interpreter(misc, Evaluator):
         if self.isTruthy(self.evaluate(stmt.condition)):
             #if true, execute
             self.evaluate(stmt.thenBranch)
-        #if false, and we have an else branch
-        elif stmt.elseBranch:
-            #execute it
-            self.evaluate(stmt.elseBranch)
+        #check all the elifbranches
+        for x in stmt.elseifs:
+            #if this elif
+            if self.isTruthy(self.evaluate(x[0])):
+                #evaluate and stop checking
+                self.evaluate(x[1])
+                break
+        #this else will only execute if the break never called
+        else:
+            if stmt.elseBranch:
+                #execute it
+                self.evaluate(stmt.elseBranch)
         return None
 
     #define a way of handling an imported module

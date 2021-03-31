@@ -136,7 +136,7 @@ class Skiylia:
             print()
 
         #initialise the interpreter
-        interpreter = Interpreter(self, parser.arglimit)
+        interpreter = Interpreter(self, parser.arglimit, self.workdir)
         #initialise the resolver
         resolver = Resolver(self, interpreter, parser.arglimit)
         #run the resolver on the parsed code

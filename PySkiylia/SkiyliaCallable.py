@@ -197,7 +197,7 @@ class SkiyliaFunction(SkiyliaCallable):
             interpreter.executeBlock(self.declaration.body.statements, self.environment)
         except Return as ret:
             #check if we are an init function, with a blank return
-            if self.isinit and (ret.message == None):
+            if self.isinit and (ret.message is None):
                 #return a reference to the class
                 return self.closure.getAt(0, "self")
             #if we had a return, return the contents

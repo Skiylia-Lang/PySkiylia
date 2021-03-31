@@ -30,6 +30,150 @@ class SkiyliaCallable:
         #we're given the interpreter state in case we need it's memory
         pass
 
+class SkiyliaArray(SkiyliaCallable):
+    arity = "0,*"
+    string = "Skiylia array"
+    callname = "Array"
+    def __init__(self, *elements):
+        self.name = "array"
+        self.list = list(elements)
+        self.instance = SkiyliaInstance(self)
+        self.instance.get = self.get
+
+    def get(self, name):
+        #if the user wants to get from a function
+        if name.lexeme == "get":
+            #construct a new callable
+            a = SkiyliaCallable()
+            #setup the base parameters
+            a.arity = 1
+            a.string = "Skiylia array function"
+            a.callname = "get"
+            #create it's call function
+            def getcall(interpreter, arguments, token=""):
+                try:
+                    #return the list index they asked for
+                    return self.list[int(arguments[0])]
+                except:
+                    #or show them an error if it wasn't valid
+                    raise SyntaxError([token, "Invalid index '{}' for array.".format(arguments[0])])
+            #overwrite the call function with our new array one
+            a.call = getcall
+            #and return the callable
+            return a
+        #if the user wants to pop from a function
+        elif name.lexeme == "pop":
+            #construct a new callable
+            a = SkiyliaCallable()
+            #setup the base parameters
+            a.arity = 0
+            a.string = "Skiylia array function"
+            a.callname = "pop"
+            #create it's call function
+            def getcall(interpreter, arguments, token=""):
+                #remove the last index and return it
+                return self.list.pop()
+            #overwrite the call function with our new array one
+            a.call = getcall
+            #and return the callable
+            return a
+        #if the user wants to remove from a function
+        elif name.lexeme == "remove":
+            #construct a new callable
+            a = SkiyliaCallable()
+            #setup the base parameters
+            a.arity = 1
+            a.string = "Skiylia array function"
+            a.callname = "remove"
+            #create it's call function
+            def getcall(interpreter, arguments, token=""):
+                try:
+                    #fetch the index
+                    idx = int(arguments[0])
+                    #if its within the array, then overwrite
+                    self.list.pop(idx)
+                except:
+                    #or show them an error if it wasn't valid
+                    raise SyntaxError([name, "Invalid index '{}' for array.".format(arguments[0])])
+                    #return the list if no error was raised
+                    return self.list
+            #overwrite the call function with our new array one
+            a.call = getcall
+            #and return the callable
+            return a
+        elif name.lexeme == "add":
+            #construct a new callable
+            a = SkiyliaCallable()
+            #setup the base parameters
+            a.arity = 1
+            a.string = "Skiylia array function"
+            a.callname = "add"
+            #create it's call function
+            def getcall(interpreter, arguments, token=""):
+                ##append their value to the list
+                self.list.append(arguments[0])
+                #and return the list
+                return self.list
+            #overwrite the call function with our new array one
+            a.call = getcall
+            #and return the callable
+            return a
+        #elseif the user wants to set at an index
+        elif name.lexeme == "set":
+            #construct a new callable
+            a = SkiyliaCallable()
+            #setup the base parameters
+            a.arity = 2
+            a.string = "Skiylia array function"
+            a.callname = "set"
+            #create it's call function
+            def setcall(interpreter, arguments, token=""):
+                try:
+                    #fetch the index
+                    idx = int(arguments[0])
+                    #if its within the array, then overwrite
+                    if idx < len(self.list):
+                        self.list[idx] = arguments[1]
+                    #if it's the length of the array, append
+                    elif idx == len(self.list):
+                        self.list.append(arguments[1])
+                    #if not, then throw an error
+                    else:
+                        raise SyntaxError([name, "Index '{}' outside of array.".format(arguments[0])])
+                    #return the list if no error was raised
+                    return self.list
+                except:
+                    #or show them an error if it wasn't valid
+                    raise SyntaxError([name, "Invalid index '{}' for array.".format(arguments[0])])
+            #overwrite the call function with our new array one
+            a.call = setcall
+            #and return the callable
+            return a
+        #elseif the user wants to insert at an index
+        elif name.lexeme == "insert":
+            #construct a new callable
+            a = SkiyliaCallable()
+            #setup the base parameters
+            a.arity = 2
+            a.string = "Skiylia array function"
+            a.callname = "insert"
+            #create it's call function
+            def setcall(interpreter, arguments, token=""):
+                try:
+                    #fetch the index
+                    idx = int(arguments[0])
+                    #if its within the array, then overwrite
+                    self.list.insert(idx, arguments[1])
+                except:
+                    #or show them an error if it wasn't valid
+                    raise SyntaxError([name, "Invalid index '{}' for array.".format(arguments[0])])
+                    #return the list if no error was raised
+                    return self.list
+            #overwrite the call function with our new array one
+            a.call = setcall
+            #and return the callable
+            return a
+
 #internal handling of functions
 class SkiyliaFunction(SkiyliaCallable):
     string = "Skiylia function"

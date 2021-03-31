@@ -103,9 +103,10 @@ class Function(Stmt):
 		self.body = body
 
 class If(Stmt):
-	def __init__(self, condition,thenBranch,elseBranch):
+	def __init__(self, condition,thenBranch,elseifs,elseBranch):
 		self.condition = condition
 		self.thenBranch = thenBranch
+		self.elseifs = elseifs
 		self.elseBranch = elseBranch
 
 class Import(Stmt):

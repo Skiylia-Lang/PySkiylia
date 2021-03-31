@@ -164,8 +164,16 @@ class Parser:
             raise RuntimeError(self.error(self.peek(), "Expect ':' after if condition"))
         #fetch the code to execute if the condition is true
         thenbranch = self.statement()
-        #set else to none by default
-        elsebranch = None
+        #set else and elifs to none by default
+        elsebranch, elifs = None, []
+        while self.check("Elif"):
+            self.advance()
+            elifcondition = self.expression()
+            #make sure we have semicolon grammar
+            if not self.check(*self.blockStart):
+                raise RuntimeError(self.error(self.peek(), "Expect ':' after if condition"))
+            elifbranch = self.statement()
+            elifs.append([elifcondition, elifbranch])
         #if there is an else
         if self.match("Else"):
             #WILL NEED TO ADD Indentation code to check else probably
@@ -175,7 +183,7 @@ class Parser:
             #and return the else statement
             elsebranch = self.statement()
         #return the abstracted If statement
-        return If(condition, thenbranch, elsebranch)
+        return If(condition, thenbranch, elifs, elsebranch)
 
     #define the for loop grammar
     def forstatement(self):

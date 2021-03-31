@@ -1,0 +1,7 @@
+//check that elif works
+
+var a = 3
+
+if a < 3: print("a greater than 3")
+elif a==3: print("a equal to 3")
+else: print("a less than 3")

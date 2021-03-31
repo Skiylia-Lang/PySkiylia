@@ -5,7 +5,7 @@
 import time, math
 
 #import our code
-from SkiyliaCallable import SkiyliaCallable
+from SkiyliaCallable import *
 
 #convert internal representation to user readible code
 def stringify(obj):
@@ -21,12 +21,15 @@ def stringify(obj):
         elif obj==False:
             return "false"
     #if it's a number
-    if isinstance(obj, float) or isinstance(obj, int):
+    elif isinstance(obj, float) or isinstance(obj, int):
         #if it's an integer, cast to integer first
         if isinstance(obj, int) or obj.is_integer():
             return str(int(obj))
         #else just return it
         return str(obj)
+    #cehck if we are trying to print an array
+    if isinstance(obj, SkiyliaInstance) and isinstance(obj.thisclass, SkiyliaArray):
+        return list(map(stringify, obj.thisclass.list))
     #return the string of the object
     return str(obj)
 
@@ -124,6 +127,15 @@ class skiyliabool(SkiyliaCallable):
             return bool(n)
         except Exception as e:
             raise RuntimeError([token, str(e), type(e).__name__])
+
+#array handline
+class skiyliaarray(SkiyliaCallable):
+    string = "array object"
+    arity = "0,*"
+    callname = "Array"
+    def call(self, interpreter, arguments, token):
+        array = SkiyliaArray(*arguments)
+        return array.instance
 
 #absolute value return
 class skiyliaabsolute(SkiyliaCallable):

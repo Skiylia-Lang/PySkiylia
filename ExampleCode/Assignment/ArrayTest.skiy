@@ -1,0 +1,9 @@
+//trialing some array grammar
+
+var a = Array("hi there", "this is a test")
+
+print(a.get(0))
+
+a.set(2, "this worked")
+
+print(a)

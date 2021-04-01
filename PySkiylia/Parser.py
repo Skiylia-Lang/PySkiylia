@@ -137,9 +137,9 @@ class Parser:
             self.imported.append(module.lexeme)
             #fetcht the contents of the other module
             with open(fpath, "r") as f:
-                bytes = f.read()
+                source = f.read()
             #Pass the sourcecode to a new lexer
-            lexer = Lexer(self.skiylia, bytes, False)
+            lexer = Lexer(self.skiylia, source, False)
             #and scan the sourcecode for tokens
             tokens = lexer.scanTokens()
             #create a parser object

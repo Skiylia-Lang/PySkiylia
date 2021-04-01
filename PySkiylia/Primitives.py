@@ -10,18 +10,18 @@ from SkiyliaCallable import *
 #convert internal representation to user readible code
 def stringify(obj):
     #if none, show null
-    if obj==None:
+    if obj is None:
         return "null"
     #if the object is boolean
     elif isinstance(obj, bool):
         #if the object is true
-        if obj==True:
+        if obj is True:
             return "true"
         #else the object is false
-        elif obj==False:
+        elif obj is False:
             return "false"
     #if it's a number
-    elif isinstance(obj, float) or isinstance(obj, int):
+elif isinstance(obj, (float, int)):
         #if it's an integer, cast to integer first
         if isinstance(obj, int) or obj.is_integer():
             return str(int(obj))
@@ -43,7 +43,6 @@ class skiyliaprint(SkiyliaCallable):
     #overwrite the call
     def call(self, interpreter, arguments, token):
         print(*map(stringify, arguments))
-        return None
 
 #clock
 class skiyliaclock(SkiyliaCallable):

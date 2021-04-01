@@ -194,7 +194,7 @@ class Resolver(Evaluator):
     #calling variables
     def VarExpr(self, expr):
         #check that the scope exists, and that the variable has been initialised
-        if bool(self.scopes) and (expr.name.lexeme in self.scopes[-1]) and (self.scopes[-1][expr.name.lexeme]==False):
+        if bool(self.scopes) and (expr.name.lexeme in self.scopes[-1]) and (self.scopes[-1][expr.name.lexeme] is False):
             #if it hasn't, and the scope exists, throw an error
             self.error(expr.name, "Can't read local variable in its own initialiser")
         #otherwise resolve the local variables

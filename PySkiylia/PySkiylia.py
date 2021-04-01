@@ -14,7 +14,7 @@ from ASTPrinter import ASTPrinter
 class Skiylia:
     #set the default values here
     haderror = False
-    version = "v0.7.1"
+    version = "v0.8.0"
     title = ""
     debug = False
     #run this at initialisation
@@ -101,9 +101,9 @@ class Skiylia:
             #open the file
             with open(fname, "r") as f:
                 #return the contents
-                bytes = f.read()
+                source = f.read()
             #and try to run the script
-            self.run(bytes)
+            self.run(source)
             #exit if we had an error
             if self.haderror:
                 sys.exit(1)

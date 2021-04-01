@@ -1,0 +1,6 @@
+//loop through the contents of an array object
+
+var a = array("one", "two", "three", "four", "five", "six")
+
+for x in a:
+  print(x)

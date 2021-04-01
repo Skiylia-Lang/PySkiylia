@@ -103,10 +103,17 @@ class Function(Stmt):
 		self.body = body
 
 class If(Stmt):
-	def __init__(self, condition,thenBranch,elseBranch):
+	def __init__(self, condition,thenBranch,elseifs,elseBranch):
 		self.condition = condition
 		self.thenBranch = thenBranch
+		self.elseifs = elseifs
 		self.elseBranch = elseBranch
+
+class Import(Stmt):
+	def __init__(self, name,body,methods):
+		self.name = name
+		self.body = body
+		self.methods = methods
 
 class Interupt(Stmt):
 	def __init__(self, keyword,cont=False):

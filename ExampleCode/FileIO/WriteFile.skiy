@@ -1,0 +1,5 @@
+///write to a file///
+
+var a = "this is a test \nthis is another test"
+
+writefile("test.skiy", a)

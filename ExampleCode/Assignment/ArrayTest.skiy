@@ -1,0 +1,32 @@
+//trialing some array grammar
+
+var a = Array("hi there", "this is a test")
+
+//add to the end of an array
+
+a.add("this worked")
+print(a)
+
+//remove from the end of an array
+
+a.pop()
+print(a)
+
+//insert at an index
+
+a.insert(1, "this worked again")
+print(a)
+
+//remove an Index
+
+a.remove(0)
+print(a)
+
+//get the value at an index
+
+print(a.get(0))
+
+//and overwrite the value at an index
+
+a.set(0, "hello world!")
+print(a)

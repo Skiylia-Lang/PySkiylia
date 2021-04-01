@@ -1,9 +1,12 @@
  #!/usr/bin/env python
 """Generates usable code from our tokens"""
 #The gramar of Skiylia is encoded in the Parser Class
+#base python functions
+import os
 
 #import our code
 from AbstractSyntax import *
+from Lexer import Lexer
 import Tokens
 
 #define the parser class
@@ -13,7 +16,7 @@ class Parser:
     #use this test test if we are in a loop
     loopdepth=0
     #initialise
-    def __init__(self, skiylia, tokens=[], primitives=[]):
+    def __init__(self, skiylia, tokens=[], primitives=[], workingdir="", imported=[]):
         #return a method for accessing the skiylia class
         self.skiylia = skiylia
         #set our parser position to zero
@@ -26,20 +29,24 @@ class Parser:
         self.primitives = primitives
         #define all of the tokens that can start a block (not a lot as of current)
         self.blockStart = ["Colon"]
+        #define the current directory
+        self.mydir = workingdir
+        #and define a list of imported modules
+        self.imported = imported
 
     #define a way of starting up the parser
     def parse(self):
         #start with an empty list
-        stmt = []
+        self.stmt = []
         #while we have more sourcecode to parse
         while not self.atEnd():
             #compile the nex statement and add to the list
-            stmt.append(self.declaration())
+            self.stmt.append(self.declaration())
         #trim any Null AST nodes
         #stmt = [x for x in stmt if x!=None]
         #return all the statements
         #print()
-        return stmt
+        return self.stmt
 
     #define the declaration grammar
     def declaration(self):
@@ -75,6 +82,9 @@ class Parser:
         #if an indentation follows something that isn't a block definer
         elif (self.checkindent() > 0) and (self.previous().type not in self.blockStart):
             raise SyntaxError([self.peek(), "Incorect indentation for statement", "Indentation"])
+        #check for a module import
+        elif self.match("Import"):
+            return self.importdeclaration()
         #if the next token is an if
         elif self.match("If"):
             #compute the if statement
@@ -113,6 +123,37 @@ class Parser:
         #else return an expression statement
         return self.expressionstatement()
 
+    #define the import grammar
+    def importdeclaration(self):
+        #fetch the name of the module
+        module = self.consume("Expect module name after 'import'.", "Identifier")
+        #consume the final end token
+        self.consume("Unbounded import declaration.", "End")
+        fpath = "{}\{}.skiy".format(self.mydir, module.lexeme)
+        #check the module being imported exists
+        if module.lexeme in self.imported:
+            print("Module already imported")
+        elif os.path.isfile(fpath):
+            self.imported.append(module.lexeme)
+            #fetcht the contents of the other module
+            with open(fpath, "r") as f:
+                source = f.read()
+            #Pass the sourcecode to a new lexer
+            lexer = Lexer(self.skiylia, source, False)
+            #and scan the sourcecode for tokens
+            tokens = lexer.scanTokens()
+            #create a parser object
+            parser = Parser(self.skiylia, tokens, self.primitives, workingdir=self.mydir)
+            #and parse the sourcecode
+            source = parser.parse()
+            #fetch all of the top level functions
+            methods = [x for x in source if isinstance(x, (Function, Class))]
+            #create a module abstraction
+            return Import(module, source, methods)
+        else:
+            #otherwise, throw an error
+            raise SyntaxError([module, "Module with name '{}' cannot be found.".format(module.lexeme), "Import"])
+
     #define the if statement grammar
     def ifstatement(self):
         #fetch the if conditional
@@ -122,8 +163,16 @@ class Parser:
             raise RuntimeError(self.error(self.peek(), "Expect ':' after if condition"))
         #fetch the code to execute if the condition is true
         thenbranch = self.statement()
-        #set else to none by default
-        elsebranch = None
+        #set else and elifs to none by default
+        elsebranch, elifs = None, []
+        while self.check("Elif"):
+            self.advance()
+            elifcondition = self.expression()
+            #make sure we have semicolon grammar
+            if not self.check(*self.blockStart):
+                raise RuntimeError(self.error(self.peek(), "Expect ':' after if condition"))
+            elifbranch = self.statement()
+            elifs.append([elifcondition, elifbranch])
         #if there is an else
         if self.match("Else"):
             #WILL NEED TO ADD Indentation code to check else probably
@@ -133,7 +182,7 @@ class Parser:
             #and return the else statement
             elsebranch = self.statement()
         #return the abstracted If statement
-        return If(condition, thenbranch, elsebranch)
+        return If(condition, thenbranch, elifs, elsebranch)
 
     #define the for loop grammar
     def forstatement(self):
@@ -142,28 +191,70 @@ class Parser:
         #fetch the increment variable
         if self.match("Var"):
             #if we see an explicit variable declaration, do that
-            initialiser = self.varDeclaration("Where", "Do", "Colon")
+            initialiser = self.varDeclaration("Where", "When", "Do", "In", "Colon")
             #as we consumed the last token, back up one
             self.current -=1
         else:
-            #else assume it's an expression
-            initialiser = self.expressionstatement()
+            try:
+                #store the state of the parser location before trying
+                loc = self.current
+                #try to assume it's an expression
+                initialiser = self.expressionstatement(True)
+            except:
+                #and reset back to there if we had an exception
+                self.current = loc
+                #otherwise it might be an implicit variable declaration I guess
+                initialiser = self.varDeclaration("Where", "When", "Do", "In", "Colon")
+                #as we consumed the last token, back up one
+                self.current -=1
 
-        #condition
-        condition = None
-        #check it has not been ommited
-        if self.match("Where"):
-            #fetch the conditional
+        #condition and increment defaults
+        condition = increment = None
+
+        #check if we have been given an itteration expression
+        if self.match("In"):
+            #fetch the itterable object
+            itt = self.expression().name
+            #construct an array index variable
+            self.tokens.insert(self.current, Tokens.Token("End", "", None, itt.line, itt.char, itt.indent))
+            self.tokens.insert(self.current, Tokens.Token("Identifier", "__idx__", None, itt.line, itt.char, itt.indent))
+            init = self.varDeclaration()
+            self.stmt.append(init)
+            #construct an index increment
+            self.constructincremental(init.name)
+            increment = self.expression()
+            #construct 'x < itterable.len()'
+            self.tokens.insert(self.current, Tokens.Token("RightParenthesis", ")", None, itt.line, itt.char, itt.indent))
+            self.tokens.insert(self.current, Tokens.Token("LeftParenthesis", "(", None, itt.line, itt.char, itt.indent))
+            self.tokens.insert(self.current, Tokens.Token("Identifier", "len", None, itt.line, itt.char, itt.indent))
+            self.tokens.insert(self.current, Tokens.Token("Dot", ".", None, itt.line, itt.char, itt.indent))
+            self.tokens.insert(self.current, itt)
+            self.tokens.insert(self.current, Tokens.Token("Less", "<", None, itt.line, itt.char, itt.indent))
+            self.tokens.insert(self.current, init.name)
+            # fetch the constructed condition
             condition = self.expression()
-
-        #increment operator
-        increment = None
-        #check it has not been ommited
-        if self.match("Do"):
-            increment = self.expression()
+            #and finally, construct the expression that sets the 'incremental' to each array value
+            self.tokens.insert(self.current+1, Tokens.Token("End", "", None, itt.line, itt.char, itt.indent + 1))
+            self.tokens.insert(self.current+1, Tokens.Token("RightParenthesis", ")", None, itt.line, itt.char, itt.indent + 1))
+            self.tokens.insert(self.current+1, init.name)
+            self.tokens.insert(self.current+1, Tokens.Token("LeftParenthesis", "(", None, itt.line, itt.char, itt.indent + 1))
+            self.tokens.insert(self.current+1, Tokens.Token("Identifier", "get", None, itt.line, itt.char, itt.indent + 1))
+            self.tokens.insert(self.current+1, Tokens.Token("Dot", ".", None, itt.line, itt.char, itt.indent + 1))
+            self.tokens.insert(self.current+1, itt)
+            self.tokens.insert(self.current+1, Tokens.Token("Equal", "=", None, itt.line, itt.char, itt.indent + 1))
+            self.tokens.insert(self.current+1, initialiser.name)
+        #otherwise, fetch the conditional / increment
         else:
-            self.constructincremental(initialiser.name)
-            increment = self.expression()
+            #check it has not been ommited
+            if self.match("Where", "When"):
+                #fetch the conditional
+                condition = self.expression()
+            #check it has not been ommited
+            if self.match("Do"):
+                increment = self.expression()
+            else:
+                self.constructincremental(initialiser.name)
+                increment = self.expression()
 
         #check for the colon grammar
         if not self.check(*self.blockStart):
@@ -182,7 +273,7 @@ class Parser:
             #if none supplied, assume true
             condition = Literal(True)
         #construct the while loop from the conditional and body
-        body = While(condition, body, increment!=None)
+        body = While(condition, body, increment is not None)
 
         #as we require an initialiser, wrap it into the body code
         body = Block([initialiser, body])
@@ -274,7 +365,7 @@ class Parser:
         #and ensure there is nothing after it
         self.consume("Expressions cannot follow '{}'.".format(keyword.lexeme),"End")
         #check that the code is then deindented
-        if not self.checkindent(keyword.indent)<0:
+        if self.checkindent(keyword.indent)>=0:
             raise SyntaxError([self.peek(), "Incorect indentation for return statement", "Indentation"])
         #create and return the abstraction
         return Interupt(keyword, keyword.type=="Continue")
@@ -291,7 +382,7 @@ class Parser:
         #make sure there is an ending attatched to the return
         self.consume("Unbounded return statement.", "End")
         #check that the code is then deindented
-        if not self.checkindent(keyword.indent)<0:
+        if self.checkindent(keyword.indent)>=0:
             raise SyntaxError([self.peek(), "Incorect indentation for return statement", "Indentation"])
         #return the return... interesting
         return Return(keyword, value)
@@ -331,11 +422,11 @@ class Parser:
         return While(condition, body)
 
     #define the expression statement grammar
-    def expressionstatement(self):
+    def expressionstatement(self, silentError=False):
         #fetch the expression
         expr = self.expression()
         #consume the end token
-        self.consume("Unbounded expression.", "End")
+        self.consume("Unbounded expression.", "End", silentError=silentError)
         #return the abstraction
         return Expression(expr)
 
@@ -373,20 +464,20 @@ class Parser:
             #check for grammar
             self.consume("Expect ':' after ternary operator", "Colon")
             #and set the type to ternary
-            type = "T"
+            tertype = "T"
         #or the start of an elvis
         elif self.match("QColon"):
-            type, thenBranch = "E", 0
+            tertype, thenBranch = "E", 0
         #or the start of a null coalescence
         elif self.match("QQuestion"):
-            type, thenBranch = "N", 0
+            tertype, thenBranch = "N", 0
         #if nothing, return the expr
         else:
             return expr
         #all conditionals have an else, so fetch it
         elseBranch = self.conditional()
         #and fincally construct the conditional
-        return Conditional(expr, thenBranch, elseBranch, type)
+        return Conditional(expr, thenBranch, elseBranch, tertype)
 
     #define the asignment gramar
     def assignment(self):
@@ -515,9 +606,9 @@ class Parser:
         #fetch the final parenthesis
         paren = self.consume("Expect ')' after arguments.", "RightParenthesis")
         #can't have a colon after a call
-        '''if self.check("Colon") and self.checkNext("End"):
-            self.advance()
-            raise SyntaxError(self.error(self.previous(), "':' cannot follow function calls."))'''
+        #if self.check("Colon") and self.checkNext("End"):
+        #    self.advance()
+        #    raise SyntaxError(self.error(self.previous(), "':' cannot follow function calls."))'''
         #return the function call
         return Call(callee, paren, arguments)
 
@@ -553,7 +644,7 @@ class Parser:
         elif self.match("Null"):
             return Literal(None)
         #check if a number or string
-        elif self.match("Float", "Integer", "String"):
+        elif self.match("Number", "String"):
             return Literal(self.previous().literal)
         #check if we have a "self"
         elif self.match("Self"):
@@ -610,20 +701,22 @@ class Parser:
         self.tokens.insert(self.current, var)
 
     #define a way of checking if a token is found, and consuming it
-    def consume(self, errorMessage, *type):
+    def consume(self, errorMessage, *tokentypes, silentError=False):
         #if it's the token we want, return it
-        if self.check(*type):
+        if self.check(*tokentypes):
             return self.advance()
         #else show an error
+        if silentError:
+            raise
         raise RuntimeError(self.error(self.peek(), errorMessage))
         #could include a raise here instead I guess?
 
     #define a way of checking if the current token is any of the supplied types
     def match(self, *args):
         #loop through all types given to the function
-        for type in args:
+        for tokentype in args:
             #check if the type matches
-            if self.check(type):
+            if self.check(tokentype):
                 #advance and return true if it does
                 self.advance()
                 return True

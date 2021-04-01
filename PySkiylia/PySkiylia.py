@@ -14,7 +14,7 @@ from ASTPrinter import ASTPrinter
 class Skiylia:
     #set the default values here
     haderror = False
-    version = "v0.7.1"
+    version = "v0.8.0"
     title = ""
     debug = False
     #run this at initialisation
@@ -95,12 +95,15 @@ class Skiylia:
     def runFile(self, fname):
         #check the path exists first
         if os.path.isfile(fname):
+            #set the working directory
+            self.workdir = os.path.split(fname)[0]
+            print(self.workdir)
             #open the file
             with open(fname, "r") as f:
                 #return the contents
-                bytes = f.read()
+                source = f.read()
             #and try to run the script
-            self.run(bytes)
+            self.run(source)
             #exit if we had an error
             if self.haderror:
                 sys.exit(1)
@@ -119,7 +122,7 @@ class Skiylia:
             print(*["{} {},".format(token.type, token.indent) for token in tokens])
 
         #fetch the Parser class
-        parser = Parser(self, tokens, lexer.primitives)
+        parser = Parser(self, tokens, lexer.primitives, workingdir=self.workdir)
         #run the parser
         statements = parser.parse()
         #stop if we had an error
@@ -133,7 +136,7 @@ class Skiylia:
             print()
 
         #initialise the interpreter
-        interpreter = Interpreter(self, parser.arglimit)
+        interpreter = Interpreter(self, parser.arglimit, self.workdir)
         #initialise the resolver
         resolver = Resolver(self, interpreter, parser.arglimit)
         #run the resolver on the parsed code
@@ -160,6 +163,8 @@ class Skiylia:
 if __name__ == "__main__":
     #startup the script, fetching any arguments passed
     skiylia = Skiylia(sys.argv[1:])
+    #set the working directory
+    skiylia.workdir = os.getcwd()
     #set the window title
     os.system("title PySkiylia {}{}".format(skiylia.version, skiylia.title))
     #start running the interpreter

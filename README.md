@@ -4,14 +4,15 @@ Dynamically typed Object Oriented Programming Language.
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
 ![GitHub](https://img.shields.io/github/license/Skiylia-Lang/PySkiylia)
+[![CodeFactor](https://www.codefactor.io/repository/github/skiylia-lang/pyskiylia/badge)](https://www.codefactor.io/repository/github/skiylia-lang/pyskiylia)
 ![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/Skiylia-Lang/PySkiylia)
 [![codecov](https://codecov.io/gh/Skiylia-Lang/PySkiylia/branch/main/graph/badge.svg?token=DRJ67ZQA7M)](https://codecov.io/gh/Skiylia-Lang/PySkiylia)
 [![time tracker](https://wakatime.com/badge/github/Skiylia-Lang/PySkiylia.svg)](https://wakatime.com/badge/github/Skiylia-Lang/PySkiylia)
+
 ![GitHub language count](https://img.shields.io/github/languages/count/Skiylia-Lang/PySkiylia)
 ![GitHub top language](https://img.shields.io/github/languages/top/Skiylia-Lang/PySkiylia)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Skiylia-Lang/PySkiylia)
-![Lines of code](https://img.shields.io/tokei/lines/github.com/Skiylia-Lang/PySkiylia)
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+![Lines of code](https://img.shields.io/tokei/lines/github.com/Skiylia-Lang/PySkiylia) <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat)](#contributors)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 

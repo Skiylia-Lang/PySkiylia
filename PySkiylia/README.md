@@ -5,6 +5,7 @@ Dynamically typed Object Oriented Program Language.
 
 ![GitHub](https://img.shields.io/github/license/Skiylia-Lang/PySkiylia)
 ![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/Skiylia-Lang/PySkiylia)
+[![CodeFactor](https://www.codefactor.io/repository/github/skiylia-lang/pyskiylia/badge)](https://www.codefactor.io/repository/github/skiylia-lang/pyskiylia)
 [![codecov](https://codecov.io/gh/Skiylia-Lang/PySkiylia/branch/main/graph/badge.svg?token=DRJ67ZQA7M)](https://codecov.io/gh/Skiylia-Lang/PySkiylia)
 [![time tracker](https://wakatime.com/badge/github/Skiylia-Lang/PySkiylia.svg?style=flat-square)](https://wakatime.com/badge/github/Skiylia-Lang/PySkiylia)
 

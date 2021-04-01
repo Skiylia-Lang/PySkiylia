@@ -1,7 +1,7 @@
 //An example of the absolute minimum required for a Skiylia pre-release
 
 //reserved words:
-true, false, null, var, and, or, xor, if, else, elif, while, for, do, Where, When, def, class, super, self, {primitives}
+true, false, null, var, and, or, xor, if, import, in, else, elif, while, for, do, Where, When, def, class, super, self, {primitives}
 
 //required symbols:
 '(', ')', ':', ',', '.', '-', '+', '*', '/', '>', '<', '=', '!', '?', '"', '&', '|',
@@ -103,6 +103,9 @@ while true:
 //for loop
 for (increment variable) ("where" | "when") (condition) "do" (increment operation):
   action-during-loop
+--or--
+for (increment variable) "in" array-like:
+  action-during-loop
 
 ie:
 for x (Where | When) x<=10:
@@ -120,6 +123,10 @@ for x in 10:
 for x do x=x+2:
   print(x)
 //basically a while loop with a defined increment and implicitly declared variable
+
+for x in Array(1, 2, 3, 4, 5):
+  print(x)
+//loops through the array-like, technically an implicit conditional and incremental
 
 //functions
 def thisFunc(a, b, c=""):
@@ -168,12 +175,22 @@ class Test:
     print(a - b)
 
 //Standard library
-print(thing-to-print)   //shows display to screen, can be any data-type or variable
 str(a) / string(a)      //explicitly converts a to a string
 int(a) / integer(a)     //explicitly converts a to an integer
 float(a)                //explicitly converts a to a float
 
+array(a, b, c)          //creates an array of these objects
+array.get(i)            //fetch the value at the index 'i'
+array.set(i, a)         //overwrite the value at index 'i' with 'a'
+array.insert(i, a)      //insert 'a' before whatever is at index 'i'
+array.remove(i)         //completely remove whatever is at index 'i'
+array.add(a)            //add 'a' to the end of the array
+array.pop()             //remove (and return) whatever is at the end of the array
+
+import a                //import all the classes and functions from 'a.skiy' in the same directory as the main script
+
 //primitives (Functions from the base language, rather than ones I wrote myself)
+print(thing-to-print)   //shows display to screen, can be any data-type or variable
 clock                   //returns the current utc time
 abs(a)                  //return the absolute value of a
 ceil(a)                 //returns a, rounded up

@@ -1,4 +1,4 @@
-//declare a variable implicity
+#declare a variable implicity
 a = 5
 
 b = "hello world"

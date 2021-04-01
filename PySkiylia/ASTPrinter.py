@@ -22,6 +22,7 @@ class Evaluator:
                      "Get": self.GetExpr,
                      "Grouping": self.GroupingExpr,
                      "If": self.IfStmt,
+                     "Import": self.ImportStmt,
                      "Interupt": self.Interuptstmt,
                      "Logical": self.LogicalExpr,
                      "Literal": self.LiteralExpr,
@@ -83,13 +84,18 @@ class ASTPrinter(Evaluator):
     def IfStmt(self, stmt):
         if not stmt.elseBranch:
             return self.toparenthesis("if", stmt.condition, stmt.thenBranch)
-        return self.toparenthesis("if-else", stmt.condition, stmt.thenBranch, stmt.elseBranch)
+        if not stmt.elseifs:
+            return self.toparenthesis("if-else", stmt.condition, stmt.thenBranch, stmt.elseBranch)
+        return self.toparenthesis("if-elif-else", stmt.condition, stmt.thenBranch, *stmt.elseifs, stmt.elseBranch)
+
+    def ImportStmt(self, stmt):
+        return self.toparenthesis("import", stmt.name.lexeme)
 
     def Interuptstmt(self, stmt):
         return self.toparenthesis(stmt.keyword.lexeme)
 
     def LiteralExpr(self, expr):
-        if expr.value == None:
+        if expr.value is None:
             return "null"
         return str(expr.value)
 

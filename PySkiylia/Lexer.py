@@ -6,7 +6,7 @@ import Tokens
 #create the Lexer class
 class Lexer:
     #the function to run at initialisation
-    def __init__(self, skiylia, source):
+    def __init__(self, skiylia, source, fetchprimitives=True):
         #return a method for accessing the skiylia class
         self.skiylia = skiylia
         #initialise the Lexer
@@ -16,8 +16,9 @@ class Lexer:
         #start at first character
         self.line = self.char = 1
         #start empty primitives
-        self.primitives = []
-        self.fetchprimitives()
+        if fetchprimitives:
+            self.primitives = []
+            self.fetchprimitives()
 
     #create tokens for primitives, so we do not have to search for a call
     def fetchprimitives(self):
@@ -166,8 +167,6 @@ class Lexer:
             #Two spaces are equivalent to and indent <- TEMPORARILY MIND YOU
             if self.match(" "):
                 self.indent +=1
-            #skip whitespace
-            pass
         elif c == '"':
             #if we have a string identifier
             return self.findString()
@@ -241,9 +240,8 @@ class Lexer:
             while self.isDigit(self.peek()):
                 #advance to the next character
                 self.advance()
-            return self.addToken("Float", float(self.source[self.start:self.current]))
         #create a numeric token and return.
-        return self.addToken("Integer", int(self.source[self.start:self.current]))
+        return self.addToken("Number", self.source[self.start:self.current])
 
     #define a way of checking if the value is a digit
     def isDigit(self, char):
@@ -310,12 +308,12 @@ class Lexer:
         return self.tokens[-1]
 
     #return if the previous token was of an appropriate type
-    def checkPreviousToken(self, type):
+    def checkPreviousToken(self, tokentype):
         #if we don't have any tokens, this is false
         if len(self.tokens)==0:
             return False
         #if we don't have any tokens, this is false
-        return self.previousToken().type == type
+        return self.previousToken().type == tokentype
 
     #advance through the source code and return the character
     def advance(self, chars=1):

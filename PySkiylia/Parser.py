@@ -37,16 +37,16 @@ class Parser:
     #define a way of starting up the parser
     def parse(self):
         #start with an empty list
-        stmt = []
+        self.stmt = []
         #while we have more sourcecode to parse
         while not self.atEnd():
             #compile the nex statement and add to the list
-            stmt.append(self.declaration())
+            self.stmt.append(self.declaration())
         #trim any Null AST nodes
         #stmt = [x for x in stmt if x!=None]
         #return all the statements
         #print()
-        return stmt
+        return self.stmt
 
     #define the declaration grammar
     def declaration(self):
@@ -191,7 +191,7 @@ class Parser:
         #fetch the increment variable
         if self.match("Var"):
             #if we see an explicit variable declaration, do that
-            initialiser = self.varDeclaration("Where", "When", "Do", "Colon")
+            initialiser = self.varDeclaration("Where", "When", "Do", "In", "Colon")
             #as we consumed the last token, back up one
             self.current -=1
         else:
@@ -204,25 +204,57 @@ class Parser:
                 #and reset back to there if we had an exception
                 self.current = loc
                 #otherwise it might be an implicit variable declaration I guess
-                initialiser = self.varDeclaration("Where", "When", "Do", "Colon")
+                initialiser = self.varDeclaration("Where", "When", "Do", "In", "Colon")
                 #as we consumed the last token, back up one
                 self.current -=1
 
-        #condition
-        condition = None
-        #check it has not been ommited
-        if self.match("Where", "When"):
-            #fetch the conditional
-            condition = self.expression()
+        #condition and increment defaults
+        condition = increment = None
 
-        #increment operator
-        increment = None
-        #check it has not been ommited
-        if self.match("Do"):
+        #check if we have been given an itteration expression
+        if self.match("In"):
+            #fetch the itterable object
+            itt = self.expression().name
+            #construct an array index variable
+            self.tokens.insert(self.current, Tokens.Token("End", "", None, itt.line, itt.char, itt.indent))
+            self.tokens.insert(self.current, Tokens.Token("Identifier", "__idx__", None, itt.line, itt.char, itt.indent))
+            init = self.varDeclaration()
+            self.stmt.append(init)
+            #construct an index increment
+            self.constructincremental(init.name)
             increment = self.expression()
+            #construct 'x < itterable.len()'
+            self.tokens.insert(self.current, Tokens.Token("RightParenthesis", ")", None, itt.line, itt.char, itt.indent))
+            self.tokens.insert(self.current, Tokens.Token("LeftParenthesis", "(", None, itt.line, itt.char, itt.indent))
+            self.tokens.insert(self.current, Tokens.Token("Identifier", "len", None, itt.line, itt.char, itt.indent))
+            self.tokens.insert(self.current, Tokens.Token("Dot", ".", None, itt.line, itt.char, itt.indent))
+            self.tokens.insert(self.current, itt)
+            self.tokens.insert(self.current, Tokens.Token("Less", "<", None, itt.line, itt.char, itt.indent))
+            self.tokens.insert(self.current, init.name)
+            # fetch the constructed condition
+            condition = self.expression()
+            #and finally, construct the expression that sets the 'incremental' to each array value
+            self.tokens.insert(self.current+1, Tokens.Token("End", "", None, itt.line, itt.char, itt.indent + 1))
+            self.tokens.insert(self.current+1, Tokens.Token("RightParenthesis", ")", None, itt.line, itt.char, itt.indent + 1))
+            self.tokens.insert(self.current+1, init.name)
+            self.tokens.insert(self.current+1, Tokens.Token("LeftParenthesis", "(", None, itt.line, itt.char, itt.indent + 1))
+            self.tokens.insert(self.current+1, Tokens.Token("Identifier", "get", None, itt.line, itt.char, itt.indent + 1))
+            self.tokens.insert(self.current+1, Tokens.Token("Dot", ".", None, itt.line, itt.char, itt.indent + 1))
+            self.tokens.insert(self.current+1, itt)
+            self.tokens.insert(self.current+1, Tokens.Token("Equal", "=", None, itt.line, itt.char, itt.indent + 1))
+            self.tokens.insert(self.current+1, initialiser.name)
+        #otherwise, fetch the conditional / increment
         else:
-            self.constructincremental(initialiser.name)
-            increment = self.expression()
+            #check it has not been ommited
+            if self.match("Where", "When"):
+                #fetch the conditional
+                condition = self.expression()
+            #check it has not been ommited
+            if self.match("Do"):
+                increment = self.expression()
+            else:
+                self.constructincremental(initialiser.name)
+                increment = self.expression()
 
         #check for the colon grammar
         if not self.check(*self.blockStart):

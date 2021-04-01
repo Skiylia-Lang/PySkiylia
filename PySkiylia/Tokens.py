@@ -9,14 +9,12 @@ tokens = [#single character tokens
             "Star", "StStar", "Minus", "MMinus", "Plus", "PPlus",
             #Literal tokens
             "String", "Number", "Identifier",
-            #keyword tokens
-            "Class", "Def", "Do", "Elif", "Else", "False", "For", "If", "Null", "Return", "Self", "Super", "True", "Var", "Where", "While",
             #miscellaneous
             "EOF", "End"]
 
 #a dictionary mapping keywords to their equivalent tokens
 keywords = {"and":"And", "break":"Break", "continue":"Continue", "class":"Class", "def":"Def", "do":"Do", "elif":"Elif", "else":"Else",
-            "false":"False", "for":"For", "if":"If", "import":"Import", "not":"Not", "null":"Null", "or":"Or",
+            "false":"False", "for":"For", "if":"If", "import":"Import", "in":"In", "not":"Not", "null":"Null", "or":"Or",
             "return":"Return", "self":"Self", "super":"Super", "true":"True", "var":"Var",
             "when":"Where", "where":"Where", "while":"While", "xor":"Xor",}
 

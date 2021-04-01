@@ -150,7 +150,7 @@ class skiyliabool(SkiyliaCallable):
 class skiyliaarray(SkiyliaCallable):
     string = "array object"
     arity = "0,*"
-    callname = "Array"
+    callname = "array"
     def call(self, interpreter, arguments, token):
         array = SkiyliaArray(*arguments)
         return array.instance

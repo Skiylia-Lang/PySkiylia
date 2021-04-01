@@ -48,6 +48,7 @@ block             > {Indent level increases} declaration {End token}+ {token wit
 exprstmt          > expression {End token}+
 
 forstmt           > "for" (vardeclaration | exprstmt) (("when" | "where") expression)? ("do" expression)? {Block token} statement
+                  | "for" (vardeclaration | exprstmt) "in" Identifier
 //allowed for loop types 1) for x:    2) for x when x<=10:    3) for x when x<10 do x=x+2:    4) for x do x=x+2:
 
 ifstmt            > "if" expression {Block token} statement ( ("elif" | "else if") expression {Block token} statement )* ("else" statement)?

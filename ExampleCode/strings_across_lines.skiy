@@ -1,4 +1,4 @@
-print("This string 
+print("This string
        has been written
-       across several
+         across several
        lines.")

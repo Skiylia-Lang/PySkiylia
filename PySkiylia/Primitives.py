@@ -21,7 +21,7 @@ def stringify(obj):
         elif obj is False:
             return "false"
     #if it's a number
-elif isinstance(obj, (float, int)):
+    elif isinstance(obj, (float, int)):
         #if it's an integer, cast to integer first
         if isinstance(obj, int) or obj.is_integer():
             return str(int(obj))

@@ -65,8 +65,6 @@ class SkiyliaArray(SkiyliaCallable):
             def newcall(interpreter, arguments, token=""):
                 #remove the last index and return it
                 return self.list.pop()
-            #overwrite the call function with our new array one
-            a.call = getcall
             #and return the callable
             return a
         #if the user wants to remove from a function

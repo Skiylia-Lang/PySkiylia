@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 print("This string
        has been written
          across several
+=======
+print("This string 
+       has been written
+       across several
+>>>>>>> 422242c (fix error with primitives)
        lines.")

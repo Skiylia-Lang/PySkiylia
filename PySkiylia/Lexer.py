@@ -211,7 +211,11 @@ class Lexer:
 
     #define a way of fetching a string from sourcecode
     def findString(self):
+<<<<<<< HEAD
         si = self.char
+=======
+        startIndent = self.char
+>>>>>>> 422242c (fix error with primitives)
         #keep going until we hit the end of the code, or the string terminator
         while not self.match('"', peek=True):
             #we support multi-line strings, so if we find a newline, increment the line counter
@@ -228,9 +232,13 @@ class Lexer:
         #fetch the contents of the string, removing the leading and trailing identifiers
         stringVal = self.source[self.start+1:self.current-1]
         #remove any whitespace that occured due to newlines
+<<<<<<< HEAD
         if "\n" in stringVal:
             sv = stringVal.split("\n")
             stringVal = " \n".join([sv[0]]+[x[si:] for x in sv[1:]])
+=======
+        stringVal = " \n".join([x.strip() for x in stringVal.split("\n")])
+>>>>>>> 422242c (fix error with primitives)
         #create the token and return it
         return self.addToken("String", stringVal)
 

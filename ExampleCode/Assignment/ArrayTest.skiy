@@ -31,8 +31,13 @@ print(a.get(0))
 a.set(0, "hello world!")
 print(a)
 
+<<<<<<< HEAD
 var b = array(1, 1, 2, 3, 5, 8)
 
 print(b.get(10))
 /// Expected output:
     5. ///
+=======
+print(a.get(0))
+print(a.get(-1))
+>>>>>>> 1bd8d2a (fix broken code in array methods)

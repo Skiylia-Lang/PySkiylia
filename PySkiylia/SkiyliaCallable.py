@@ -65,6 +65,11 @@ class SkiyliaArray(SkiyliaCallable):
             def newcall(interpreter, arguments, token=""):
                 #remove the last index and return it
                 return self.list.pop()
+<<<<<<< HEAD
+=======
+            #and return the callable
+            return a
+>>>>>>> 1bd8d2a (fix broken code in array methods)
         #if the user wants to remove from a function
         elif name.lexeme == "remove":
             #setup the base parameters

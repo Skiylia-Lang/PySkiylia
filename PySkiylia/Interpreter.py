@@ -272,7 +272,7 @@ class Interpreter(misc, Evaluator):
         #return and call the callable
         if expr.callee.name.lexeme in self.primitives:
             return callee.call(self, args, expr.callee.name)
-        return callee.call(self, args)
+        return callee.call(self, args, expr.callee.name)
 
     #define how our interpreter handles classes
     def ClassStmt(self, stmt):

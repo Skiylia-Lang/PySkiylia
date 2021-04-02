@@ -31,5 +31,8 @@ print(a.get(0))
 a.set(0, "hello world!")
 print(a)
 
-print(a.get(0))
-print(a.get(-1))
+var b = array(1, 1, 2, 3, 5, 8)
+
+print(b.get(10))
+/// Expected output:
+    5. ///

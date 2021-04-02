@@ -65,8 +65,6 @@ class SkiyliaArray(SkiyliaCallable):
             def newcall(interpreter, arguments, token=""):
                 #remove the last index and return it
                 return self.list.pop()
-            #and return the callable
-            return a
         #if the user wants to remove from a function
         elif name.lexeme == "remove":
             #setup the base parameters
@@ -77,12 +75,10 @@ class SkiyliaArray(SkiyliaCallable):
                     #fetch the index
                     idx = int(arguments[0])
                     #if its within the array, then overwrite
-                    self.list.pop(idx)
+                    return self.list.pop(idx)
                 except:
                     #or show them an error if it wasn't valid
                     raise SyntaxError([name, "Invalid index '{}' for array.".format(arguments[0])])
-                #return the list if no error was raised
-                return self.list
         elif name.lexeme == "add":
             #setup the base parameters
             a.arity = 1

@@ -451,12 +451,34 @@ class Parser:
     #define the expression grammar
     def expression(self):
         #return an asignment
-        return self.conditional()
+        return self.assignment()
+
+    #define the asignment gramar
+    def assignment(self):
+        #return the equality
+        expr = self.conditional()
+        #if there is an equals after the identifier
+        if self.match("Equal"):
+            #fetch the variable name
+            equals = self.previous()
+            #fetch it's value
+            value = self.assignment()
+            #if it is a Variable type
+            if isinstance(expr, Variable):
+                name = expr.name
+                #return the assignment
+                return Assign(name, value)
+            elif isinstance(expr, Get):
+                return Set(expr.object, expr.name, value)
+            #throw an error if not
+            self.skiylia.error([equals, "Invalid assignment target."])
+        #return the variable
+        return expr
 
     #define the conditional (ternary) operator
     def conditional(self):
         #fetch the first part
-        expr = self.assignment()
+        expr = self.logicalor()
         #if we have the start of a conditional
         if self.match("Question"):
             #the then branch
@@ -478,28 +500,6 @@ class Parser:
         elseBranch = self.conditional()
         #and fincally construct the conditional
         return Conditional(expr, thenBranch, elseBranch, tertype)
-
-    #define the asignment gramar
-    def assignment(self):
-        #return the equality
-        expr = self.logicalor()
-        #if there is an equals after the identifier
-        if self.match("Equal"):
-            #fetch the variable name
-            equals = self.previous()
-            #fetch it's value
-            value = self.assignment()
-            #if it is a Variable type
-            if isinstance(expr, Variable):
-                name = expr.name
-                #return the assignment
-                return Assign(name, value)
-            elif isinstance(expr, Get):
-                return Set(expr.object, expr.name, value)
-            #throw an error if not
-            self.skiylia.error([equals, "Invalid assignment target."])
-        #return the variable
-        return expr
 
     #define the logical or grammar
     def logicalor(self):

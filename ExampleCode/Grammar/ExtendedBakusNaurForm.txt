@@ -59,11 +59,11 @@ returnstmt        > "return" expression?
 
 whilestmt         > "while" expression {Block token} statement
 
-expression        > condition
+expression        > assignment
 
-conditional       > assignment ( ( ( "?" expression ":" ) | "?:" | "??" ) conditional )?
+assignment        > (call ".")? Identifier "=" assignment | conditional
 
-assignment        > (call ".")? Identifier "=" assignment | logicalOr
+conditional       > logicalOr ( ( ( "?" expression ":" ) | "?:" | "??" ) conditional )?
 
 //Logical or has the highest precedence (and is computed last)
 logicalOr         > logicalXor ( ( "|" | "or" ) logicalXor )*

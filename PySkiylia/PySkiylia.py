@@ -112,6 +112,8 @@ class Skiylia:
             sys.exit(1)
 
     def run(self, source):
+        if not self.args and "print" not in source:
+            source = "print({})".format(source)
         #fetch the Lexer class
         lexer = Lexer(self, source)
         #and scan the sourcecode for tokens

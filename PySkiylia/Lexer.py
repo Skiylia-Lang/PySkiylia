@@ -246,7 +246,10 @@ class Lexer:
                 #advance to the next character
                 self.advance()
         #create a numeric token and return.
-        return self.addToken("Number", self.source[self.start:self.current])
+        try:
+            return self.addToken("Number", int(self.source[self.start:self.current]))
+        except:
+            return self.addToken("Number", float(self.source[self.start:self.current]))
 
     #define a way of checking if the value is a digit
     def isDigit(self, char):

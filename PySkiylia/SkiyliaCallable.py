@@ -149,6 +149,10 @@ class SkiyliaArray(SkiyliaCallable):
         #and return the callable
         return a
 
+#array shorthand
+class SkiyliaArr(SkiyliaArray):
+    callname = "Arr"
+
 #internal handling of functions
 class SkiyliaFunction(SkiyliaCallable):
     string = "Skiylia function"

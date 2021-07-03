@@ -17,7 +17,7 @@ print(1 ~~~ 1)               //true       <- have to be both same type and same 
 print(1 ~~~ 1.0)             //false      <- int and float are different types
 print(1 ~~~ "1")             //false
 print(1 ~~~ "1.0")           //false
-print(1 ~~~ true)            //true       <- '1' (as an integer) is an implicit true
+print(1 ~~~ true)            //false       <- '1' (as an integer) is an implicit true, but still has a different type
 print(1.0 ~~~ "1")           //false      <- if they're different type, even if same value, then true
 print(1.0 ~~~ "1.0")         //false
 print(1.0 ~~~ true)          //false      <- however, '1.0' (as a float) is not an implicit true
@@ -43,7 +43,7 @@ print(1 !~~ 1)               //false      <- have to be both same type and same 
 print(1 !~~ 1.0)             //true
 print(1 !~~ "1")             //true
 print(1 !~~ "1.0")           //true
-print(1 !~~ true)            //false      <- '1' (as an integer) is an explicit true
+print(1 !~~ true)            //true      <- '1' (as an integer) is an explicit true, but they still have different types
 print(1.0 !~~ "1")           //true
 print(1.0 !~~ "1.0")         //true
 print(1.0 !~~ true)          //true       <- '1.0' (as a float) is not an explicit true

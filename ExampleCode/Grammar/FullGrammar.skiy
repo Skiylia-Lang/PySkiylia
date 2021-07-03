@@ -185,16 +185,21 @@ array.set(i, a)         //overwrite the value at index 'i' with 'a'
 array.insert(i, a)      //insert 'a' before whatever is at index 'i'
 array.remove(i)         //completely remove whatever is at index 'i'
 array.add(a)            //add 'a' to the end of the array
+array.join(a)           //add the array 'a' to the end of the array
 array.pop()             //remove (and return) whatever is at the end of the array
 
 import a                //import all the classes and functions from 'a.skiy' in the same directory as the main script
 
 //primitives (Functions from the base language, rather than ones I wrote myself)
 print(thing-to-print)   //shows display to screen, can be any data-type or variable
-clock                   //returns the current utc time
+clock()                 //returns the current utc time
+wait(x)                 //pause script execution for x seconds, defaults to 1
+elapsed()               //returns the time (in seconds) since the script began executing
 abs(a)                  //return the absolute value of a
 ceil(a)                 //returns a, rounded up
 floor(a)                //returns a, rounded down
 pow(a, b)               //returns a raised to the power b
 mod(a, b)               //returns a modulo b
 round(a, b)             //returns a, rounded to 'b' decimal places
+sum(a, b, c)            //returns the summation of a, b, c
+sum(array)              //returns the summation of the elements of the array

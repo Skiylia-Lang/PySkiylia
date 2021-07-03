@@ -21,7 +21,7 @@ def stringify(obj):
         elif obj is False:
             return "false"
     #if it's a number
-elif isinstance(obj, (float, int)):
+    elif isinstance(obj, (float, int)):
         #if it's an integer, cast to integer first
         if isinstance(obj, int) or obj.is_integer():
             return str(int(obj))
@@ -52,6 +52,23 @@ class skiyliaclock(SkiyliaCallable):
     #and overwite the call
     def call(self, interpreter, arguments, token):
         return time.time()
+
+#programe execution time
+class skiyliaexecution(SkiyliaCallable):
+    string = "primitive function"
+    callname = "elapsed"
+    def call(self, interpreter, arguments, token):
+        return time.time() - interpreter.start_time
+
+class skiyliawait(SkiyliaCallable):
+    string = "primitive function"
+    arity = "0,1"
+    callname = "wait"
+    def call(self, interpreter, arguments, token):
+        if arguments:
+            time.sleep(arguments[0])
+        else:
+            time.sleep(1)
 
 #user input
 class skiyliainput(SkiyliaCallable):
@@ -235,5 +252,42 @@ class skiyliaround(SkiyliaCallable):
         a, b = (arguments+[0])[:2]
         try:
             return float(round(float(a), int(b)))
+        except Exception as e:
+            raise RuntimeError([token, str(e), type(e).__name__])
+
+#summation
+
+#ceil
+class skiyliasum(SkiyliaCallable):
+    string = "primitive function"
+    arity = "1,*"
+    callname = "sum"
+    def call(self, interpreter, arguments, token):
+        #check if we are summing numbers or strings
+        tsum = "float"
+        try:
+            a = []
+            for x in arguments:
+                #check for skiylia objects
+                if isinstance(x, SkiyliaCallable):
+                    #check for an array
+                    if "Skiylia array" in x.string:
+                        for y in x.thisclass.list:
+                            if isinstance(y, str):
+                                tsum = "string"
+                            a.append(y)
+                    else:
+                        #dont sum other types
+                        raise SyntaxError([token, "Cannot compute sum of {}".format(x.string)])
+                    continue
+                #otherwise, try adding in place
+                if isinstance(x, str):
+                    tsum = "string"
+                a.append(x)
+            #and return the sum if it is a float
+            if tsum == "float":
+                return sum(a)
+            #else return the concatenated string
+            return "".join(str(x) for x in a)
         except Exception as e:
             raise RuntimeError([token, str(e), type(e).__name__])

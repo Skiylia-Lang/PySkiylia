@@ -1,0 +1,4 @@
+print("This string
+       has been written
+         across several
+       lines.")

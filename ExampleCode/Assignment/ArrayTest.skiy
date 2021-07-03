@@ -1,6 +1,6 @@
 //trialing some array grammar
 
-var a = Array("hi there", "this is a test")
+var a = array("hi there", "this is a test")
 
 //add to the end of an array
 
@@ -30,3 +30,9 @@ print(a.get(0))
 
 a.set(0, "hello world!")
 print(a)
+
+var b = array(1, 1, 2, 3, 5, 8)
+
+print(b.get(10))
+/// Expected output:
+    5. ///

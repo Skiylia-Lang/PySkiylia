@@ -82,6 +82,10 @@ class Lexer:
             return self.addToken("LeftParenthesis")
         elif c == ")":
             return self.addToken("RightParenthesis")
+        if c == "[":
+            return self.addToken("LeftSquareBrace")
+        elif c == "]":
+            return self.addToken("RightSquareBrace")
         elif c == ":":
             token = self.addToken("Colon")
             #indent after creating the token, ensures that the following block has the appropriate indentation
@@ -207,6 +211,7 @@ class Lexer:
 
     #define a way of fetching a string from sourcecode
     def findString(self):
+        si = self.char
         #keep going until we hit the end of the code, or the string terminator
         while not self.match('"', peek=True):
             #we support multi-line strings, so if we find a newline, increment the line counter
@@ -222,6 +227,10 @@ class Lexer:
         self.advance()
         #fetch the contents of the string, removing the leading and trailing identifiers
         stringVal = self.source[self.start+1:self.current-1]
+        #remove any whitespace that occured due to newlines
+        if "\n" in stringVal:
+            sv = stringVal.split("\n")
+            stringVal = " \n".join([sv[0]]+[x[si:] for x in sv[1:]])
         #create the token and return it
         return self.addToken("String", stringVal)
 
@@ -241,7 +250,10 @@ class Lexer:
                 #advance to the next character
                 self.advance()
         #create a numeric token and return.
-        return self.addToken("Number", self.source[self.start:self.current])
+        try:
+            return self.addToken("Number", int(self.source[self.start:self.current]))
+        except:
+            return self.addToken("Number", float(self.source[self.start:self.current]))
 
     #define a way of checking if the value is a digit
     def isDigit(self, char):

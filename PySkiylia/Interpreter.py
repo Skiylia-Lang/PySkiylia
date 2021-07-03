@@ -1,6 +1,9 @@
  #!/usr/bin/env python
 """Executes code from Abstractions"""
 
+#import python functions
+import time
+
 #import our code
 from Environment import Environment
 from ASTPrinter import Evaluator
@@ -31,6 +34,18 @@ class misc:
             #if we get to here, throw an error
             raise RuntimeError([operator,"'{}' not valid for '{}' operator, requires a number.".format(operand, operator.lexeme)])
 
+    #convert an object to an integer where possible
+    def intifpos(self, operand):
+        if isinstance(operand, int):
+            return operand
+        try:
+            op = float(operand)
+            if op.is_integer():
+                return int(op)
+            return op
+        except:
+            return operand
+
     #define a way of testing if one, but not both, of two objects can be represented as an integer
     def xorNumber(self, a, b):
     	out=[]
@@ -38,7 +53,7 @@ class misc:
     	for x in [a,b]:
     		try:
                 #try converting to float
-    			int(x)
+    			float(x)
                 #if it worked, return true
     			out.append(True)
     		except:
@@ -91,6 +106,8 @@ class Interpreter(misc, Evaluator):
         self.mydir = workingdir
         #define a way of skipping to the last part of a block
         self.skipToLast = False
+        #define the starting time
+        self.start_time = 0
         #and add our primitives to the global scope
         self.primitives = []
         self.fetchprimitives()
@@ -114,6 +131,7 @@ class Interpreter(misc, Evaluator):
 
     #define the interpreter function
     def interpret(self, statements):
+        self.start_time = time.time()
         #try to execute code, escape if error
         try:
             #loop through all statements provided
@@ -185,37 +203,37 @@ class Interpreter(misc, Evaluator):
             return self.isEqual(left, right)
         elif optype == "NEEqual":
             #strictly not equal
-            if (isinstance(left, type(right)) or isinstance(right, type(left))) and self.isEqual(left, right):
+            if isinstance(left, type(right)) and self.isEqual(left, right):
                 #if they're the same type, and are equal, return false
                 return False
             #true in any other case
             return True
         elif optype == "EEEqual":
             #strictly equal
-            if (isinstance(left, type(right)) or isinstance(right, type(left))):
+            if isinstance(left, type(right)):
                 #if they're the same type, check if they are equal
                 return self.isEqual(left, right)
             #false if they have different types
             return False
         elif optype == "NFuzequal":
             #Fuzzily equal only checks for type equality
-            return not (isinstance(left, type(right)) or isinstance(right, type(left)))
+            return not isinstance(left, type(right))
         elif optype == "Fuzequal":
             #Fuzzily equal only checks for type equality
-            return (isinstance(left, type(right)) or isinstance(right, type(left)))
+            return isinstance(left, type(right))
         elif optype == "Minus":
             self.checkNumber(expr.operator, left, right)
             #subtract if given
-            return float(left) - float(right)
+            return self.intifpos(float(left) - float(right))
         elif optype == "Slash":
             self.checkNumber(expr.operator, left, right)
             #divide if given
             if float(right) == 0:
                 raise RuntimeError([expr.operator,"division by zero"])
-            return float(left) / float(right)
+            return self.intifpos(float(left) / float(right))
         elif optype == "StStar":
             self.checkNumber(expr.operator, left, right)
-            return float(left) ** float(right)
+            return self.intifpos(float(left) ** float(right))
         elif optype == "Star":
             #check if one (and only one) is a number, so we can repeat substrings
             xornum = self.xorNumber(left, right)
@@ -230,7 +248,7 @@ class Interpreter(misc, Evaluator):
             #check they can both be converted to numbers
             self.checkNumber(expr.operator, left, right)
             #multiply if given
-            return float(left) * float(right)
+            return self.intifpos(float(left) * float(right))
         elif optype == "Plus":
             #check if either is a strings to concatenate
             if isinstance(left, str) and isinstance(right, str):
@@ -238,7 +256,7 @@ class Interpreter(misc, Evaluator):
             #otherwise check if they are numberable
             self.checkNumber(expr.operator, left, right)
             #compute calculation if all went well
-            return float(left) + float(right)
+            return self.intifpos(float(left) + float(right))
             #if neither triggered, this is probably wrong
 
     #define the methods for dealing with block abstractions
@@ -271,8 +289,8 @@ class Interpreter(misc, Evaluator):
             raise RuntimeError([expr.parenthesis, "Expected {} argument{} but got {}.".format(arglim, "s"*(arglim!=1), len(args))])
         #return and call the callable
         if expr.callee.name.lexeme in self.primitives:
-            return callee.call(self, args, expr.callee.name)
-        return callee.call(self, args)
+            return self.intifpos(callee.call(self, args, expr.callee.name))
+        return self.intifpos(callee.call(self, args, expr.callee.name))
 
     #define how our interpreter handles classes
     def ClassStmt(self, stmt):
@@ -484,7 +502,7 @@ class Interpreter(misc, Evaluator):
         if optype == "Minus":
             self.checkNumber(expr.operator, right)
             #return the float value negated
-            return -float(right)
+            return -self.intifpos(right)
         #check if a logical not
         elif optype == "Not":
             #return the not of the operand
@@ -494,7 +512,7 @@ class Interpreter(misc, Evaluator):
             #ensure the operator is a number we can increment
             self.checkNumber(expr.operator, right)
             #fetch the value of the operand
-            value = float(right)
+            value = self.intifpos(right)
             #check if the operand is a variable
             if isinstance(expr.right, Variable):
                 var = self.VarExpr(expr.right)
@@ -511,7 +529,7 @@ class Interpreter(misc, Evaluator):
             #ensure the operator is a number we can decrement
             self.checkNumber(expr.operator, right)
             #fetch the value of the operand
-            value = float(right)
+            value = self.intifpos(right)
             #check if the operand is a variable
             if isinstance(expr.right, Variable):
                 var = self.VarExpr(expr.right)
@@ -536,7 +554,7 @@ class Interpreter(misc, Evaluator):
         #if the variable has an initial value assigned
         if stmt.initial:
             #evaluate and return the initial value
-            value = self.evaluate(stmt.initial)
+            value = self.intifpos(self.evaluate(stmt.initial))
         #store the variable in our environment
         self.environment.define(stmt.name.lexeme, value)
 

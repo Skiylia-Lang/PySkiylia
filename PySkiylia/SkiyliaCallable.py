@@ -65,10 +65,6 @@ class SkiyliaArray(SkiyliaCallable):
             def newcall(interpreter, arguments, token=""):
                 #remove the last index and return it
                 return self.list.pop()
-            #overwrite the call function with our new array one
-            a.call = getcall
-            #and return the callable
-            return a
         #if the user wants to remove from a function
         elif name.lexeme == "remove":
             #setup the base parameters
@@ -79,12 +75,10 @@ class SkiyliaArray(SkiyliaCallable):
                     #fetch the index
                     idx = int(arguments[0])
                     #if its within the array, then overwrite
-                    self.list.pop(idx)
+                    return self.list.pop(idx)
                 except:
                     #or show them an error if it wasn't valid
                     raise SyntaxError([name, "Invalid index '{}' for array.".format(arguments[0])])
-                #return the list if no error was raised
-                return self.list
         elif name.lexeme == "add":
             #setup the base parameters
             a.arity = 1
@@ -137,6 +131,19 @@ class SkiyliaArray(SkiyliaCallable):
             #create it's call function
             def newcall(interpreter, arguments, token=""):
                 return len(self.list)
+        elif name.lexeme == "join":
+            a.arity = "1,*"
+            def newcall(interpreter, arguments, token=""):
+                for x in arguments:
+                    #check if we are joining an array
+                    if isinstance(x, SkiyliaCallable) and ("Skiylia array" in x.string):
+                        for y in x.thisclass.list:
+                            self.list.append(y)
+                        continue
+                    #else default to array.add()
+                    self.list.append(x)
+                #return the list
+                return self.list
         #overwrite the call function with our new array one
         a.call = newcall
         #and return the callable

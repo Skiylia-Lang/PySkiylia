@@ -82,6 +82,10 @@ class Lexer:
             return self.addToken("LeftParenthesis")
         elif c == ")":
             return self.addToken("RightParenthesis")
+        if c == "[":
+            return self.addToken("LeftSquareBrace")
+        elif c == "]":
+            return self.addToken("RightSquareBrace")
         elif c == ":":
             token = self.addToken("Colon")
             #indent after creating the token, ensures that the following block has the appropriate indentation

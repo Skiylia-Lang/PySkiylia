@@ -131,6 +131,19 @@ class SkiyliaArray(SkiyliaCallable):
             #create it's call function
             def newcall(interpreter, arguments, token=""):
                 return len(self.list)
+        elif name.lexeme == "join":
+            a.arity = "1,*"
+            def newcall(interpreter, arguments, token=""):
+                for x in arguments:
+                    #check if we are joining an array
+                    if isinstance(x, SkiyliaCallable) and ("Skiylia array" in x.string):
+                        for y in x.thisclass.list:
+                            self.list.append(y)
+                        continue
+                    #else default to array.add()
+                    self.list.append(x)
+                #return the list
+                return self.list
         #overwrite the call function with our new array one
         a.call = newcall
         #and return the callable

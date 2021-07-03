@@ -201,7 +201,7 @@ import a                //import all the classes and functions from 'a.skiy' in 
 //primitives (Functions from the base language, rather than ones I wrote myself)
 print(thing-to-print)   //shows display to screen, can be any data-type or variable
 clock()                 //returns the current utc time
-wait(x)                 //pause script execution for x seconds
+wait(x)                 //pause script execution for x seconds, defaults to 1
 elapsed()               //returns the time (in seconds) since the script began executing
 abs(a)                  //return the absolute value of a
 ceil(a)                 //returns a, rounded up

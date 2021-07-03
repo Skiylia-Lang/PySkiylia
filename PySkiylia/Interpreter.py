@@ -1,6 +1,9 @@
  #!/usr/bin/env python
 """Executes code from Abstractions"""
 
+#import python functions
+import time
+
 #import our code
 from Environment import Environment
 from ASTPrinter import Evaluator
@@ -103,6 +106,8 @@ class Interpreter(misc, Evaluator):
         self.mydir = workingdir
         #define a way of skipping to the last part of a block
         self.skipToLast = False
+        #define the starting time
+        self.start_time = 0
         #and add our primitives to the global scope
         self.primitives = []
         self.fetchprimitives()
@@ -126,6 +131,7 @@ class Interpreter(misc, Evaluator):
 
     #define the interpreter function
     def interpret(self, statements):
+        self.start_time = time.time()
         #try to execute code, escape if error
         try:
             #loop through all statements provided

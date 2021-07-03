@@ -16,7 +16,7 @@ class Skiylia:
     haderror = False
     version = "v0.8.0"
     title = ""
-    debug = True
+    debug = False
     #run this at initialisation
     def __init__(self, args=""):
         #check if the user has asked for help

@@ -289,8 +289,18 @@ class Interpreter(misc, Evaluator):
             raise RuntimeError([expr.parenthesis, "Expected {} argument{} but got {}.".format(arglim, "s"*(arglim!=1), len(args))])
         #return and call the callable
         if expr.callee.name.lexeme in self.primitives:
+<<<<<<< HEAD
+<<<<<<< HEAD
             return self.intifpos(callee.call(self, args, expr.callee.name))
         return self.intifpos(callee.call(self, args, expr.callee.name))
+=======
+            return callee.call(self, args, expr.callee.name)
+        return callee.call(self, args, expr.callee.name)
+>>>>>>> d3f73be (Interpreter was not passing token to error when calling a statement)
+=======
+            return self.intifpos(callee.call(self, args, expr.callee.name))
+        return self.intifpos(callee.call(self, args, expr.callee.name))
+>>>>>>> 897d8cb (fix type-equality operator)
 
     def CheckStmt(self, stmt):
         if not self.isTruthy(self.evaluate(stmt.condition)):

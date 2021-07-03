@@ -185,7 +185,16 @@ array.set(i, a)         //overwrite the value at index 'i' with 'a'
 array.insert(i, a)      //insert 'a' before whatever is at index 'i'
 array.remove(i)         //completely remove whatever is at index 'i'
 array.add(a)            //add 'a' to the end of the array
+<<<<<<< HEAD
+<<<<<<< HEAD
 array.join(a)           //add the array 'a' to the end of the array
+=======
+array += a              //add 'a' to the end of the array
+
+>>>>>>> 2c9721c (add token and example code definitions)
+=======
+array.join(a)           //add the array 'a' to the end of the array
+>>>>>>> 494acb3 (added the "join" command to arrays)
 array.pop()             //remove (and return) whatever is at the end of the array
 
 import a                //import all the classes and functions from 'a.skiy' in the same directory as the main script
@@ -193,7 +202,15 @@ import a                //import all the classes and functions from 'a.skiy' in 
 //primitives (Functions from the base language, rather than ones I wrote myself)
 print(thing-to-print)   //shows display to screen, can be any data-type or variable
 clock()                 //returns the current utc time
+<<<<<<< HEAD
+<<<<<<< HEAD
 wait(x)                 //pause script execution for x seconds, defaults to 1
+=======
+wait(x)                 //pause script execution for x seconds
+>>>>>>> 2c9721c (add token and example code definitions)
+=======
+wait(x)                 //pause script execution for x seconds, defaults to 1
+>>>>>>> 21dd403 (implemented the wait(), elapsed(), and sum() primitives)
 elapsed()               //returns the time (in seconds) since the script began executing
 abs(a)                  //return the absolute value of a
 ceil(a)                 //returns a, rounded up

@@ -1,4 +1,16 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
 print("This string
        has been written
          across several
+=======
+print("This string 
+       has been written
+       across several
+>>>>>>> 422242c (fix error with primitives)
+=======
+print("This string
+       has been written
+         across several
+>>>>>>> af85ead (string indentation preservation)
        lines.")

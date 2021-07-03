@@ -292,6 +292,10 @@ class Interpreter(misc, Evaluator):
             return self.intifpos(callee.call(self, args, expr.callee.name))
         return self.intifpos(callee.call(self, args, expr.callee.name))
 
+    def CheckStmt(self, stmt):
+        if not self.isTruthy(self.evaluate(stmt.condition)):
+            raise AssertionError([stmt.token, stmt.message.value, "Assertion"])
+
     #define how our interpreter handles classes
     def ClassStmt(self, stmt):
         #check for the superclass

@@ -77,8 +77,13 @@ class Block(Stmt):
 	def __init__(self, statements):
 		self.statements = statements
 
-class Class(Stmt):
+class Check(Stmt):
+	def __init__(self, token,condition,message):
+		self.token = token
+		self.condition = condition
+		self.message = message
 
+class Class(Stmt):
 	def __init__(self, name,superclass,methods):
 		self.name = name
 

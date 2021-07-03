@@ -85,6 +85,10 @@ class Parser:
         #check for a module import
         elif self.match("Import"):
             return self.importdeclaration()
+        #if the next token is "check"
+        elif self.match("Check"):
+            #return the check statement
+            return self.checkstatement()
         #if the next token is an if
         elif self.match("If"):
             #compute the if statement
@@ -153,6 +157,22 @@ class Parser:
         else:
             #otherwise, throw an error
             raise SyntaxError([module, "Module with name '{}' cannot be found.".format(module.lexeme), "Import"])
+
+    #define the check statement grammar
+    def checkstatement(self):
+        #fetch the check token
+        token = self.previous()
+        #fetch the check expression
+        condition = self.expression()
+        #check for the error message
+        message = Literal("Check statement evaluated as false")
+        if self.match("Comma"):
+            #fetch it
+            message = self.expression()
+        #and remove the end token
+        self.consume("Unbounded expression.", "End")
+        #and return the check statement
+        return Check(token, condition, message)
 
     #define the if statement grammar
     def ifstatement(self):

@@ -15,6 +15,7 @@ class Evaluator:
                      "Block": self.BlockStmt,
                      "Binary": self.BinaryExpr,
                      "Call": self.CallExpr,
+                     "Check": self.CheckStmt,
                      "Class": self.ClassStmt,
                      "Conditional": self.ConditionalStmt,
                      "Expression": self.ExpressionStmt,
@@ -56,6 +57,9 @@ class ASTPrinter(Evaluator):
 
     def CallExpr(self, expr):
         return self.toparenthesis("call", expr.callee, expr.arguments)
+
+    def CheckStmt(self, stmt):
+        return self.toparenthesis("check", stmt.condition, stmt.message)
 
     def ClassStmt(self, stmt):
         if stmt.superclass:

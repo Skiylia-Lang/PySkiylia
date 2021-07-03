@@ -41,9 +41,11 @@ parameters        > Identifier ( "," Identifier )*
 
 vardeclaration    > ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
 
-statement         > exprstmt | forstmt | ifstmt | interuptstmt | returnstmt | whilestmt | block
+statement         > checkstmt | exprstmt | forstmt | ifstmt | interuptstmt | returnstmt | whilestmt | block
 
 block             > {Indent level increases} declaration {End token}+ {token with lower indentation}
+
+checkstmt         > "check" expression ("," expression)? {End token}+
 
 exprstmt          > expression {End token}+
 

@@ -62,6 +62,11 @@ class Resolver(Evaluator):
         for arg in expr.arguments:
             self.resolve(arg)
 
+    def CheckStmt(self, stmt):
+        self.resolve(stmt.condition)
+        if stmt.message:
+            self.resolve(stmt.message)
+
     def ClassStmt(self, stmt):
         #store a reference to the enclosing class
         enclosingClass = self.currentClass

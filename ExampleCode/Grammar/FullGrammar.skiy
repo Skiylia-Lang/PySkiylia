@@ -70,6 +70,7 @@ a ?? b      //if a null, then b, else a       <-null coalescence operator, equiv
 //Variables and assignment
 var a       //initialise as 0
 a = 5       //reassign a as 5. a must already exist
+check a     //evaluates the truthiness of a, thorwing an error if it is false
 
 //control flow
 //if statements

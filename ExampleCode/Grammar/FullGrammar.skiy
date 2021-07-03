@@ -180,24 +180,21 @@ int(a) / integer(a)     //explicitly converts a to an integer
 float(a)                //explicitly converts a to a float
 
 array(a, b, c)          //creates an array of these objects
-[a, b, c]               //creates an array of these objects
-
 array.get(i)            //fetch the value at the index 'i'
-array[i]                //fetch the value at the index 'i'
-
 array.set(i, a)         //overwrite the value at index 'i' with 'a'
-array[i] = a            //overwrite the value at index 'i' with 'a'
-
 array.insert(i, a)      //insert 'a' before whatever is at index 'i'
 array.remove(i)         //completely remove whatever is at index 'i'
-
 array.add(a)            //add 'a' to the end of the array
+<<<<<<< HEAD
 <<<<<<< HEAD
 array.join(a)           //add the array 'a' to the end of the array
 =======
 array += a              //add 'a' to the end of the array
 
 >>>>>>> 2c9721c (add token and example code definitions)
+=======
+array.join(a)           //add the array 'a' to the end of the array
+>>>>>>> 494acb3 (added the "join" command to arrays)
 array.pop()             //remove (and return) whatever is at the end of the array
 
 import a                //import all the classes and functions from 'a.skiy' in the same directory as the main script

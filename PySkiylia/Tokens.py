@@ -2,7 +2,7 @@
 """Stores token definitions, may end up moving this elsewhere"""
 
 tokens = [#single character tokens
-            "LeftParenthesis", "RightParenthesis", "LeftSquareBrace", "RightSquareBrace", "Colon", "Comma", "Dot", "Slash", "And", "Or", "Xor",
+            "LeftParenthesis", "RightParenthesis", "Colon", "Comma", "Dot", "Slash", "And", "Or", "Xor",
             #single or double character Tokens
             "NFuzequal", "NEEqual", "NEqual", "Not", "Fuzequal", "EEEqual", "EEqual", "Equal",
             "Greater", "EGreater", "Less", "ELess", "Question", "QColon", "QQuestion",

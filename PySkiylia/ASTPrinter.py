@@ -18,6 +18,7 @@ class Evaluator:
                      "Check": self.CheckStmt,
                      "Class": self.ClassStmt,
                      "Conditional": self.ConditionalStmt,
+                     "Do": self.DoStmt,
                      "Expression": self.ExpressionStmt,
                      "Function": self.FunctionStmt,
                      "Get": self.GetExpr,
@@ -32,6 +33,7 @@ class Evaluator:
                      "Set": self.SetExpr,
                      "Super": self.SuperExpr,
                      "Unary": self.UnaryExpr,
+                     "Until":self.UntilStmt,
                      "Var":self.VarStmt,
                      "Variable": self.VarExpr,
                      "While":self.WhileStmt,}
@@ -72,6 +74,9 @@ class ASTPrinter(Evaluator):
         elif stmt.type=="E":
             return self.toparenthesis("conditional-elvis", stmt.condition, stmt.elseBranch)
         return self.toparenthesis("conditional-null", stmt.condition, stmt.elseBranch)
+
+    def DoStmt(self, stmt):
+        return self.toparenthesis("do", stmt.loop.body, self.evaluate(stmt.loop))
 
     def ExpressionStmt(self, stmt):
         return self.toparenthesis("",stmt.expression)
@@ -122,6 +127,9 @@ class ASTPrinter(Evaluator):
         if expr.postfix:
             return self.toparenthesis(expr.right, expr.operator.lexeme)
         return self.toparenthesis(expr.operator.lexeme, expr.right)
+
+    def UntilStmt(self, stmt):
+        return self.toparenthesis("until", stmt.condition, stmt.body)
 
     def VarStmt(self, stmt):
         if stmt.initial in [None, 0.0]:

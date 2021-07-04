@@ -97,6 +97,10 @@ class Conditional(Stmt):
 		self.elseBranch = elseBranch
 		self.type = type
 
+class Do(Stmt):
+	def __init__(self, loop):
+		self.loop = loop
+
 class Expression(Stmt):
 	def __init__(self, expression):
 		self.expression = expression
@@ -124,6 +128,12 @@ class Interupt(Stmt):
 	def __init__(self, keyword,cont=False):
 		self.keyword = keyword
 		self.cont = cont
+
+class Until(Stmt):
+	def __init__(self, condition,body,hasincrement=False):
+		self.condition = condition
+		self.body = body
+		self.hasincrement = hasincrement
 
 class Var(Stmt):
 	def __init__(self, name,initial):

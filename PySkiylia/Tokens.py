@@ -7,6 +7,8 @@ tokens = [#single character tokens
             "NFuzequal", "NEEqual", "NEqual", "Not", "Fuzequal", "EEEqual", "EEqual", "Equal",
             "Greater", "EGreater", "Less", "ELess", "Question", "QColon", "QQuestion",
             "Star", "StStar", "Minus", "MMinus", "Plus", "PPlus",
+            #Triple character tokens
+            "ThreeWayComp"
             #Literal tokens
             "String", "Number", "Identifier",
             #miscellaneous

@@ -195,6 +195,8 @@ class Interpreter(misc, Evaluator):
             self.checkNumber(expr.operator, left, right)
             #less of equal comparison
             return float(left) <= float(right)
+        elif optype == "ThreeWayComp":
+            return float(float(left) > float(right)) - float(float(left) < float(right))
         elif optype == "NEqual":
             #inequality comparison
             return not self.isEqual(left, right)

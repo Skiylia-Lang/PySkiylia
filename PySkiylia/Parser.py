@@ -544,7 +544,7 @@ class Parser:
     #define the comparison grammar
     def comparison(self):
         #grab the binaary operation
-        return self.leftAssociative(self.term, "Greater", "EGreater", "Less", "ELess")
+        return self.leftAssociative(self.term, "Greater", "EGreater", "Less", "ELess", "ThreeWayComp")
 
     #define the term grammar
     def term(self):
@@ -698,7 +698,7 @@ class Parser:
         if self.match("NEqual", "NEEqual", "NFuzequal", "EEqual", "EEEqual", "Fuzequal"):
             a = self.equality
         #or a comparison
-        elif self.match("Greater", "EGreater", "Less", "ELess"):
+        elif self.match("Greater", "EGreater", "Less", "ELess", "ThreeWayComp"):
             a = self.comparison
         #or an addition (a blank '-' is a unary operator as well)
         elif self.match("Plus"):

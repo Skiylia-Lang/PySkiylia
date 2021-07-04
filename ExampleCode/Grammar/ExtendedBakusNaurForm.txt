@@ -41,9 +41,13 @@ parameters        > Identifier ( "," Identifier )*
 
 vardeclaration    > ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
 
-statement         > exprstmt | forstmt | ifstmt | interuptstmt | returnstmt | whilestmt | block
+statement         > checkstmt | dostmt | exprstmt | forstmt | ifstmt | interuptstmt | returnstmt | untilstmt | whilestmt | block
 
 block             > {Indent level increases} declaration {End token}+ {token with lower indentation}
+
+checkstmt         > "check" expression ("," expression)? {End token}+
+
+dostmt            > "do" (whilestmt | untilstmt)
 
 exprstmt          > expression {End token}+
 
@@ -58,6 +62,8 @@ interuptstmt      > "break" | "continue"
 returnstmt        > "return" expression?
 
 whilestmt         > "while" expression {Block token} statement
+
+untilstmt         > "until" expression {Block token} statement
 
 expression        > assignment
 
@@ -75,7 +81,7 @@ logicalAnd        > equality ( ( ( "&" | "and" ) ) equality )*
 equality          > comparison ( ( "!=" | "==" | "!==" | "===" | "!~~" | "~~~" ) comparison )*
 
 //Then comparisons
-comparison        > term ( ( ">" | ">=" | "<" | "<=" ) term )*
+comparison        > term ( ( ">" | ">=" | "<" | "<=" | "<=>" ) term )*
 
 //Then terms
 term              > factor ( ( "-" | "+" ) factor )*

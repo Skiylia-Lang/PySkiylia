@@ -14,9 +14,9 @@ from ASTPrinter import ASTPrinter
 class Skiylia:
     #set the default values here
     haderror = False
-    version = "v0.8.0"
+    version = "v0.8.1"
     title = ""
-    debug = False
+    debug = True
     #run this at initialisation
     def __init__(self, args=""):
         #check if the user has asked for help
@@ -112,7 +112,7 @@ class Skiylia:
             sys.exit(1)
 
     def run(self, source):
-        if not self.args and "print" not in source:
+        if (not self.args) and ("print" not in source) and (source.split()[0] != "check"):
             source = "print({})".format(source)
         #fetch the Lexer class
         lexer = Lexer(self, source)

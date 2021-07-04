@@ -85,6 +85,14 @@ class Parser:
         #check for a module import
         elif self.match("Import"):
             return self.importdeclaration()
+        #if the next token is "check"
+        elif self.match("Check"):
+            #return the check statement
+            return self.checkstatement()
+        #if the next token is do
+        elif self.match("Do"):
+            #return the do loop
+            return self.dostatement()
         #if the next token is an if
         elif self.match("If"):
             #compute the if statement
@@ -97,6 +105,9 @@ class Parser:
         elif self.match("While"):
             #compute the while statement
             return self.whilestatement()
+        #if the next token is an until
+        elif self.match("Until"):
+            return self.untilstatement()
         #if we see a class identifier
         elif self.match("Class"):
             return self.classdeclaration()
@@ -153,6 +164,38 @@ class Parser:
         else:
             #otherwise, throw an error
             raise SyntaxError([module, "Module with name '{}' cannot be found.".format(module.lexeme), "Import"])
+
+    #define the check statement grammar
+    def checkstatement(self):
+        #fetch the check token
+        token = self.previous()
+        #fetch the check expression
+        condition = self.expression()
+        #check for the error message
+        message = Literal("Check statement evaluated as false")
+        if self.match("Comma"):
+            #fetch it
+            message = self.expression()
+        #and remove the end token
+        self.consume("Unbounded expression.", "End")
+        #and return the check statement
+        return Check(token, condition, message)
+
+    #define the do statement grammar
+    def dostatement(self):
+        #fetch the loop
+        print("do statement")
+        if self.match("While"):
+            print("while")
+            loop = self.whilestatement()
+        elif self.match("Until"):
+            print("until")
+            loop = self.untilstatement()
+        else:
+            #ensure we don't have a floating
+            raise RuntimeError(self.error(self.peek(), "Expect Loop to follow 'do' statement"))
+        #fetch the body of the loop, and return the do statement
+        return Do(loop)
 
     #define the if statement grammar
     def ifstatement(self):
@@ -387,6 +430,22 @@ class Parser:
         #return the return... interesting
         return Return(keyword, value)
 
+    #define the until statement grammar
+    def untilstatement(self):
+        #increment the loop counter
+        self.loopdepth+=1
+        #fetch the until conditional
+        condition = self.expression()
+        #make sure we have semicolon grammar
+        if not self.check(*self.blockStart):
+            raise RuntimeError(self.error(self.peek(), "Expect ':' after until condition"))
+        #fetch the body of the until loop
+        body = self.statement()
+        #decrement the loop counter
+        self.loopdepth-=1
+        #return the until abstraction
+        return Until(condition, body)
+
     #define the variable declaration grammar
     def varDeclaration(self, *Endings):
         #if the variable terminator is not defined, pass an end token
@@ -524,7 +583,7 @@ class Parser:
     #define the comparison grammar
     def comparison(self):
         #grab the binaary operation
-        return self.leftAssociative(self.term, "Greater", "EGreater", "Less", "ELess")
+        return self.leftAssociative(self.term, "Greater", "EGreater", "Less", "ELess", "ThreeWayComp")
 
     #define the term grammar
     def term(self):
@@ -678,7 +737,7 @@ class Parser:
         if self.match("NEqual", "NEEqual", "NFuzequal", "EEqual", "EEEqual", "Fuzequal"):
             a = self.equality
         #or a comparison
-        elif self.match("Greater", "EGreater", "Less", "ELess"):
+        elif self.match("Greater", "EGreater", "Less", "ELess", "ThreeWayComp"):
             a = self.comparison
         #or an addition (a blank '-' is a unary operator as well)
         elif self.match("Plus"):

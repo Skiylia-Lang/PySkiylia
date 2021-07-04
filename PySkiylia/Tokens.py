@@ -7,16 +7,18 @@ tokens = [#single character tokens
             "NFuzequal", "NEEqual", "NEqual", "Not", "Fuzequal", "EEEqual", "EEqual", "Equal",
             "Greater", "EGreater", "Less", "ELess", "Question", "QColon", "QQuestion",
             "Star", "StStar", "Minus", "MMinus", "Plus", "PPlus",
+            #Triple character tokens
+            "ThreeWayComp"
             #Literal tokens
             "String", "Number", "Identifier",
             #miscellaneous
             "EOF", "End"]
 
 #a dictionary mapping keywords to their equivalent tokens
-keywords = {"and":"And", "break":"Break", "continue":"Continue", "class":"Class", "def":"Def", "do":"Do", "elif":"Elif", "else":"Else",
-            "false":"False", "for":"For", "if":"If", "import":"Import", "in":"In", "not":"Not", "null":"Null", "or":"Or",
-            "return":"Return", "self":"Self", "super":"Super", "true":"True", "var":"Var",
-            "when":"Where", "where":"Where", "while":"While", "xor":"Xor",}
+keywords = {"and":"And", "break":"Break", "check":"Check", "class":"Class", "continue":"Continue", "def":"Def", "do":"Do",
+            "elif":"Elif", "else":"Else", "false":"False", "for":"For", "if":"If", "import":"Import", "in":"In", "not":"Not",
+            "null":"Null", "or":"Or", "return":"Return", "self":"Self", "super":"Super", "true":"True", "until":"Until",
+            "var":"Var", "when":"Where", "where":"Where", "while":"While", "xor":"Xor",}
 
 class Token:
     def __init__(self, type, lexeme, literal, line, char, indent):

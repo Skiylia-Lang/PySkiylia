@@ -47,6 +47,7 @@ a < b       //less than
 a <= b      //less than or equal to
 a > b       //greater than
 a >= b      //greater than or equal to
+a <=> b     //Three way Comparison, equivalent to int(a > b) - int(a < b)
 a == b      //equal to
 a === b     //strictly equal to (same type, as well as same value)   <- "3.0" == 3 gives true, "3.0" === 3 gives false, as "3.0" is a string
 a ~~~ b     //Fuzzily equal to (same type, don't care about value)   <- "3.0" == 3 gives false, "3.0" === 3 gives false, none of them have the same type
@@ -70,6 +71,7 @@ a ?? b      //if a null, then b, else a       <-null coalescence operator, equiv
 //Variables and assignment
 var a       //initialise as 0
 a = 5       //reassign a as 5. a must already exist
+check a     //evaluates the truthiness of a, thorwing an error if it is false
 
 //control flow
 //if statements
@@ -89,6 +91,7 @@ else:
   print("a was not greater than 5")
 
 //while loop
+//(Continues executing while the condition is true)
 while condition:    //require any variables to be defined prior to
   action-while-True
   action-while-True
@@ -99,6 +102,31 @@ while true:
   print(a--)
   if a < 10:
     break
+
+//prefacing with 'do' causes the body to be executed one or more times
+a = 10
+do while a>1:
+  print(a--)
+//outputs 10
+
+//until loop
+//(Continues executing until the condition is true)
+until condition:    //require any variables to be defined prior to
+  action-until-True
+  action-until-True
+
+ie:
+a=100
+until false:
+  print(a--)
+  if a < 10:
+    break
+
+//prefacing with 'do' causes the body to be executed one or more times
+a = 10
+do until a<100:
+  print(a--)
+// outputs 10
 
 //for loop
 for (increment variable) ("where" | "when") (condition) "do" (increment operation):

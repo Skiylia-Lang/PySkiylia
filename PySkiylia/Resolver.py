@@ -62,6 +62,11 @@ class Resolver(Evaluator):
         for arg in expr.arguments:
             self.resolve(arg)
 
+    def CheckStmt(self, stmt):
+        self.resolve(stmt.condition)
+        if stmt.message:
+            self.resolve(stmt.message)
+
     def ClassStmt(self, stmt):
         #store a reference to the enclosing class
         enclosingClass = self.currentClass
@@ -106,6 +111,10 @@ class Resolver(Evaluator):
             self.resolve(stmt.thenBranch)
         #and the else
         self.resolve(stmt.elseBranch)
+
+    def DoStmt(self, stmt):
+        #resolve the loop
+        self.resolve(stmt.loop)
 
     def ExpressionStmt(self, stmt):
         #resolve the expression
@@ -190,6 +199,10 @@ class Resolver(Evaluator):
 
     def UnaryExpr(self, expr):
         self.resolve(expr.right)
+
+    def UntilStmt(self, stmt):
+        self.resolve(stmt.condition)
+        self.resolve(stmt.body)
 
     #calling variables
     def VarExpr(self, expr):

@@ -19,15 +19,18 @@ ExprDict = {"Assign":"name,value",
             "Variable":"name"}
 
 StmtDict = {"Block":"statements",
+            "Check":"token,condition,message",
             "Class":"name,superclass,methods",
             "Conditional":"condition,thenBranch,elseBranch,type",
+            "Do":"loop",
             "Expression":"expression",
             "Function": "name,params,body",
             "If":"condition,thenBranch,elseifs,elseBranch",
             "Import":"name,body,methods",
             "Interupt":"keyword,cont=False",
             "Var":"name,initial",
-            "While":"condition,body,hasincrement=False"}
+            "While":"condition,body,hasincrement=False",
+            "Until":"condition,body,hasincrement=False"}
 
 #create the class for the AST generator
 class ASTGen:

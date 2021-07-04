@@ -77,8 +77,13 @@ class Block(Stmt):
 	def __init__(self, statements):
 		self.statements = statements
 
-class Class(Stmt):
+class Check(Stmt):
+	def __init__(self, token,condition,message):
+		self.token = token
+		self.condition = condition
+		self.message = message
 
+class Class(Stmt):
 	def __init__(self, name,superclass,methods):
 		self.name = name
 
@@ -91,6 +96,10 @@ class Conditional(Stmt):
 		self.thenBranch = thenBranch
 		self.elseBranch = elseBranch
 		self.type = type
+
+class Do(Stmt):
+	def __init__(self, loop):
+		self.loop = loop
 
 class Expression(Stmt):
 	def __init__(self, expression):
@@ -119,6 +128,12 @@ class Interupt(Stmt):
 	def __init__(self, keyword,cont=False):
 		self.keyword = keyword
 		self.cont = cont
+
+class Until(Stmt):
+	def __init__(self, condition,body,hasincrement=False):
+		self.condition = condition
+		self.body = body
+		self.hasincrement = hasincrement
 
 class Var(Stmt):
 	def __init__(self, name,initial):

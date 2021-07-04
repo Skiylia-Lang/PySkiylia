@@ -130,6 +130,8 @@ class Lexer:
             return self.addToken("Greater")
         elif c == "<":
             if self.match("="):
+                if self.match(">"):
+                    return self.addToken("ThreeWayComp")
                 return self.addToken("ELess")
             return self.addToken("Less")
         elif c == "=":

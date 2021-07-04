@@ -30,7 +30,6 @@ print(a.get(0))
 
 a.set(0, "hello world!")
 print(a)
-
 var b = array(1, 1, 2, 3, 5, 8)
 
 print(b.get(10))

@@ -1,6 +1,11 @@
 //loop through the contents of an array object
 
 var a = array("one", "two", "three", "four", "five", "six")
-
 for x in a:
+  print(x)
+
+
+//or do so implicitly
+
+for x in array("one", "two", "three", "four", "five", "six"):
   print(x)

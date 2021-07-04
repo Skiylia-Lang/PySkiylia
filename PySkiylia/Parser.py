@@ -89,6 +89,10 @@ class Parser:
         elif self.match("Check"):
             #return the check statement
             return self.checkstatement()
+        #if the next token is do
+        elif self.match("Do"):
+            #return the do loop
+            return self.dostatement()
         #if the next token is an if
         elif self.match("If"):
             #compute the if statement
@@ -101,6 +105,9 @@ class Parser:
         elif self.match("While"):
             #compute the while statement
             return self.whilestatement()
+        #if the next token is an until
+        elif self.match("Until"):
+            return self.untilstatement()
         #if we see a class identifier
         elif self.match("Class"):
             return self.classdeclaration()
@@ -173,6 +180,22 @@ class Parser:
         self.consume("Unbounded expression.", "End")
         #and return the check statement
         return Check(token, condition, message)
+
+    #define the do statement grammar
+    def dostatement(self):
+        #fetch the loop
+        print("do statement")
+        if self.match("While"):
+            print("while")
+            loop = self.whilestatement()
+        elif self.match("Until"):
+            print("until")
+            loop = self.untilstatement()
+        else:
+            #ensure we don't have a floating
+            raise RuntimeError(self.error(self.peek(), "Expect Loop to follow 'do' statement"))
+        #fetch the body of the loop, and return the do statement
+        return Do(loop)
 
     #define the if statement grammar
     def ifstatement(self):
@@ -406,6 +429,22 @@ class Parser:
             raise SyntaxError([self.peek(), "Incorect indentation for return statement", "Indentation"])
         #return the return... interesting
         return Return(keyword, value)
+
+    #define the until statement grammar
+    def untilstatement(self):
+        #increment the loop counter
+        self.loopdepth+=1
+        #fetch the until conditional
+        condition = self.expression()
+        #make sure we have semicolon grammar
+        if not self.check(*self.blockStart):
+            raise RuntimeError(self.error(self.peek(), "Expect ':' after until condition"))
+        #fetch the body of the until loop
+        body = self.statement()
+        #decrement the loop counter
+        self.loopdepth-=1
+        #return the until abstraction
+        return Until(condition, body)
 
     #define the variable declaration grammar
     def varDeclaration(self, *Endings):

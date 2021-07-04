@@ -52,8 +52,9 @@ dostmt            > "do" (whilestmt | untilstmt)
 exprstmt          > expression {End token}+
 
 forstmt           > "for" (vardeclaration | exprstmt) (("when" | "where") expression)? ("do" expression)? {Block token} statement
-                  | "for" (vardeclaration | exprstmt) "in" Identifier
-//allowed for loop types 1) for x:    2) for x when x<=10:    3) for x when x<10 do x=x+2:    4) for x do x=x+2:
+                  | "for" (vardeclaration | exprstmt) "in" (Identifier | Array)
+//allowed for loop types 1) for x:    2) for x when x<=10:    3) for x when x<10 do x=x+2:
+4) for x do x=x+2:    5) for x in 10:        6) for x in array(1, 2, 3):
 
 ifstmt            > "if" expression {Block token} statement ( ("elif" | "else if") expression {Block token} statement )* ("else" statement)?
 

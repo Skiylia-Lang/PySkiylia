@@ -144,15 +144,15 @@ for x (Where | When) x<10 do x=x+2
   print(x)
 //explicitly defining the increment operation
 
-for x in 10:
-  print(x)
-//implicitly define '(Where | When) x<10' as 'in 10'        <-- NOT SURE IF I WANT TO KEEP THIS BEHAVIOUR
-
 for x do x=x+2:
   print(x)
 //basically a while loop with a defined increment and implicitly declared variable
 
-for x in Array(1, 2, 3, 4, 5):
+///   for x in 10:
+        print(x)
+      //implicitly define '(Where | When) x<10' as 'in 10'        <-- BEHAVIOUR REMOVED IN PYSKIYLIA 0.8.2
+
+for x in array(1, 2, 3, 4, 5):
   print(x)
 //loops through the array-like, technically an implicit conditional and incremental
 

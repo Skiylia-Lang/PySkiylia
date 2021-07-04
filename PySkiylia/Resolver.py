@@ -112,6 +112,10 @@ class Resolver(Evaluator):
         #and the else
         self.resolve(stmt.elseBranch)
 
+    def DoStmt(self, stmt):
+        #resolve the loop
+        self.resolve(stmt.loop)
+
     def ExpressionStmt(self, stmt):
         #resolve the expression
         self.resolve(stmt.expression)
@@ -195,6 +199,10 @@ class Resolver(Evaluator):
 
     def UnaryExpr(self, expr):
         self.resolve(expr.right)
+
+    def UntilStmt(self, stmt):
+        self.resolve(stmt.condition)
+        self.resolve(stmt.body)
 
     #calling variables
     def VarExpr(self, expr):

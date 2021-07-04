@@ -357,6 +357,13 @@ class Interpreter(misc, Evaluator):
         #otherwise, execute the else branch
         return self.evaluate(stmt.elseBranch)
 
+    #define how we handle the do abstraction
+    def DoStmt(self, stmt):
+        #fetch the loop body and execute once
+        self.evaluate(stmt.loop.body)
+        #then execute the loop
+        self.evaluate(stmt.loop)
+
     #define the way of interpreting an expression statement
     def ExpressionStmt(self, stmt):
         #evaluate the expression
@@ -547,6 +554,27 @@ class Interpreter(misc, Evaluator):
                 return value
             #otherwise return the value - 1
             return value - 1
+
+    #define how we handle the until abstraction
+    def UntilStmt(self, stmt):
+        #while the condition is truthy
+        while not self.isTruthy(self.evaluate(stmt.condition)):
+            try:
+                #execute the body of the Until loop
+                self.evaluate(stmt.body)
+            #if we got an interupt command
+            except Interupt as e:
+                #if the intreuption is continue
+                if e.message is True:
+                    #if the loop contains an incremental
+                    if stmt.hasincrement:
+                        #try to execute it (it will always be the last thing in the Until block)
+                        self.skipToLast = True
+                        self.evaluate(stmt.body)
+                    #now it will redo the loop
+                else:
+                    #otherwise, break
+                    break
 
     #define the method of fetching a variables value
     def VarExpr(self, expr):

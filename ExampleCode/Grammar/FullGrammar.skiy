@@ -91,6 +91,7 @@ else:
   print("a was not greater than 5")
 
 //while loop
+//(Continues executing while the condition is true)
 while condition:    //require any variables to be defined prior to
   action-while-True
   action-while-True
@@ -101,6 +102,31 @@ while true:
   print(a--)
   if a < 10:
     break
+
+//prefacing with 'do' causes the body to be executed one or more times
+a = 10
+do while a>1:
+  print(a--)
+//outputs 10
+
+//until loop
+//(Continues executing until the condition is true)
+until condition:    //require any variables to be defined prior to
+  action-until-True
+  action-until-True
+
+ie:
+a=100
+until false:
+  print(a--)
+  if a < 10:
+    break
+
+//prefacing with 'do' causes the body to be executed one or more times
+a = 10
+do until a<100:
+  print(a--)
+// outputs 10
 
 //for loop
 for (increment variable) ("where" | "when") (condition) "do" (increment operation):

@@ -1,0 +1,8 @@
+//explicitly declare a variable
+a = 2
+
+print(a)
+
+b = "hello world"
+
+print(b)

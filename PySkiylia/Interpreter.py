@@ -167,7 +167,7 @@ class Interpreter(misc, Evaluator):
             self.environment.assignAt(dist, expr.name.lexeme, value)
         else:
             #otherwise, add to globals
-            self.globals.define(expr.name, value)
+            self.globals.define(expr.name.lexeme, value)
         return value
 
     #define a way of unpacking a binary expression

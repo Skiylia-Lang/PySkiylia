@@ -29,6 +29,8 @@ class Parser:
         self.primitives = primitives
         #define all of the tokens that can start a block (not a lot as of current)
         self.blockStart = ["Colon"]
+        #define the variables that have been created in this parser
+        self.non_user_vars, self.vars = 0, set()
         #define the current directory
         self.mydir = workingdir
         #and define a list of imported modules
@@ -184,12 +186,9 @@ class Parser:
     #define the do statement grammar
     def dostatement(self):
         #fetch the loop
-        print("do statement")
         if self.match("While"):
-            print("while")
             loop = self.whilestatement()
         elif self.match("Until"):
-            print("until")
             loop = self.untilstatement()
         else:
             #ensure we don't have a floating
@@ -256,36 +255,49 @@ class Parser:
 
         #check if we have been given an itteration expression
         if self.match("In"):
-            #fetch the itterable object
-            itt = self.expression().name
-            #construct an array index variable
-            self.tokens.insert(self.current, Tokens.Token("End", "", None, itt.line, itt.char, itt.indent))
-            self.tokens.insert(self.current, Tokens.Token("Identifier", "__idx__", None, itt.line, itt.char, itt.indent))
-            init = self.varDeclaration()
+            #fetch the "in" token
+            itk, itk_num = self.previous(), self.current
+            #fetch the itterable
+            itt = self.expression()
+            #ensure we have a variable, and this is slightly easier
+            if hasattr(itt, "name"):
+                pass
+            #else, check if we have a raw array
+            elif hasattr(itt, "callee") and ((itt.callee.name.lexeme == "array") or (itt.callee.name.lexeme == "arr")):
+                self.insertToken("End")
+                self.current = itk_num
+                self.insertToken("Equal", "=")
+                self.insertToken("Identifier", "__arr{}__".format(self.non_user_vars))
+                itt = self.varDeclaration()
+                self.stmt.append(itt)
+            #otherwise, throw an error
+            else:
+                raise SyntaxError(self.error(itk, "Non itterable object"))
+            #create an index variable that holds our position in the array, and add it to the loop, __idx__ = 0
+            init = self.constructvariable()
             self.stmt.append(init)
-            #construct an index increment
-            self.constructincremental(init.name)
-            increment = self.expression()
-            #construct 'x < itterable.len()'
-            self.tokens.insert(self.current, Tokens.Token("RightParenthesis", ")", None, itt.line, itt.char, itt.indent))
-            self.tokens.insert(self.current, Tokens.Token("LeftParenthesis", "(", None, itt.line, itt.char, itt.indent))
-            self.tokens.insert(self.current, Tokens.Token("Identifier", "len", None, itt.line, itt.char, itt.indent))
-            self.tokens.insert(self.current, Tokens.Token("Dot", ".", None, itt.line, itt.char, itt.indent))
-            self.tokens.insert(self.current, itt)
-            self.tokens.insert(self.current, Tokens.Token("Less", "<", None, itt.line, itt.char, itt.indent))
-            self.tokens.insert(self.current, init.name)
-            # fetch the constructed condition
+            #construct the index incremental, __idx__++
+            increment = self.constructincremental(init.name)
+            #construct the conditional, __idx__ < array.len()
+            self.insertToken("RightParenthesis", ")")
+            self.insertToken("LeftParenthesis", "(")
+            self.insertToken("Identifier", "len")
+            self.insertToken("Dot", ".")
+            self.insertToken(itt.name)
+            self.insertToken("Less", "<")
+            self.insertToken(init.name)
             condition = self.expression()
-            #and finally, construct the expression that sets the 'incremental' to each array value
-            self.tokens.insert(self.current+1, Tokens.Token("End", "", None, itt.line, itt.char, itt.indent + 1))
-            self.tokens.insert(self.current+1, Tokens.Token("RightParenthesis", ")", None, itt.line, itt.char, itt.indent + 1))
-            self.tokens.insert(self.current+1, init.name)
-            self.tokens.insert(self.current+1, Tokens.Token("LeftParenthesis", "(", None, itt.line, itt.char, itt.indent + 1))
-            self.tokens.insert(self.current+1, Tokens.Token("Identifier", "get", None, itt.line, itt.char, itt.indent + 1))
-            self.tokens.insert(self.current+1, Tokens.Token("Dot", ".", None, itt.line, itt.char, itt.indent + 1))
-            self.tokens.insert(self.current+1, itt)
-            self.tokens.insert(self.current+1, Tokens.Token("Equal", "=", None, itt.line, itt.char, itt.indent + 1))
-            self.tokens.insert(self.current+1, initialiser.name)
+            #construct the incremental association, x = b.get(__idx__)
+            self.current+=1
+            self.insertToken("RightParenthesis", ")")
+            self.insertToken(init.name)
+            self.insertToken("LeftParenthesis", "(")
+            self.insertToken("Identifier", "get")
+            self.insertToken("Dot", ".")
+            self.insertToken(itt.name)
+            self.insertToken("Equal", "=")
+            self.insertToken(initialiser.name)
+            self.current-=1
         #otherwise, fetch the conditional / increment
         else:
             #check it has not been ommited
@@ -296,8 +308,7 @@ class Parser:
             if self.match("Do"):
                 increment = self.expression()
             else:
-                self.constructincremental(initialiser.name)
-                increment = self.expression()
+                increment = self.constructincremental(initialiser.name)
 
         #check for the colon grammar
         if not self.check(*self.blockStart):
@@ -461,6 +472,8 @@ class Parser:
             initial = self.expression()
         #make sure the variable is bounded
         self.consume("Unbounded variable declaration.", *Endings)
+        #add the variable to our set
+        self.vars.add(name.lexeme)
         #return the variable abstraction
         return Var(name, initial)
 
@@ -525,7 +538,12 @@ class Parser:
             #if it is a Variable type
             if isinstance(expr, Variable):
                 name = expr.name
-                #return the assignment
+                #check if this has been used before
+                if name.lexeme not in self.vars:
+                    #add to our set
+                    self.vars.add(name.lexeme)
+                    return Var(name, value)
+                #otherwise, return the assignment
                 return Assign(name, value)
             elif isinstance(expr, Get):
                 return Set(expr.object, expr.name, value)
@@ -755,9 +773,35 @@ class Parser:
         #and return true, as we found an error
         return True
 
-    def constructincremental(self, var):
-        self.tokens.insert(self.current, Tokens.Token("PPlus", "++", None, var.line, var.char, var.indent))
-        self.tokens.insert(self.current, var)
+    #function to very quickly insert a token a the current position
+    def insertToken(self, ttype, lexeme="", literal=None, line=0, char=0, indent=0):
+        if isinstance(ttype, str):
+            self.tokens.insert(self.current, Tokens.Token(ttype, lexeme, literal, line, char, indent))
+        else:
+            self.tokens.insert(self.current, ttype)
+
+    #very quickly construct and insert a variable definition
+    def constructvariable(self, varname="____", value=None):
+        self.insertToken("End", "")
+        if value is not None:
+            if isinstance(value, str):
+                self.insertToken("Identifier", value, value)
+            elif isinstance(value, (float, int)):
+                self.insertToken("Number", value, value)
+            self.insertToken("Equal", "=")
+        if varname == "____":
+            self.insertToken("Identifier", "__var{}__".format(self.non_user_vars))
+            self.non_user_vars += 1
+        return self.varDeclaration()
+
+    #very quickly construct and insert an incremental token stream
+    def constructincremental(self, var, positive = True):
+        if positive:
+            self.insertToken("PPlus", "++")
+        else:
+            self.insertToken("MMinus", "--")
+        self.insertToken(var)
+        return self.expression()
 
     #define a way of checking if a token is found, and consuming it
     def consume(self, errorMessage, *tokentypes, silentError=False):

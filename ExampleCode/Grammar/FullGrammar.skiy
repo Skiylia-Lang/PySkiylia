@@ -69,8 +69,9 @@ a ?: b      //if a is true, then a, else b    <-elvis operator, equivalent to a 
 a ?? b      //if a null, then b, else a       <-null coalescence operator, equivalent to a!=null ? a : b, but does not evaluate 'a' twice
 
 //Variables and assignment
-var a       //initialise as 0
-a = 5       //reassign a as 5. a must already exist
+var a       //initialise as 0.
+a = 5       //reassign a as 5.
+b = 3       //implicitly define b as 3
 check a     //evaluates the truthiness of a, thorwing an error if it is false
 
 //control flow
@@ -144,15 +145,15 @@ for x (Where | When) x<10 do x=x+2
   print(x)
 //explicitly defining the increment operation
 
-for x in 10:
-  print(x)
-//implicitly define '(Where | When) x<10' as 'in 10'        <-- NOT SURE IF I WANT TO KEEP THIS BEHAVIOUR
-
 for x do x=x+2:
   print(x)
 //basically a while loop with a defined increment and implicitly declared variable
 
-for x in Array(1, 2, 3, 4, 5):
+///   for x in 10:
+        print(x)
+      //implicitly define '(Where | When) x<10' as 'in 10'        <-- BEHAVIOUR REMOVED IN PYSKIYLIA 0.8.2
+
+for x in array(1, 2, 3, 4, 5):
   print(x)
 //loops through the array-like, technically an implicit conditional and incremental
 

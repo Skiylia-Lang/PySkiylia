@@ -69,8 +69,9 @@ a ?: b      //if a is true, then a, else b    <-elvis operator, equivalent to a 
 a ?? b      //if a null, then b, else a       <-null coalescence operator, equivalent to a!=null ? a : b, but does not evaluate 'a' twice
 
 //Variables and assignment
-var a       //initialise as 0
-a = 5       //reassign a as 5. a must already exist
+var a       //initialise as 0.
+a = 5       //reassign a as 5.
+b = 3       //implicitly define b as 3
 check a     //evaluates the truthiness of a, thorwing an error if it is false
 
 //control flow

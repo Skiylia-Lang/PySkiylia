@@ -39,7 +39,7 @@ function          > Identifier "(" parameters? ")" {Block token} block
 
 parameters        > Identifier ( "," Identifier )*
 
-vardeclaration    > ("var" Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
+vardeclaration    > ("var"? Idenitifer ( "=" expression )? ) "\n"+     <=explicit requires "var"
 
 statement         > checkstmt | dostmt | exprstmt | forstmt | ifstmt | interuptstmt | returnstmt | untilstmt | whilestmt | block
 

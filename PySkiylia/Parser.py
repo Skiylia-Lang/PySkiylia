@@ -30,7 +30,7 @@ class Parser:
         #define all of the tokens that can start a block (not a lot as of current)
         self.blockStart = ["Colon"]
         #define the variables that have been created in this parser
-        self.non_user_vars = 0
+        self.non_user_vars, self.vars = 0, set()
         #define the current directory
         self.mydir = workingdir
         #and define a list of imported modules
@@ -186,12 +186,9 @@ class Parser:
     #define the do statement grammar
     def dostatement(self):
         #fetch the loop
-        print("do statement")
         if self.match("While"):
-            print("while")
             loop = self.whilestatement()
         elif self.match("Until"):
-            print("until")
             loop = self.untilstatement()
         else:
             #ensure we don't have a floating
@@ -270,7 +267,7 @@ class Parser:
                 self.insertToken("End")
                 self.current = itk_num
                 self.insertToken("Equal", "=")
-                self.insertToken("Identifier", "__arr__")
+                self.insertToken("Identifier", "__arr{}__".format(self.non_user_vars))
                 itt = self.varDeclaration()
                 self.stmt.append(itt)
             #otherwise, throw an error
@@ -475,6 +472,8 @@ class Parser:
             initial = self.expression()
         #make sure the variable is bounded
         self.consume("Unbounded variable declaration.", *Endings)
+        #add the variable to our set
+        self.vars.add(name.lexeme)
         #return the variable abstraction
         return Var(name, initial)
 
@@ -539,7 +538,12 @@ class Parser:
             #if it is a Variable type
             if isinstance(expr, Variable):
                 name = expr.name
-                #return the assignment
+                #check if this has been used before
+                if name.lexeme not in self.vars:
+                    #add to our set
+                    self.vars.add(name.lexeme)
+                    return Var(name, value)
+                #otherwise, return the assignment
                 return Assign(name, value)
             elif isinstance(expr, Get):
                 return Set(expr.object, expr.name, value)
